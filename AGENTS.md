@@ -129,6 +129,7 @@ Data and content rules:
 - Persist assessment sessions, answers, and sephira results locally with Room.
 - Plan content and UI strings for English and Spanish from the start.
 - Keep localized copy separate from scoring rules and domain logic.
+- When the architecture uses repositories plus use cases, prefer repository methods that return `Flow` and thin use cases that expose those flows to ViewModels.
 
 Testing priorities:
 - scoring engine correctness
@@ -149,6 +150,13 @@ UX guidance:
   - deficiency pattern
   - excess pattern
   - suggested practices
+
+Compose screen construction guidance:
+- Keep each screen file centered on orchestration and state mapping, not one large block of inline UI.
+- Extract smaller composables for clearly distinct sections such as headers, hero areas, content blocks, progress indicators, and action areas.
+- Prefer reusable UI sections when the same visual pattern may appear in more than one screen.
+- Decompose screens enough to improve readability and maintenance, but avoid creating meaningless wrapper composables.
+- For onboarding or other multi-state screens, keep page/state definitions explicit so images, copy, and behavior stay aligned in one place.
 
 When making implementation decisions:
 - Prefer choices that support clear interpretation, local reliability, and testability.

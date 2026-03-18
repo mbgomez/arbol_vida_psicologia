@@ -377,6 +377,7 @@ Recommended rule:
 - user-facing Compose UI should live under `ui/*`
 - ViewModels should live under `viewmodel/*`
 - data, domain, and DI should stay outside the UI tree
+- When a feature already uses repository and use case abstractions, prefer flow-based repositories and thin use cases rather than direct repository access from ViewModels
 
 ### Layer Responsibilities
 
@@ -542,6 +543,14 @@ In practice, that means:
 - prefer polished, intentional flows over generic template behavior
 - keep architecture simple but durable
 - avoid shipping user-facing copy or UI that feels unfinished, internal, or prototype-like
+
+Compose screen construction guidance:
+
+- A screen should primarily coordinate layout and state, not hold every visual section inline.
+- Extract smaller composable sections when they represent distinct responsibilities such as top bars, hero media, body copy, progress indicators, cards, and action areas.
+- Keep reusable visual building blocks easy to share across screens.
+- Prefer decomposition that improves readability and reuse without fragmenting simple logic into unnecessary wrappers.
+- For multi-step onboarding or intro flows, keep page definitions explicit so text, artwork, and behavior can evolve together without spreading page logic across the layout tree.
 
 ## Recommended Next Step After This Spec
 

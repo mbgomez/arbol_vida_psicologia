@@ -2,17 +2,20 @@ package com.netah.hakkam.numyah.mind.data.repository
 
 import android.content.SharedPreferences
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class LocalOnboardingRepository @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : OnboardingRepository {
 
-    override suspend fun hasCompletedOnboarding(): Boolean {
-        return sharedPreferences.getBoolean(KEY_ONBOARDING_COMPLETED, false)
+    override fun hasCompletedOnboarding(): Flow<Boolean> = flow {
+        emit(sharedPreferences.getBoolean(KEY_ONBOARDING_COMPLETED, false))
     }
 
-    override suspend fun setOnboardingCompleted(completed: Boolean) {
+    override fun setOnboardingCompleted(completed: Boolean): Flow<Boolean> = flow {
         sharedPreferences.edit().putBoolean(KEY_ONBOARDING_COMPLETED, completed).apply()
+        emit(completed)
     }
 
     private companion object {

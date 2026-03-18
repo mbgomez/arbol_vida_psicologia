@@ -1,6 +1,8 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
+import kotlinx.coroutines.flow.Flow
+
 interface OnboardingRepository {
-    suspend fun hasCompletedOnboarding(): Boolean
-    suspend fun setOnboardingCompleted(completed: Boolean)
+    fun hasCompletedOnboarding(): Flow<Boolean>
+    fun setOnboardingCompleted(completed: Boolean): Flow<Boolean>
 }

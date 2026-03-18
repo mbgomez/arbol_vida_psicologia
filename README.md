@@ -67,6 +67,12 @@ Non-UI code should continue to live in supporting layers such as `app`, `data`, 
 
 This preserves the current stack while keeping the active UI implementation aligned to one clear schema instead of splitting visual code across multiple competing package conventions.
 
+State and use case standard:
+
+- Repository interfaces should expose `Flow` when the surrounding feature already follows the repository -> use case -> ViewModel flow pattern.
+- Use cases should stay thin and delegate to repositories, following the same style used in the posts example.
+- ViewModels should collect use case flows in `viewModelScope` rather than reaching into repositories directly when that architectural path already exists for the feature area.
+
 ## Delivery Standard
 
 Future work in this repository should be approached with the judgment of:
@@ -76,3 +82,11 @@ Future work in this repository should be approached with the judgment of:
 - a senior project manager
 
 That means implementation decisions should balance product clarity, user trust, visual quality, technical maintainability, and realistic scope. When tradeoffs appear, prefer the option that produces a cleaner user experience and a more durable foundation for the next feature slice.
+
+Screen construction standard:
+
+- Keep each screen composable as an orchestrator rather than a large monolithic block.
+- Extract meaningful sub-composables for reusable or clearly separable sections such as headers, hero areas, body content, progress indicators, action areas, and background treatments.
+- Keep screen content models or page definitions separate from layout when that improves readability.
+- Prefer small, composable UI pieces that are easy to preview, reuse, and adjust without rewriting the full screen.
+- When a screen has per-page or per-state media, prefer explicit page models that map content and artwork together instead of hardcoding visual branching inline.

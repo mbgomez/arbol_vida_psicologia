@@ -2,9 +2,10 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.netah.hakkam.numyah.mind.data.repository.OnboardingRepository
+import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,7 @@ data class OnboardingUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val onboardingRepository: OnboardingRepository
+    private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -48,8 +49,9 @@ class OnboardingViewModel @Inject constructor(
 
     private fun completeOnboarding(onFinished: () -> Unit) {
         viewModelScope.launch {
-            onboardingRepository.setOnboardingCompleted(true)
-            onFinished()
+            setOnboardingCompletedUseCase.run(true).collect {
+                onFinished()
+            }
         }
     }
 }
