@@ -1,0 +1,527 @@
+# Product Spec: Tree of Life Psychology App
+
+## 1. Short Product Vision
+
+Build a reflective Android app that translates the Kabbalah Tree of Life into a practical psychology experience. Users complete a structured questionnaire across the ten sephirot and receive a personal profile showing where each sephira appears balanced, deficient, or excessive, along with clear explanations and gentle practices for integration.
+
+The product should feel insightful, grounded, and non-pathologizing. It is a self-reflection tool, not a diagnostic or clinical mental health product.
+
+The app's educational content should be grounded in the project's own Kabbalah reference document in [Tree of life - overview - psychology.docx](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\Tree%20of%20life%20-%20overview%20-%20psychology.docx), adapted into app-friendly copy rather than pasted directly.
+
+The app should launch with bilingual support for English and Spanish.
+
+## 2. User Flow
+
+### Primary Flow
+
+1. User opens the app.
+2. User sees short onboarding that explains the Tree of Life framework, reflection-focused positioning, privacy, and time commitment.
+3. User starts a new assessment.
+4. Before each sephira section, the user sees a short intro that explains the sephira in practical psychological language.
+5. User answers questionnaire sections for each sephira in sequence.
+6. After each section, progress is saved locally.
+7. When the final section is complete, the scoring engine evaluates each sephira.
+8. User lands on the results overview screen with all ten sephirot and their states.
+9. User taps any sephira to open a deeper detail screen.
+10. User reviews psychological meaning, signs of deficiency or excess, strengths of balance, and suggested practices.
+11. User can open an optional Learn/About area for deeper Kabbalah context and longer educational content.
+12. User can save the result, retake the assessment later, or compare with a previous run in a future version.
+
+### Secondary Flows
+
+- Resume interrupted assessment from the last unanswered question.
+- Retake assessment from the results screen.
+- Review previous completed assessments from history.
+- Open a sephira detail screen directly from a saved assessment.
+- Open a Learn/About section without starting the assessment.
+
+### UX Principles
+
+- One question at a time or one short cluster at a time.
+- Clear progress and section context.
+- Language should be psychologically accessible, spiritually respectful, and free of deterministic claims.
+- Results should emphasize tendencies, not labels.
+- Onboarding should be brief and trust-building, not a long lecture.
+- Deeper educational material should appear in context, especially before and after each sephira assessment.
+- All core user-facing flows should be available in English and Spanish.
+
+## 3. Screen List
+
+### Launch / Setup
+
+- Splash or startup routing screen
+- Optional sign-in gate if the existing auth foundation is kept, though this should be disabled for v1 unless there is a real backend need
+- Onboarding carousel or short intro flow
+
+### Assessment
+
+- Assessment home screen
+- Sephira intro screen for the current section
+- Question screen
+- Section completion micro-summary screen
+- Resume assessment prompt
+
+### Results
+
+- Results overview screen with all ten sephirot
+- Sephira detail screen
+- Suggested practices screen or practices section inside detail
+- Assessment history screen
+
+### Support Screens
+
+- Learn / About the Tree of Life screen
+- Privacy and methodology screen
+- Settings screen
+
+## 4. Domain Model
+
+The domain should center on a local-first assessment engine.
+
+### Core Enums
+
+- `SephiraId`
+  - `KETER`
+  - `CHOKHMAH`
+  - `BINAH`
+  - `CHESED`
+  - `GEVURAH`
+  - `TIFERET`
+  - `NETZACH`
+  - `HOD`
+  - `YESOD`
+  - `MALKHUT`
+- `Pole`
+  - `BALANCE`
+  - `DEFICIENCY`
+  - `EXCESS`
+- `AssessmentStatus`
+  - `NOT_STARTED`
+  - `IN_PROGRESS`
+  - `COMPLETED`
+- `QuestionFormat`
+  - `LIKERT_5`
+  - `LIKERT_7`
+  - `SINGLE_CHOICE`
+
+### Core Entities
+
+- `SephiraDefinition`
+  - id
+  - displayName
+  - order
+  - shortMeaning
+  - balancedDescription
+  - deficiencyDescription
+  - excessDescription
+  - practiceRecommendations
+  - cautionNote
+
+- `Questionnaire`
+  - version
+  - title
+  - sephiraSections
+
+- `SephiraSection`
+  - sephiraId
+  - title
+  - introText
+  - questions
+
+- `Question`
+  - id
+  - sephiraId
+  - prompt
+  - format
+  - options
+  - reverseScored
+  - weightsByPole
+
+- `AnswerOption`
+  - id
+  - label
+  - numericValue
+
+- `AssessmentSession`
+  - id
+  - questionnaireVersion
+  - startedAt
+  - completedAt
+  - status
+  - currentSephira
+  - currentQuestionIndex
+
+- `Response`
+  - sessionId
+  - questionId
+  - selectedOptionId
+  - numericValue
+  - answeredAt
+
+- `SephiraScore`
+  - sessionId
+  - sephiraId
+  - balanceScore
+  - deficiencyScore
+  - excessScore
+  - dominantPole
+  - confidence
+
+- `AssessmentResult`
+  - sessionId
+  - overallSummary
+  - sephiraScores
+  - generatedAt
+
+### Content Model
+
+Each sephira should include:
+
+- short intro copy shown before the questionnaire section
+- psychological theme
+- healthy expression
+- typical deficiency expression
+- typical excess expression
+- reflective prompts
+- grounding practices
+- optional journaling prompts
+
+### Content Source Strategy
+
+The project's Kabbalah document should be adapted into four content layers:
+
+- `Onboarding content`
+  - short explanation of the Tree of Life as a map
+  - explanation of balance, deficiency, and excess
+  - reflection-focused framing and non-diagnostic disclaimer
+- `Sephira intro content`
+  - one short paragraph before each sephira question set
+  - plain-language psychological framing
+- `Sephira result detail content`
+  - fuller explanation of the sephira
+  - how balance, deficiency, and excess may show up
+  - reflective examples and suggested practices
+- `Learn/About content`
+  - deeper material such as broader Kabbalah framing, structure of the Tree, and optional terminology
+
+The document should be treated as the content source, but the app copy should be edited for clarity, brevity, and consistency.
+
+### Localization Requirement
+
+The product should support:
+
+- English
+- Spanish
+
+Localization rules:
+
+- All onboarding, questionnaire, results, practices, and Learn/About content should be available in both languages.
+- Content architecture should separate copy from scoring logic.
+- The source document may remain as the authoring base, but app-ready copy should be produced as localized English and Spanish strings.
+- Question meaning should remain equivalent across languages, especially where scoring depends on nuanced wording.
+
+## 5. Scoring Model
+
+The goal is not to force a mystical interpretation, but to produce a stable and understandable psychological profile.
+
+### Basic Structure
+
+Each sephira has a dedicated question set, ideally 6 to 10 questions in v1.
+
+Each question contributes weighted points to one or more poles:
+
+- balance
+- deficiency
+- excess
+
+Example:
+
+- A statement like "I can set limits without feeling guilty" may contribute positively to `BALANCE` for `GEVURAH`.
+- A statement like "I avoid conflict even when something matters deeply to me" may contribute to `DEFICIENCY` for `GEVURAH`.
+- A statement like "I become rigid when others do not meet my standards" may contribute to `EXCESS` for `GEVURAH`.
+
+### Recommended Response Format
+
+Use a 5-point Likert scale:
+
+- strongly disagree = 0
+- disagree = 1
+- neither = 2
+- agree = 3
+- strongly agree = 4
+
+This keeps the questionnaire simple and mobile-friendly.
+
+### Per-Question Weighting
+
+Each question should define:
+
+- target sephira
+- target pole
+- optional secondary pole contribution
+- weight, default `1.0`
+
+This allows some questions to reflect mixed patterns without overcomplicating the UI.
+
+### Per-Sephira Calculation
+
+For each sephira:
+
+1. Sum all weighted answer contributions into three buckets: `balance`, `deficiency`, and `excess`.
+2. Normalize by the maximum possible score for that section.
+3. Compute percentages for the three poles.
+4. Choose the dominant pole using threshold rules.
+
+### Suggested Classification Rules
+
+For each sephira:
+
+- `BALANCED` if:
+  - balance percentage is highest, and
+  - balance percentage is at least 0.55, and
+  - the gap between balance and the next highest pole is at least 0.10
+
+- `DEFICIENCY` if:
+  - deficiency percentage is highest, and
+  - deficiency percentage is at least 0.45, and
+  - deficiency exceeds balance by at least 0.08
+
+- `EXCESS` if:
+  - excess percentage is highest, and
+  - excess percentage is at least 0.45, and
+  - excess exceeds balance by at least 0.08
+
+- `MIXED / LOW_CONFIDENCE` internal state if no rule is met
+  - In UI, map this to the nearest dominant pole but show lower confidence and softer language such as "leans toward excess" rather than a hard label.
+
+### Confidence Score
+
+Confidence should help copy and UI tone.
+
+Suggested confidence inputs:
+
+- dominance gap between highest and second-highest pole
+- completion rate
+- variance consistency within the sephira section
+
+Confidence bands:
+
+- `HIGH`
+- `MEDIUM`
+- `LOW`
+
+### Example Output Per Sephira
+
+- `TIFERET`
+  - balance: 0.62
+  - deficiency: 0.21
+  - excess: 0.17
+  - result: balanced
+  - confidence: high
+
+## 6. Architecture Proposal For This Repo
+
+## Current Repo Read
+
+The repository already contains:
+
+- a single `:app` module
+- Compose UI
+- Hilt DI
+- Room database plumbing
+- Retrofit networking
+- Navigation Compose
+- starter packages for `data`, `domain`, `ui`, `viewmodel`, and `di`
+
+It also appears to contain starter-template content such as `PostRepository`, `MainScreen`, and `DetailScreen`, which should be treated as scaffolding rather than the real product architecture.
+
+## Proposed Direction
+
+For this project, keep one module first and reorganize inside it by feature plus core layers. That matches the current size of the repo and avoids early multi-module overhead.
+
+### Recommended Package Structure
+
+`com.netah.hakkam.numyah.mind`
+
+- `app`
+  - `NumyahMindApplication`
+  - app-wide setup
+- `core`
+  - `designsystem`
+  - `navigation`
+  - `ui`
+  - `common`
+  - `scoring`
+  - `model`
+- `data`
+  - `local`
+  - `repository`
+  - `mapper`
+- `feature`
+  - `onboarding`
+  - `assessment`
+  - `results`
+  - `history`
+  - `settings`
+
+### Layer Responsibilities
+
+- UI layer
+  - Compose screens, view state, events, navigation
+- Domain layer
+  - use cases for loading questionnaire, saving answers, resuming progress, scoring results
+- Data layer
+  - Room entities, DAOs, repositories, seed content sources, optional remote sync later
+- Core scoring layer
+  - deterministic scoring engine isolated from Android dependencies
+
+### ViewModel Plan
+
+Use one ViewModel per feature screen or per tightly related flow:
+
+- `OnboardingViewModel`
+- `AssessmentViewModel`
+- `ResultsViewModel`
+- `SephiraDetailViewModel`
+- `HistoryViewModel`
+
+Prefer `StateFlow`-based UI state rather than exposing mutable Compose state directly. This will make business logic easier to test.
+
+### Storage Proposal
+
+Use Room for v1 with the following tables:
+
+- `questionnaires`
+- `sephira_definitions`
+- `questions`
+- `answer_options`
+- `assessment_sessions`
+- `responses`
+- `sephira_scores`
+
+Questionnaire content can be seeded from local JSON on first launch or from code-based fixtures in v1. Local JSON is preferable because copy and question wording will change often.
+
+Seeded content should be structured to support multilingual copy from the start.
+
+### Navigation Proposal
+
+Navigation graph:
+
+- onboarding
+- assessment intro
+- sephira intro
+- assessment question flow
+- assessment results
+- sephira detail
+- learn/about
+- history
+- settings
+
+The current login flow should not be part of the v1 critical path unless there is a real product requirement for account sync.
+
+### Networking Proposal
+
+Retrofit is already present, but v1 does not need network dependency for the core product loop. Keep the networking stack available but do not make the questionnaire or scoring depend on it.
+
+Possible future uses:
+
+- syncing assessment history
+- content updates
+- remote editor-driven questionnaire versions
+
+### Test Strategy
+
+Prioritize tests for:
+
+- scoring engine
+- questionnaire progression logic
+- repository persistence
+- ViewModel result mapping
+
+Suggested test split:
+
+- unit tests for scoring rules and use cases
+- Room integration tests for persistence
+- Compose UI tests for core screens
+
+## 7. Implementation Phases
+
+### Phase 1: Product Foundation
+
+- remove or quarantine starter-template post flows from the main navigation path
+- define sephira taxonomy and copy guidelines
+- adapt the Word document into onboarding, sephira intro, detail, and learn-content layers
+- define English and Spanish content requirements and translation approach
+- write v1 questionnaire content for all ten sephirot
+- define Room schema and domain models
+- define navigation routes and screen contracts
+
+### Phase 2: Assessment Engine
+
+- implement questionnaire loader
+- build assessment session persistence
+- implement answer capture and resume logic
+- create deterministic scoring engine
+- add unit tests for score calculation
+
+### Phase 3: Core User Experience
+
+- build onboarding
+- build short sephira intro screens
+- build question flow UI
+- build progress tracking
+- build results overview
+- build sephira detail screen with explanations and practices
+- build optional Learn/About area if it fits the phase scope
+
+### Phase 4: History And Polish
+
+- add assessment history
+- add retake flow
+- improve copy and confidence messaging
+- add empty, loading, and recovery states
+- add accessibility and content review pass
+
+### Phase 5: Optional Extensions
+
+- compare current and previous assessments
+- create personalized growth plans
+- add reminders for reflective practices
+- add account sync
+- support remote content versioning
+
+## Suggested v1 Content Shape
+
+To keep the first release achievable:
+
+- 10 sephirot
+- 6 questions per sephira
+- 60 total questions
+- 5-point Likert answers
+- 1 overall results dashboard
+- 10 sephira detail pages
+
+This is enough to feel meaningful without making the assessment exhausting.
+
+## Risks And Product Notes
+
+- Spiritual language can become vague if not paired with concrete psychology terms.
+- Clinical-sounding labels should be avoided.
+- Balance, deficiency, and excess should be framed as current tendencies, not fixed identity.
+- The copywriting and question design will matter as much as the code.
+- The scoring model should be transparent enough that future content edits do not break interpretability.
+- Long-form educational content should not overload onboarding.
+- The source document should be edited into app-ready copy rather than used verbatim.
+- English and Spanish copy must stay semantically aligned so scoring interpretation remains consistent.
+
+## Recommended Next Step After This Spec
+
+Before coding, define the v1 content set in detail:
+
+- final wording for each sephira definition
+- 6 to 10 questions per sephira
+- answer scale labels
+- deficiency, excess, and balance interpretation copy
+- 3 to 5 practices per sephira
+
+Once that content exists, implementation can proceed cleanly through the architecture above.
