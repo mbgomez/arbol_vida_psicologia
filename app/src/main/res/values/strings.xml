@@ -1,7 +1,56 @@
 <resources>
-    <string name="app_name">Numyah Mind</string>
-    <string name="progress_indicator_desccription">Loading please wait</string>
-    <string name="default_web_client_id">797861297052-r0ee8k3r7p3ck602tvpvk3sf4nclb145.apps.googleusercontent.com</string>
-
-
+    <string name="app_name">Arbol Vida Psicologia</string>
+    <string name="progress_indicator_desccription">Loading, please wait</string>
+    <string name="default_web_client_id" translatable="false">797861297052-r0ee8k3r7p3ck602tvpvk3sf4nclb145.apps.googleusercontent.com</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_learn">Learn</string>
+    <string name="nav_settings">Settings</string>
+    <string name="screen_onboarding">Welcome</string>
+    <string name="screen_assessment">Assessment</string>
+    <string name="screen_results">Results</string>
+    <string name="screen_history">History</string>
+    <string name="screen_learn">Learn</string>
+    <string name="screen_settings">Settings</string>
+    <string name="app_loading_title">Preparing your reflection space</string>
+    <string name="app_loading_body">Loading your local experience and choosing the right starting point.</string>
+    <string name="home_title">Tree of Life reflection</string>
+    <string name="home_subtitle">A calm, local-first space for psychological self-reflection through the ten sephirot.</string>
+    <string name="home_primary_cta">Start assessment</string>
+    <string name="home_secondary_cta">Preview results layout</string>
+    <string name="home_progress_title">What this first build includes</string>
+    <string name="home_progress_body">Onboarding, navigation, bilingual structure, and placeholders for the flows we will build next.</string>
+    <string name="home_cards_title">Explore the shell</string>
+    <string name="home_card_history_title">Assessment history</string>
+    <string name="home_card_history_body">Review saved runs and compare future retakes once persistence is wired in.</string>
+    <string name="home_card_learn_title">Learn the framework</string>
+    <string name="home_card_learn_body">Read the deeper context behind the Tree of Life in psychologically grounded language.</string>
+    <string name="home_card_settings_title">Language and preferences</string>
+    <string name="home_card_settings_body">Prepare for English and Spanish support, privacy framing, and future local preferences.</string>
+    <string name="onboarding_step_counter">Step %1$d of %2$d</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_finish">Begin</string>
+    <string name="onboarding_skip">Skip intro</string>
+    <string name="onboarding_page_1_title">A reflective map, not a label</string>
+    <string name="onboarding_page_1_body">This app uses the Kabbalah Tree of Life as a structure for self-observation. It is designed to help you notice patterns, strengths, and edges in your current experience.</string>
+    <string name="onboarding_page_2_title">Balance, deficiency, and excess</string>
+    <string name="onboarding_page_2_body">Each sephira is explored as a living tendency. Results describe whether an area currently feels more balanced, underexpressed, or overextended. They are not fixed identity statements.</string>
+    <string name="onboarding_page_3_title">Private, gentle, and bilingual</string>
+    <string name="onboarding_page_3_body">The core experience works offline and stores progress locally on your device. The interface is ready for both English and Spanish, following your device language.</string>
+    <string name="onboarding_footer">Expect a brief introduction now, then a clearer assessment flow in the next build.</string>
+    <string name="placeholder_primary_action">Back to home</string>
+    <string name="placeholder_assessment_title">Assessment flow placeholder</string>
+    <string name="placeholder_assessment_body">The questionnaire and sephira intros come next. This route already exists so we can connect the app shell before scoring and question content are finalized.</string>
+    <string name="placeholder_results_title">Results overview placeholder</string>
+    <string name="placeholder_results_body">This screen will evolve into the full Tree of Life profile with ten sephirot, softened confidence language, and deeper interpretation.</string>
+    <string name="placeholder_history_title">History placeholder</string>
+    <string name="placeholder_history_body">Completed assessments and retakes will appear here once local persistence for sessions and results is added.</string>
+    <string name="placeholder_learn_title">Learn and About placeholder</string>
+    <string name="placeholder_learn_body">This area will hold the richer educational content adapted from the source document, separate from the short onboarding flow.</string>
+    <string name="settings_title">Settings foundation</string>
+    <string name="settings_body">The shell is ready for language-aware UI, privacy guidance, and future local preferences. For now, app language follows the device locale automatically.</string>
+    <string name="settings_language_title">Current language behavior</string>
+    <string name="settings_language_body">English and Spanish strings are both available. More settings can be added later without changing the navigation structure.</string>
+    <string name="status_ready">Ready for the next feature slice</string>
 </resources>

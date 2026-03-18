@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.compose.material.icons)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.viewmodel.compose)
     implementation(libs.hilt.android)

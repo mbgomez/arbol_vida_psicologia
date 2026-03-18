@@ -1,0 +1,70 @@
+package com.netah.hakkam.numyah.mind.app
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
+import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.core.designsystem.theme.ArbolVidaTheme
+import com.netah.hakkam.numyah.mind.core.navigation.AppNavHost
+
+@Composable
+fun ArbolVidaApp(
+    appStateViewModel: AppStateViewModel = hiltViewModel()
+) {
+    val uiState by appStateViewModel.uiState.collectAsState()
+
+    ArbolVidaTheme {
+        if (uiState.isLoading) {
+            AppLoadingScreen()
+        } else {
+            val navController = rememberNavController()
+            AppNavHost(
+                navController = navController,
+                startDestination = uiState.startDestination
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppLoadingScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        Text(
+            text = stringResource(R.string.app_loading_title),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(top = 24.dp),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.app_loading_body),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 12.dp),
+            textAlign = TextAlign.Center
+        )
+    }
+}
