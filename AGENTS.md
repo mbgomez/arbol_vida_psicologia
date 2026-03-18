@@ -14,6 +14,7 @@ Product framing:
 - Language should be psychologically grounded, spiritually respectful, and non-pathologizing.
 - Results describe current tendencies, not fixed identity.
 - The app should support both English and Spanish.
+- Canonical product name is `Numyah Mind`.
 
 Core product loop:
 1. User reads a short onboarding that explains the framework and privacy expectations.
@@ -74,12 +75,14 @@ Questionnaire guidance:
 Content guidance:
 - The Word document in `docs/Tree of life - overview - psychology.docx` is the main content source for educational copy.
 - Do not put most of that document into onboarding.
-- Keep onboarding brief and focused on trust, framing, and expectations.
+- Keep onboarding focused on trust, framing, privacy expectations, and what the user will experience.
+- Onboarding can be fuller than a simple splash screen, but it should remain lighter and more practical than the deeper Learn/About material.
 - Use short sephira-specific intro copy before each questionnaire section.
 - Use fuller adapted content on each sephira result detail screen.
 - Put broader and denser conceptual material in an optional Learn/About area.
 - Adapt the source document into app-friendly English rather than copying it verbatim.
 - When in doubt, prefer clear psychological phrasing first and Kabbalah terminology second.
+- Onboarding and other user-facing flows must be written from the user's perspective, not from a builder, roadmap, or implementation perspective.
 
 Scoring guidance:
 - Use deterministic scoring, not AI-generated interpretation.
@@ -138,7 +141,8 @@ UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
 - Show progress through the ten sephirot.
 - Favor soft interpretive language such as "leans toward deficiency" when confidence is low.
-- Onboarding should be short.
+- Onboarding should feel like a dedicated first-run experience, not a reused standard app shell screen.
+- Onboarding should look polished and intentional, with stable layout, strong hierarchy, and professional visual treatment.
 - Richer explanation should appear in-context before each sephira and on result detail screens.
 - Explanations should include:
   - healthy expression
@@ -149,3 +153,4 @@ UX guidance:
 When making implementation decisions:
 - Prefer choices that support clear interpretation, local reliability, and testability.
 - If the codebase and the spec conflict, follow `docs/product_spec.md`.
+- Apply the judgment of a senior UX designer, a senior Android developer, and a senior project manager. Balance user trust, visual quality, maintainable implementation, and realistic scope.

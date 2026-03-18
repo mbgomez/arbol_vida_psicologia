@@ -2,6 +2,8 @@
 
 Android app concept for exploring the Kabbalah Tree of Life through a psychological self-reflection journey.
 
+Canonical product name: `Numyah Mind`.
+
 This repository currently contains a single Android app module built with Kotlin, Jetpack Compose, Hilt, Room, Retrofit, and Navigation. The existing codebase looks like a starter foundation, so the first product step is to reshape it around a questionnaire-driven assessment for the ten sephirot.
 
 The app should support both English and Spanish.
@@ -22,10 +24,14 @@ The product content should be based on the project's own Kabbalah source documen
 
 That content should not all live in onboarding. The app should use it in layers:
 
-- short onboarding for framing and expectations
+- dedicated onboarding for trust, orientation, privacy expectations, and clear user framing
 - short sephira intros before each questionnaire section
 - richer per-sephira explanations on the result detail screens
 - optional deeper reading in a Learn/About area
+
+Onboarding should be more substantial than a splash screen, but it should still stay lighter and more practical than the deeper educational material in Learn/About.
+
+All onboarding copy should be written from the user's perspective. It should explain what the user is about to experience, what kind of reflection the app supports, and what the results mean. It should not sound like roadmap text, implementation notes, or builder-facing commentary.
 
 All user-facing content should be planned for English and Spanish from the beginning.
 
@@ -61,3 +67,13 @@ Keep the repo as a single `:app` module for now, but move from the current gener
 - `core/scoring`
 
 This preserves the current stack while making the codebase easier to grow.
+
+## Delivery Standard
+
+Future work in this repository should be approached with the judgment of:
+
+- a senior UX designer
+- a senior Android developer
+- a senior project manager
+
+That means implementation decisions should balance product clarity, user trust, visual quality, technical maintainability, and realistic scope. When tradeoffs appear, prefer the option that produces a cleaner user experience and a more durable foundation for the next feature slice.

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 data class OnboardingUiState(
     val currentPage: Int = 0,
-    val pageCount: Int = 3
+    val pageCount: Int = 5
 ) {
     val isFirstPage: Boolean = currentPage == 0
     val isLastPage: Boolean = currentPage == pageCount - 1

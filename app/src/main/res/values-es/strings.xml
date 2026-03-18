@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Arbol Vida Psicologia</string>
+    <string name="app_name">Numyah Mind</string>
     <string name="progress_indicator_desccription">Cargando, por favor espera</string>
     <string name="nav_home">Inicio</string>
     <string name="nav_history">Historial</string>
@@ -31,13 +31,20 @@
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_finish">Comenzar</string>
     <string name="onboarding_skip">Saltar introduccion</string>
-    <string name="onboarding_page_1_title">Un mapa reflexivo, no una etiqueta</string>
-    <string name="onboarding_page_1_body">Esta app usa el Arbol de la Vida de la Cabala como una estructura para la autoobservacion. Su objetivo es ayudarte a notar patrones, fortalezas y bordes en tu experiencia actual.</string>
-    <string name="onboarding_page_2_title">Balance, carencia y exceso</string>
-    <string name="onboarding_page_2_body">Cada sefira se explora como una tendencia viva. Los resultados describen si un area se siente mas equilibrada, poco expresada o sobreextendida. No son afirmaciones fijas sobre tu identidad.</string>
-    <string name="onboarding_page_3_title">Privada, amable y bilingue</string>
-    <string name="onboarding_page_3_body">La experiencia principal funciona sin conexion y guarda el progreso localmente en tu dispositivo. La interfaz esta lista para ingles y espanol, siguiendo el idioma de tu dispositivo.</string>
-    <string name="onboarding_footer">Espera una introduccion breve ahora y un flujo de evaluacion mas claro en la siguiente etapa.</string>
+    <string name="onboarding_eyebrow">Numyah Mind</string>
+    <string name="onboarding_page_1_title">Un mapa amable para la autorreflexion</string>
+    <string name="onboarding_page_1_body">Numyah Mind te ayuda a reflexionar sobre tu experiencia actual a traves del Arbol de la Vida. Traduce cada sefira en temas humanos con los pies en la tierra, como los limites, la vitalidad, el flujo emocional, el discernimiento, la compasion y la accion cotidiana.\n\nNo estas aqui para recibir una etiqueta. Estas aqui para notar patrones, comprenderte con mas matiz y continuar con mayor claridad.</string>
+    <string name="onboarding_page_2_title">Como se organiza la evaluacion</string>
+    <string name="onboarding_page_2_body">Iras avanzando por las diez sefirot una por una: Malkhut, Yesod, Hod, Netzach, Tiferet, Gevurah, Chesed, Binah, Chokhmah y Keter.\n\nAntes de cada seccion veras una introduccion breve en lenguaje practico. Despues responderas un pequeno grupo de preguntas con una escala simple pensada para sentirse serena y manejable en movil.</string>
+    <string name="onboarding_page_3_title">Balance, carencia y exceso</string>
+    <string name="onboarding_page_3_body">Tus resultados se describen a traves de tres tendencias: balance, carencia y exceso.\n\nEl balance apunta a una expresion mas integrada. La carencia sugiere que un area podria estar menos sostenida o ser mas dificil de acceder en este momento. El exceso sugiere que un area podria estar sobreextendida o cargando mas fuerza de la que ayuda. Estas son tendencias actuales, no afirmaciones fijas sobre tu identidad.</string>
+    <string name="onboarding_page_4_title">Que ocurre con tus resultados</string>
+    <string name="onboarding_page_4_body">Cuando termines, recibiras un perfil completo del Arbol de la Vida a traves de las diez sefirot.\n\nPodras abrir cada area para una interpretacion mas amplia, con expresion saludable, patrones de carencia, patrones de exceso y practicas sugeridas. Cuando un resultado sea mixto, el lenguaje se mantendra suave y reflexivo en lugar de forzar una etiqueta rigida.</string>
+    <string name="onboarding_page_5_title">Privada, local y lista para un aprendizaje mas profundo</string>
+    <string name="onboarding_page_5_body">Tu experiencia principal es local en tu dispositivo. El progreso se guarda de forma privada y el flujo principal de evaluacion esta pensado para funcionar sin conexion.\n\nEsta introduccion mantiene las cosas simples. Si despues quieres mas contexto, podras explorarlo en Aprender y en los resultados de cada sefira.</string>
+    <string name="onboarding_footer">Una introduccion serena antes de comenzar.</string>
+    <string name="onboarding_supporting_caption">Reflexion, no diagnostico</string>
+    <string name="onboarding_primary_visual_title">El Arbol de la Vida traducido a la experiencia vivida</string>
     <string name="placeholder_primary_action">Volver al inicio</string>
     <string name="placeholder_assessment_title">Placeholder del flujo de evaluacion</string>
     <string name="placeholder_assessment_body">El cuestionario y las introducciones por sefira vienen despues. Esta ruta ya existe para conectar la estructura principal antes de cerrar el scoring y el contenido.</string>

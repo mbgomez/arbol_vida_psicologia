@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Arbol Vida Psicologia</string>
+    <string name="app_name">Numyah Mind</string>
     <string name="progress_indicator_desccription">Loading, please wait</string>
     <string name="default_web_client_id" translatable="false">797861297052-r0ee8k3r7p3ck602tvpvk3sf4nclb145.apps.googleusercontent.com</string>
     <string name="nav_home">Home</string>
@@ -32,13 +32,20 @@
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_finish">Begin</string>
     <string name="onboarding_skip">Skip intro</string>
-    <string name="onboarding_page_1_title">A reflective map, not a label</string>
-    <string name="onboarding_page_1_body">This app uses the Kabbalah Tree of Life as a structure for self-observation. It is designed to help you notice patterns, strengths, and edges in your current experience.</string>
-    <string name="onboarding_page_2_title">Balance, deficiency, and excess</string>
-    <string name="onboarding_page_2_body">Each sephira is explored as a living tendency. Results describe whether an area currently feels more balanced, underexpressed, or overextended. They are not fixed identity statements.</string>
-    <string name="onboarding_page_3_title">Private, gentle, and bilingual</string>
-    <string name="onboarding_page_3_body">The core experience works offline and stores progress locally on your device. The interface is ready for both English and Spanish, following your device language.</string>
-    <string name="onboarding_footer">Expect a brief introduction now, then a clearer assessment flow in the next build.</string>
+    <string name="onboarding_eyebrow">Numyah Mind</string>
+    <string name="onboarding_page_1_title">A gentle map for self-reflection</string>
+    <string name="onboarding_page_1_body">Numyah Mind helps you reflect on your current experience through the Tree of Life. It turns each sephira into grounded human themes such as boundaries, vitality, emotional flow, discernment, compassion, and daily action.\n\nYou are not here to be labeled. You are here to notice patterns, understand yourself with more nuance, and continue with greater clarity.</string>
+    <string name="onboarding_page_2_title">How the assessment is structured</string>
+    <string name="onboarding_page_2_body">You will move through the ten sephirot one at a time: Malkhut, Yesod, Hod, Netzach, Tiferet, Gevurah, Chesed, Binah, Chokhmah, and Keter.\n\nBefore each section, you will get a short introduction in practical language. Then you will answer a small set of questions with a simple rating scale designed to feel calm and manageable on mobile.</string>
+    <string name="onboarding_page_3_title">Balance, deficiency, and excess</string>
+    <string name="onboarding_page_3_body">Your results are described through three tendencies: balance, deficiency, and excess.\n\nBalance points to a more integrated expression. Deficiency suggests an area may be under-supported or harder to access right now. Excess suggests an area may be overextended or carrying more force than is helpful. These are current tendencies, not fixed identity statements.</string>
+    <string name="onboarding_page_4_title">What happens with your results</string>
+    <string name="onboarding_page_4_body">When you finish, you will receive a full Tree of Life profile across all ten sephirot.\n\nYou will be able to open each area for a fuller interpretation, including healthy expression, deficiency patterns, excess patterns, and suggested practices. When a result is mixed, the language should stay soft and reflective instead of forcing a hard label.</string>
+    <string name="onboarding_page_5_title">Private, local, and ready for deeper learning</string>
+    <string name="onboarding_page_5_body">Your core experience is local to your device. Progress is saved privately, and the main assessment flow is designed to work offline.\n\nThis introduction keeps things simple. If you want deeper context later, you will be able to explore that in Learn and in each sephira result.</string>
+    <string name="onboarding_footer">A calm introduction before you begin.</string>
+    <string name="onboarding_supporting_caption">Reflection, not diagnosis</string>
+    <string name="onboarding_primary_visual_title">The Tree of Life, translated into lived experience</string>
     <string name="placeholder_primary_action">Back to home</string>
     <string name="placeholder_assessment_title">Assessment flow placeholder</string>
     <string name="placeholder_assessment_body">The questionnaire and sephira intros come next. This route already exists so we can connect the app shell before scoring and question content are finalized.</string>

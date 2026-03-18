@@ -6,6 +6,8 @@ Build a reflective Android app that translates the Kabbalah Tree of Life into a 
 
 The product should feel insightful, grounded, and non-pathologizing. It is a self-reflection tool, not a diagnostic or clinical mental health product.
 
+Canonical product name: `Numyah Mind`.
+
 The app's educational content should be grounded in the project's own Kabbalah reference document in [Tree of life - overview - psychology.docx](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\Tree%20of%20life%20-%20overview%20-%20psychology.docx), adapted into app-friendly copy rather than pasted directly.
 
 The app should launch with bilingual support for English and Spanish.
@@ -41,9 +43,12 @@ The app should launch with bilingual support for English and Spanish.
 - Clear progress and section context.
 - Language should be psychologically accessible, spiritually respectful, and free of deterministic claims.
 - Results should emphasize tendencies, not labels.
-- Onboarding should be brief and trust-building, not a long lecture.
+- Onboarding should be a dedicated first-run experience rather than a reused in-app shell screen.
+- Onboarding should be trust-building and substantial enough to orient the user, but still lighter than the deeper educational material in Learn/About.
+- Onboarding copy must be written from the user's perspective and should never read like implementation notes, roadmap language, or builder-facing commentary.
 - Deeper educational material should appear in context, especially before and after each sephira assessment.
 - All core user-facing flows should be available in English and Spanish.
+- The first-run experience should feel polished and product-grade, with intentional layout, strong hierarchy, and a professional visual treatment.
 
 ## 3. Screen List
 
@@ -51,7 +56,7 @@ The app should launch with bilingual support for English and Spanish.
 
 - Splash or startup routing screen
 - Optional sign-in gate if the existing auth foundation is kept, though this should be disabled for v1 unless there is a real backend need
-- Onboarding carousel or short intro flow
+- Dedicated onboarding flow with its own visual treatment and without the standard in-app toolbar behavior
 
 ### Assessment
 
@@ -191,9 +196,11 @@ Each sephira should include:
 The project's Kabbalah document should be adapted into four content layers:
 
 - `Onboarding content`
-  - short explanation of the Tree of Life as a map
+  - a clear explanation of the Tree of Life as a reflection map
   - explanation of balance, deficiency, and excess
   - reflection-focused framing and non-diagnostic disclaimer
+  - privacy and local-first expectations
+  - a concise explanation of what the user will experience and what kind of results they will receive
 - `Sephira intro content`
   - one short paragraph before each sephira question set
   - plain-language psychological framing
@@ -205,6 +212,12 @@ The project's Kabbalah document should be adapted into four content layers:
   - deeper material such as broader Kabbalah framing, structure of the Tree, and optional terminology
 
 The document should be treated as the content source, but the app copy should be edited for clarity, brevity, and consistency.
+
+User-facing copy rules:
+
+- Prefer direct user-oriented language such as "you will reflect on" or "your results may show" rather than builder-oriented language such as "the app will later include."
+- Avoid copy that references implementation state, roadmap progress, or development placeholders in production-facing flows.
+- Keep onboarding understandable to a first-time user without requiring product or technical context.
 
 ### Localization Requirement
 
@@ -513,6 +526,21 @@ This is enough to feel meaningful without making the assessment exhausting.
 - Long-form educational content should not overload onboarding.
 - The source document should be edited into app-ready copy rather than used verbatim.
 - English and Spanish copy must stay semantically aligned so scoring interpretation remains consistent.
+
+## Working Standard
+
+Implementation and product decisions for this repository should be made with the combined judgment of:
+
+- a senior UX designer
+- a senior Android developer
+- a senior project manager
+
+In practice, that means:
+
+- prioritize user trust and clarity over cleverness
+- prefer polished, intentional flows over generic template behavior
+- keep architecture simple but durable
+- avoid shipping user-facing copy or UI that feels unfinished, internal, or prototype-like
 
 ## Recommended Next Step After This Spec
 
