@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -72,42 +73,15 @@ fun OnboardingScreen(
     onContinue: () -> Unit,
     onSkip: () -> Unit
 ) {
-    val pages = listOf(
-        OnboardingPage(R.mipmap.on_boarding_1, R.string.onboarding_page_1_title, R.string.onboarding_page_1_body),
-        OnboardingPage(R.mipmap.on_boarding_2, R.string.onboarding_page_2_title, R.string.onboarding_page_2_body),
-        OnboardingPage(R.mipmap.on_boarding_3, R.string.onboarding_page_3_title, R.string.onboarding_page_3_body),
-        OnboardingPage(R.mipmap.on_boarding_4, R.string.onboarding_page_4_title, R.string.onboarding_page_4_body),
-        OnboardingPage(R.mipmap.on_boarding_5, R.string.onboarding_page_5_title, R.string.onboarding_page_5_body)
-    )
+    val pages = onboardingPages()
     val page = pages[uiState.currentPage]
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
-                    )
-                )
-            )
+            .background(onboardingBackgroundBrush())
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(360.dp)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
-                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.10f),
-                            Color.Transparent
-                        )
-                    )
-                )
-                .align(Alignment.TopCenter)
-        )
+        OnboardingBackgroundGlow()
 
         Surface(
             modifier = Modifier
@@ -126,150 +100,237 @@ fun OnboardingScreen(
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.onboarding_eyebrow),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(
-                                    R.string.onboarding_step_counter,
-                                    uiState.currentPage + 1,
-                                    uiState.pageCount
-                                ),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Text(
-                            text = stringResource(R.string.onboarding_supporting_caption),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
-                                    shape = RoundedCornerShape(999.dp)
-                                )
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                        )
-                    }
+                    OnboardingHeader(
+                        currentPage = uiState.currentPage,
+                        pageCount = uiState.pageCount
+                    )
                     Spacer(modifier = Modifier.height(24.dp))
                     OnboardingHero(
                         imageRes = page.imageRes,
                         title = stringResource(R.string.onboarding_primary_visual_title)
                     )
                     Spacer(modifier = Modifier.height(28.dp))
-                    Text(
-                        text = stringResource(page.titleRes),
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(page.bodyRes),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    OnboardingBody(
+                        title = stringResource(page.titleRes),
+                        body = stringResource(page.bodyRes)
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    OnboardingProgressIndicator(
+                        currentPage = uiState.currentPage,
+                        pageCount = uiState.pageCount
+                    )
+                }
+
+                OnboardingActionCard(
+                    isFirstPage = uiState.isFirstPage,
+                    isLastPage = uiState.isLastPage,
+                    onBack = onBack,
+                    onSkip = onSkip,
+                    onContinue = onContinue
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun onboardingBackgroundBrush(): Brush {
+    return Brush.verticalGradient(
+        listOf(
+            MaterialTheme.colorScheme.background,
+            MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
+        )
+    )
+}
+
+@Composable
+private fun BoxScope.OnboardingBackgroundGlow() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(360.dp)
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
+                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.10f),
+                        Color.Transparent
+                    )
+                )
+            )
+            .align(Alignment.TopCenter)
+    )
+}
+
+@Composable
+private fun OnboardingHeader(
+    currentPage: Int,
+    pageCount: Int
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = stringResource(R.string.onboarding_eyebrow),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(
+                    R.string.onboarding_step_counter,
+                    currentPage + 1,
+                    pageCount
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(
+            text = stringResource(R.string.onboarding_supporting_caption),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
+                    shape = RoundedCornerShape(999.dp)
+                )
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun OnboardingBody(
+    title: String,
+    body: String
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.displayLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+        fontWeight = FontWeight.SemiBold
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = body,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+private fun OnboardingProgressIndicator(
+    currentPage: Int,
+    pageCount: Int
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        repeat(pageCount) { index ->
+            Box(
+                modifier = Modifier
+                    .size(
+                        width = if (index == currentPage) 34.dp else 12.dp,
+                        height = 12.dp
+                    )
+                    .background(
+                        color = if (index == currentPage) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        },
+                        shape = RoundedCornerShape(999.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun OnboardingActionCard(
+    isFirstPage: Boolean,
+    isLastPage: Boolean,
+    onBack: () -> Unit,
+    onSkip: () -> Unit,
+    onContinue: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+        tonalElevation = 4.dp,
+        shadowElevation = 8.dp
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(
+                text = stringResource(R.string.onboarding_footer),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(18.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (isFirstPage) {
+                    OutlinedButton(
+                        onClick = onSkip,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     ) {
-                        repeat(uiState.pageCount) { index ->
-                            Box(
-                                modifier = Modifier
-                                    .size(
-                                        width = if (index == uiState.currentPage) 34.dp else 12.dp,
-                                        height = 12.dp
-                                    )
-                                    .background(
-                                        color = if (index == uiState.currentPage) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.surfaceVariant
-                                        },
-                                        shape = RoundedCornerShape(999.dp)
-                                    )
-                            )
-                        }
+                        Text(text = stringResource(R.string.onboarding_skip))
+                    }
+                } else {
+                    OutlinedButton(
+                        onClick = onBack,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.onboarding_back))
                     }
                 }
 
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(28.dp),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
-                    tonalElevation = 4.dp,
-                    shadowElevation = 8.dp
+                Button(
+                    onClick = onContinue,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
-                    Column(modifier = Modifier.padding(18.dp)) {
-                        Text(
-                            text = stringResource(R.string.onboarding_footer),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Start
-                        )
-                        Spacer(modifier = Modifier.height(18.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            if (uiState.isFirstPage) {
-                                OutlinedButton(
-                                    onClick = onSkip,
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-                                ) {
-                                    Text(text = stringResource(R.string.onboarding_skip))
-                                }
+                    Text(
+                        text = stringResource(
+                            if (isLastPage) {
+                                R.string.onboarding_finish
                             } else {
-                                OutlinedButton(
-                                    onClick = onBack,
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-                                ) {
-                                    Text(text = stringResource(R.string.onboarding_back))
-                                }
+                                R.string.onboarding_continue
                             }
-
-                            Button(
-                                onClick = onContinue,
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
-                            ) {
-                                Text(
-                                    text = stringResource(
-                                        if (uiState.isLastPage) {
-                                            R.string.onboarding_finish
-                                        } else {
-                                            R.string.onboarding_continue
-                                        }
-                                    )
-                                )
-                            }
-                        }
-                    }
+                        )
+                    )
                 }
             }
         }
     }
 }
+
+private fun onboardingPages(): List<OnboardingPage> = listOf(
+    OnboardingPage(R.mipmap.on_boarding_1, R.string.onboarding_page_1_title, R.string.onboarding_page_1_body),
+    OnboardingPage(R.mipmap.on_boarding_2, R.string.onboarding_page_2_title, R.string.onboarding_page_2_body),
+    OnboardingPage(R.mipmap.on_boarding_3, R.string.onboarding_page_3_title, R.string.onboarding_page_3_body),
+    OnboardingPage(R.mipmap.on_boarding_4, R.string.onboarding_page_4_title, R.string.onboarding_page_4_body),
+    OnboardingPage(R.mipmap.on_boarding_5, R.string.onboarding_page_5_title, R.string.onboarding_page_5_body)
+)
 
 @Composable
 private fun OnboardingHero(
