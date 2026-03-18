@@ -1,4 +1,4 @@
-package com.netah.hakkam.numyah.mind.feature.home
+package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.netah.hakkam.numyah.mind.R
-import com.netah.hakkam.numyah.mind.core.designsystem.component.AppCard
-import com.netah.hakkam.numyah.mind.core.designsystem.component.StatusChip
+import com.netah.hakkam.numyah.mind.ui.components.AppCard
+import com.netah.hakkam.numyah.mind.ui.components.StatusChip
 
 @Composable
 fun HomeScreen(

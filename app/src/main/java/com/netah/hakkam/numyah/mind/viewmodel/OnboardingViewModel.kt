@@ -1,4 +1,4 @@
-package com.netah.hakkam.numyah.mind.feature.onboarding
+package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

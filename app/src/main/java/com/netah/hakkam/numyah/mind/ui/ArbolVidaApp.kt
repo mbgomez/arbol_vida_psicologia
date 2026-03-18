@@ -1,4 +1,4 @@
-package com.netah.hakkam.numyah.mind.app
+package com.netah.hakkam.numyah.mind.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.netah.hakkam.numyah.mind.R
-import com.netah.hakkam.numyah.mind.core.designsystem.theme.ArbolVidaTheme
-import com.netah.hakkam.numyah.mind.core.navigation.AppNavHost
+import com.netah.hakkam.numyah.mind.ui.nav.MainNavGraph
+import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
+import com.netah.hakkam.numyah.mind.viewmodel.AppStateViewModel
 
 @Composable
 fun ArbolVidaApp(
@@ -28,12 +29,12 @@ fun ArbolVidaApp(
 ) {
     val uiState by appStateViewModel.uiState.collectAsState()
 
-    ArbolVidaTheme {
+    AppTheme {
         if (uiState.isLoading) {
             AppLoadingScreen()
         } else {
             val navController = rememberNavController()
-            AppNavHost(
+            MainNavGraph(
                 navController = navController,
                 startDestination = uiState.startDestination
             )

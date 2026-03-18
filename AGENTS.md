@@ -105,22 +105,22 @@ Architecture rules:
 
 Repository direction:
 - Keep a single `:app` module for now.
-- Evolve the current starter structure toward feature-first packages.
+- Standardize active UI code under the existing `ui` tree.
 - Recommended package direction:
-  - `feature/onboarding`
-  - `feature/assessment`
-  - `feature/results`
-  - `feature/history`
-  - `feature/settings`
-  - `core/designsystem`
-  - `core/navigation`
-  - `core/scoring`
+  - `ui/components`
+  - `ui/nav`
+  - `ui/screen`
+  - `ui/theme`
+  - `viewmodel`
   - `data/local`
   - `data/repository`
+  - `app`
+  - `domain`
 
 Current repo note:
 - Existing starter-template code such as posts, generic detail screens, and login scaffolding should not define the product architecture.
 - Reuse the technical foundation where useful, but prioritize the Tree of Life assessment flow over preserving template concepts.
+- Do not split active UI across competing schemas like `feature/*`, `core/designsystem`, and `ui/*` at the same time. Prefer one consistent UI home under `ui/*`.
 
 Data and content rules:
 - The app should work offline for the core v1 experience.

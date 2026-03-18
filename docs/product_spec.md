@@ -350,7 +350,7 @@ It also appears to contain starter-template content such as `PostRepository`, `M
 
 ## Proposed Direction
 
-For this project, keep one module first and reorganize inside it by feature plus core layers. That matches the current size of the repo and avoids early multi-module overhead.
+For this project, keep one module first and standardize the active UI implementation inside the existing `ui` tree. That matches the current size of the repo, keeps the package structure easy to scan, and avoids mixing multiple competing UI conventions.
 
 ### Recommended Package Structure
 
@@ -359,23 +359,24 @@ For this project, keep one module first and reorganize inside it by feature plus
 - `app`
   - `NumyahMindApplication`
   - app-wide setup
-- `core`
-  - `designsystem`
-  - `navigation`
-  - `ui`
-  - `common`
-  - `scoring`
-  - `model`
 - `data`
   - `local`
   - `repository`
   - `mapper`
+- `ui`
+  - `components`
+  - `nav`
+  - `screen`
+  - `theme`
+- `viewmodel`
 - `feature`
-  - `onboarding`
-  - `assessment`
-  - `results`
-  - `history`
-  - `settings`
+  - future domain-oriented expansion only when it materially improves maintainability
+
+Recommended rule:
+
+- user-facing Compose UI should live under `ui/*`
+- ViewModels should live under `viewmodel/*`
+- data, domain, and DI should stay outside the UI tree
 
 ### Layer Responsibilities
 
@@ -390,7 +391,7 @@ For this project, keep one module first and reorganize inside it by feature plus
 
 ### ViewModel Plan
 
-Use one ViewModel per feature screen or per tightly related flow:
+Use one ViewModel per screen or tightly related flow, under the `viewmodel` package:
 
 - `OnboardingViewModel`
 - `AssessmentViewModel`

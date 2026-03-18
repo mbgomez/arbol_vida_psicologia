@@ -1,9 +1,9 @@
-package com.netah.hakkam.numyah.mind.app
+package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.netah.hakkam.numyah.mind.core.navigation.AppDestination
 import com.netah.hakkam.numyah.mind.data.repository.OnboardingRepository
+import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

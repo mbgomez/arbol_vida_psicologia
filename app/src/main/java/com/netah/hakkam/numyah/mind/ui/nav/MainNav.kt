@@ -1,65 +1,156 @@
 package com.netah.hakkam.numyah.mind.ui.nav
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.netah.hakkam.numyah.mind.ui.nav.NumyahMindDestinations.DETAIL_ROUTE
-import com.netah.hakkam.numyah.mind.ui.nav.NumyahMindDestinations.MAIN_ROUTE
-import com.netah.hakkam.numyah.mind.ui.nav.route.DetailRoute
-import com.netah.hakkam.numyah.mind.ui.nav.route.LoginRoute
-import com.netah.hakkam.numyah.mind.ui.nav.route.MainRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
+import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
+import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
+import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
+import com.netah.hakkam.numyah.mind.ui.screen.ResultsPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 
-
-object NumyahMindDestinations {
-    const val LOGIN_ROUTE = "numyah_mind_login"
-    const val MAIN_ROUTE = "numyah_mind_main"
-    const val DETAIL_ROUTE = "numyah_mind_detail_main"
-
-}
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainNavGraph(
-    navController: NavHostController = rememberNavController(),
-    startDestination: String = NumyahMindDestinations.LOGIN_ROUTE
+    navController: NavHostController,
+    startDestination: String
 ) {
-    val actions = remember(navController) { MainNavActions(navController) }
-
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(route = NumyahMindDestinations.LOGIN_ROUTE) {
-            LoginRoute(actions.navigateToMain)
+        composable(AppDestination.Onboarding.route) {
+            OnboardingRoute(
+                onFinish = {
+                    navController.navigate(AppDestination.Home.route) {
+                        popUpTo(AppDestination.Onboarding.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
-        composable(route = NumyahMindDestinations.MAIN_ROUTE) {
-            MainRoute(actions.navigateToDetails)
+        composable(AppDestination.Home.route) {
+            AppShell(navController = navController) { paddingValues ->
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
+                    onOpenResults = { navController.navigate(AppDestination.Results.route) },
+                    onOpenHistory = { navController.navigate(AppDestination.History.route) },
+                    onOpenLearn = { navController.navigate(AppDestination.Learn.route) },
+                    onOpenSettings = { navController.navigate(AppDestination.Settings.route) }
+                )
+            }
         }
-        composable(
-            route = "$DETAIL_ROUTE/{index}",
-            arguments = listOf(navArgument("index") { type = NavType.IntType })
-        )
-        { backStackEntry ->
-            val index = backStackEntry.arguments?.getInt("index") ?: 0
-            DetailRoute(index = index)
+        composable(AppDestination.Assessment.route) {
+            AppShell(navController = navController) { paddingValues ->
+                AssessmentPlaceholderScreen(
+                    paddingValues = paddingValues,
+                    onBackHome = { navController.navigate(AppDestination.Home.route) }
+                )
+            }
+        }
+        composable(AppDestination.Results.route) {
+            AppShell(navController = navController) { paddingValues ->
+                ResultsPlaceholderScreen(
+                    paddingValues = paddingValues,
+                    onBackHome = { navController.navigate(AppDestination.Home.route) }
+                )
+            }
+        }
+        composable(AppDestination.History.route) {
+            AppShell(navController = navController) { paddingValues ->
+                HistoryPlaceholderScreen(paddingValues = paddingValues)
+            }
+        }
+        composable(AppDestination.Learn.route) {
+            AppShell(navController = navController) { paddingValues ->
+                LearnPlaceholderScreen(paddingValues = paddingValues)
+            }
+        }
+        composable(AppDestination.Settings.route) {
+            AppShell(navController = navController) { paddingValues ->
+                SettingsScreen(paddingValues = paddingValues)
+            }
         }
     }
 }
 
-class MainNavActions(navController: NavHostController) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppShell(
+    navController: NavHostController,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val currentRoute = currentDestination?.route
+    val currentTitle = destinationForRoute(currentRoute)?.titleRes ?: AppDestination.Home.titleRes
 
-    val navigateToDetails: (index: Int) -> Unit = {
-        navController.navigate("$DETAIL_ROUTE/$it")
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    Text(text = stringResource(currentTitle))
+                }
+            )
+        },
+        bottomBar = {
+            NavigationBar {
+                topLevelDestinations.forEach { topLevelDestination ->
+                    val selected = currentDestination?.hierarchy?.any {
+                        it.route == topLevelDestination.destination.route
+                    } == true
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            navController.navigate(topLevelDestination.destination.route) {
+                                popUpTo(AppDestination.Home.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = topLevelDestination.icon,
+                                contentDescription = stringResource(topLevelDestination.destination.titleRes)
+                            )
+                        },
+                        label = {
+                            Text(text = stringResource(topLevelDestination.destination.titleRes))
+                        }
+                    )
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            content(paddingValues)
+        }
     }
-
-    val navigateToMain: () -> Unit = {
-        navController.navigate(MAIN_ROUTE)
-    }
-
 }

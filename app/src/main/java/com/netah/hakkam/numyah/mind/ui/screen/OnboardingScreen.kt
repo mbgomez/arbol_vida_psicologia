@@ -1,8 +1,9 @@
-package com.netah.hakkam.numyah.mind.feature.onboarding
+package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -31,16 +31,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.viewmodel.OnboardingUiState
+import com.netah.hakkam.numyah.mind.viewmodel.OnboardingViewModel
 
 private data class OnboardingPage(
+    val imageRes: Int,
     @StringRes val titleRes: Int,
     @StringRes val bodyRes: Int
 )
@@ -67,11 +73,11 @@ fun OnboardingScreen(
     onSkip: () -> Unit
 ) {
     val pages = listOf(
-        OnboardingPage(R.string.onboarding_page_1_title, R.string.onboarding_page_1_body),
-        OnboardingPage(R.string.onboarding_page_2_title, R.string.onboarding_page_2_body),
-        OnboardingPage(R.string.onboarding_page_3_title, R.string.onboarding_page_3_body),
-        OnboardingPage(R.string.onboarding_page_4_title, R.string.onboarding_page_4_body),
-        OnboardingPage(R.string.onboarding_page_5_title, R.string.onboarding_page_5_body)
+        OnboardingPage(R.mipmap.on_boarding_1, R.string.onboarding_page_1_title, R.string.onboarding_page_1_body),
+        OnboardingPage(R.mipmap.on_boarding_2, R.string.onboarding_page_2_title, R.string.onboarding_page_2_body),
+        OnboardingPage(R.mipmap.on_boarding_3, R.string.onboarding_page_3_title, R.string.onboarding_page_3_body),
+        OnboardingPage(R.mipmap.on_boarding_4, R.string.onboarding_page_4_title, R.string.onboarding_page_4_body),
+        OnboardingPage(R.mipmap.on_boarding_5, R.string.onboarding_page_5_title, R.string.onboarding_page_5_body)
     )
     val page = pages[uiState.currentPage]
 
@@ -156,7 +162,10 @@ fun OnboardingScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(24.dp))
-                    TreeOfLifeHero()
+                    OnboardingHero(
+                        imageRes = page.imageRes,
+                        title = stringResource(R.string.onboarding_primary_visual_title)
+                    )
                     Spacer(modifier = Modifier.height(28.dp))
                     Text(
                         text = stringResource(page.titleRes),
@@ -202,9 +211,7 @@ fun OnboardingScreen(
                     tonalElevation = 4.dp,
                     shadowElevation = 8.dp
                 ) {
-                    Column(
-                        modifier = Modifier.padding(18.dp)
-                    ) {
+                    Column(modifier = Modifier.padding(18.dp)) {
                         Text(
                             text = stringResource(R.string.onboarding_footer),
                             style = MaterialTheme.typography.bodyMedium,
@@ -265,79 +272,42 @@ fun OnboardingScreen(
 }
 
 @Composable
-private fun TreeOfLifeHero() {
+private fun OnboardingHero(
+    imageRes: Int,
+    title: String
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(220.dp)
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.22f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                        Color.Transparent
-                    )
-                ),
-                shape = RoundedCornerShape(32.dp)
-            )
-            .padding(20.dp)
+            .clip(RoundedCornerShape(32.dp))
     ) {
-        val nodeColor = MaterialTheme.colorScheme.primary
-        val accentColor = MaterialTheme.colorScheme.secondary
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .size(38.dp)
-                .background(accentColor.copy(alpha = 0.9f), CircleShape)
+        Image(
+            painter = painterResource(imageRes),
+            contentDescription = title,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
         Box(
             modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 28.dp, top = 12.dp)
-                .size(28.dp)
-                .background(nodeColor.copy(alpha = 0.85f), CircleShape)
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            MaterialTheme.colorScheme.background.copy(alpha = 0.12f),
+                            MaterialTheme.colorScheme.background.copy(alpha = 0.72f)
+                        )
+                    )
+                )
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 28.dp, top = 12.dp)
-                .size(28.dp)
-                .background(nodeColor.copy(alpha = 0.85f), CircleShape)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(42.dp)
-                .background(MaterialTheme.colorScheme.primary, CircleShape)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 42.dp, bottom = 28.dp)
-                .size(30.dp)
-                .background(accentColor.copy(alpha = 0.88f), CircleShape)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
-                .size(32.dp)
-                .background(nodeColor.copy(alpha = 0.92f), CircleShape)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 42.dp, bottom = 28.dp)
-                .size(30.dp)
-                .background(accentColor.copy(alpha = 0.88f), CircleShape)
-        )
-
         Text(
-            text = stringResource(R.string.onboarding_primary_visual_title),
+            text = title,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.align(Alignment.BottomStart)
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(18.dp)
         )
     }
 }

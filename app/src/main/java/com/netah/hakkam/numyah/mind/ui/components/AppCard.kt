@@ -1,4 +1,4 @@
-package com.netah.hakkam.numyah.mind.core.designsystem.component
+package com.netah.hakkam.numyah.mind.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

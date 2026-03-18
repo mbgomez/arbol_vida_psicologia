@@ -55,18 +55,17 @@ The full product plan is documented here:
 
 ## Architectural Direction
 
-Keep the repo as a single `:app` module for now, but move from the current generic starter structure toward feature-based packages:
+Keep the repo as a single `:app` module for now, and standardize UI code under the existing `ui` package tree so the project has one consistent visual structure:
 
-- `feature/onboarding`
-- `feature/assessment`
-- `feature/results`
-- `feature/sephira_detail`
-- `core/designsystem`
-- `core/navigation`
-- `core/database`
-- `core/scoring`
+- `ui/components`
+- `ui/nav`
+- `ui/screen`
+- `ui/theme`
+- `viewmodel`
 
-This preserves the current stack while making the codebase easier to grow.
+Non-UI code should continue to live in supporting layers such as `app`, `data`, `domain`, `di`, and related technical packages.
+
+This preserves the current stack while keeping the active UI implementation aligned to one clear schema instead of splitting visual code across multiple competing package conventions.
 
 ## Delivery Standard
 
