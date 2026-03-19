@@ -55,6 +55,9 @@ hilt {
 
 dependencies {
 
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
 
     implementation(libs.androidx.core.ktx)
@@ -89,6 +92,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.compose.ui.test)
+    androidTestImplementation(libs.compose.material.icons)
     debugImplementation(libs.compose.ui.test.manifest)
 
 }

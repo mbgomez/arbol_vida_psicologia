@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -18,7 +20,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -30,21 +31,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
+import kotlinx.coroutines.flow.distinctUntilChanged
 import com.netah.hakkam.numyah.mind.viewmodel.OnboardingUiState
 import com.netah.hakkam.numyah.mind.viewmodel.OnboardingViewModel
+import androidx.compose.foundation.rememberScrollState
 
 private data class OnboardingPage(
     val imageRes: Int,
@@ -62,7 +67,8 @@ fun OnboardingRoute(
         uiState = uiState,
         onBack = viewModel::onBack,
         onContinue = { viewModel.onContinue(onFinish) },
-        onSkip = { viewModel.skip(onFinish) }
+        onSkip = { viewModel.skip(onFinish) },
+        onPageChanged = viewModel::onPageChanged
     )
 }
 
@@ -71,10 +77,31 @@ fun OnboardingScreen(
     uiState: OnboardingUiState,
     onBack: () -> Unit,
     onContinue: () -> Unit,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
+    onPageChanged: (Int) -> Unit
 ) {
     val pages = onboardingPages()
-    val page = pages[uiState.currentPage]
+    val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
+    val mediumSpacing = dimensionResource(R.dimen.onboarding_spacing_medium)
+    val smallSpacing = dimensionResource(R.dimen.onboarding_spacing_small)
+    val headerSpacing = dimensionResource(R.dimen.onboarding_header_spacing)
+    val sectionSpacing = dimensionResource(R.dimen.onboarding_section_spacing)
+    val pagerState = rememberPagerState(
+        initialPage = uiState.currentPage,
+        pageCount = { uiState.pageCount }
+    )
+
+    LaunchedEffect(uiState.currentPage) {
+        if (pagerState.currentPage != uiState.currentPage) {
+            pagerState.animateScrollToPage(uiState.currentPage)
+        }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collect { onPageChanged(it) }
+    }
 
     Box(
         modifier = Modifier
@@ -88,7 +115,7 @@ fun OnboardingScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = horizontalPadding, vertical = mediumSpacing),
             color = Color.Transparent
         ) {
             Column(
@@ -98,23 +125,35 @@ fun OnboardingScreen(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .verticalScroll(rememberScrollState())
                 ) {
                     OnboardingHeader(
                         currentPage = uiState.currentPage,
                         pageCount = uiState.pageCount
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    OnboardingHero(
-                        imageRes = page.imageRes,
-                        title = stringResource(R.string.onboarding_primary_visual_title)
-                    )
-                    Spacer(modifier = Modifier.height(28.dp))
-                    OnboardingBody(
-                        title = stringResource(page.titleRes),
-                        body = stringResource(page.bodyRes)
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(headerSpacing))
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.weight(1f)
+                    ) { pageIndex ->
+                        val currentPage = pages[pageIndex]
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = smallSpacing)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            OnboardingHero(
+                                imageRes = currentPage.imageRes,
+                                title = stringResource(R.string.onboarding_primary_visual_title)
+                            )
+                            Spacer(modifier = Modifier.height(sectionSpacing))
+                            OnboardingBody(
+                                title = stringResource(currentPage.titleRes),
+                                body = stringResource(currentPage.bodyRes)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(mediumSpacing))
                     OnboardingProgressIndicator(
                         currentPage = uiState.currentPage,
                         pageCount = uiState.pageCount
@@ -148,7 +187,7 @@ private fun BoxScope.OnboardingBackgroundGlow() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(360.dp)
+            .height(dimensionResource(R.dimen.onboarding_background_glow_height))
             .background(
                 Brush.verticalGradient(
                     listOf(
@@ -178,7 +217,7 @@ private fun OnboardingHeader(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.onboarding_header_micro_spacing)))
             Text(
                 text = stringResource(
                     R.string.onboarding_step_counter,
@@ -195,11 +234,14 @@ private fun OnboardingHeader(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .border(
-                    width = 1.dp,
+                    width = dimensionResource(R.dimen.onboarding_supporting_chip_border_width),
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
-                    shape = RoundedCornerShape(999.dp)
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_pill_radius))
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .padding(
+                    horizontal = dimensionResource(R.dimen.onboarding_spacing_button),
+                    vertical = dimensionResource(R.dimen.onboarding_spacing_small)
+                )
         )
     }
 }
@@ -215,7 +257,7 @@ private fun OnboardingBody(
         color = MaterialTheme.colorScheme.onBackground,
         fontWeight = FontWeight.SemiBold
     )
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.onboarding_spacing_medium)))
     Text(
         text = body,
         style = MaterialTheme.typography.bodyLarge,
@@ -229,15 +271,19 @@ private fun OnboardingProgressIndicator(
     pageCount: Int
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
     ) {
         repeat(pageCount) { index ->
             Box(
                 modifier = Modifier
                     .size(
-                        width = if (index == currentPage) 34.dp else 12.dp,
-                        height = 12.dp
+                        width = if (index == currentPage) {
+                            dimensionResource(R.dimen.onboarding_progress_active_width)
+                        } else {
+                            dimensionResource(R.dimen.onboarding_progress_dot)
+                        },
+                        height = dimensionResource(R.dimen.onboarding_progress_dot)
                     )
                     .background(
                         color = if (index == currentPage) {
@@ -245,7 +291,7 @@ private fun OnboardingProgressIndicator(
                         } else {
                             MaterialTheme.colorScheme.surfaceVariant
                         },
-                        shape = RoundedCornerShape(999.dp)
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_pill_radius))
                     )
             )
         }
@@ -262,22 +308,22 @@ private fun OnboardingActionCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_action_card_corner_radius)),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
-        tonalElevation = 4.dp,
-        shadowElevation = 8.dp
+        tonalElevation = dimensionResource(R.dimen.onboarding_action_card_tonal_elevation),
+        shadowElevation = dimensionResource(R.dimen.onboarding_action_card_shadow_elevation)
     ) {
-        Column(modifier = Modifier.padding(18.dp)) {
+        Column(modifier = Modifier.padding(dimensionResource(R.dimen.onboarding_spacing_large))) {
             Text(
                 text = stringResource(R.string.onboarding_footer),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Start
             )
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.onboarding_spacing_large)))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_button))
             ) {
                 if (isFirstPage) {
                     OutlinedButton(
@@ -340,8 +386,8 @@ private fun OnboardingHero(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp)
-            .clip(RoundedCornerShape(32.dp))
+            .height(dimensionResource(R.dimen.onboarding_hero_height))
+            .clip(RoundedCornerShape(dimensionResource(R.dimen.onboarding_hero_corner_radius)))
     ) {
         Image(
             painter = painterResource(imageRes),
@@ -368,7 +414,7 @@ private fun OnboardingHero(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(18.dp)
+                .padding(dimensionResource(R.dimen.onboarding_spacing_large))
         )
     }
 }

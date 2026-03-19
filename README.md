@@ -73,6 +73,15 @@ State and use case standard:
 - Use cases should stay thin and delegate to repositories, following the same style used in the posts example.
 - ViewModels should collect use case flows in `viewModelScope` rather than reaching into repositories directly when that architectural path already exists for the feature area.
 
+Testing standard:
+
+- When a feature follows the repository -> use case -> ViewModel pattern, add tests at all three levels when the feature is user-critical.
+- Repository tests should verify persistence contracts and emitted flow values.
+- Use case tests should verify delegation and emitted values.
+- ViewModel tests should verify state mapping, progression rules, and completion behavior.
+- Compose UI tests should focus first on stable, user-facing flows that define the current slice of work.
+- Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
+
 ## Delivery Standard
 
 Future work in this repository should be approached with the judgment of:
@@ -90,3 +99,19 @@ Screen construction standard:
 - Keep screen content models or page definitions separate from layout when that improves readability.
 - Prefer small, composable UI pieces that are easy to preview, reuse, and adjust without rewriting the full screen.
 - When a screen has per-page or per-state media, prefer explicit page models that map content and artwork together instead of hardcoding visual branching inline.
+- Keep resource ownership close to the composable that consumes it. If a spacing, size, or visual token is only used inside one extracted child composable, resolve it there instead of leaking parent-only values downward.
+- When refactoring a large screen into smaller composables, move the dependent UI resources and layout rules with the extracted section so the parent remains an orchestrator and not a parameter hub.
+- Group equal `dimen` values only when they represent the same design role. Shared spacing tokens are good; spacing, elevation, and shape values should stay separate even if the numbers match.
+
+## Collaboration Protocol
+
+To work effectively on future slices:
+
+- Lock identity-level decisions early when possible, especially product name, package direction, user-facing tone, and scope boundaries.
+- Separate each slice into three steps:
+  - decisions we are locking
+  - implementation pass
+  - review and refinement
+- Treat reversible experiments differently from project standards. When a choice becomes a standard, reflect it in code and docs in the same pass.
+- Prefer reducing rework over maximizing speed when assumptions are still unstable.
+- Use product judgment plus structured execution together: strong critique on user experience, followed by concrete implementation and verification.

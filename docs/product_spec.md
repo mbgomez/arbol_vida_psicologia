@@ -49,6 +49,8 @@ The app should launch with bilingual support for English and Spanish.
 - Deeper educational material should appear in context, especially before and after each sephira assessment.
 - All core user-facing flows should be available in English and Spanish.
 - The first-run experience should feel polished and product-grade, with intentional layout, strong hierarchy, and a professional visual treatment.
+- Refactored Compose screens should keep resource lookup and visual tokens close to the UI section that uses them, so extracted sub-composables remain self-contained and easier to maintain.
+- Shared dimension tokens should be grouped by semantic role, not just by matching numeric value.
 
 ## 3. Screen List
 
@@ -218,6 +220,7 @@ User-facing copy rules:
 - Prefer direct user-oriented language such as "you will reflect on" or "your results may show" rather than builder-oriented language such as "the app will later include."
 - Avoid copy that references implementation state, roadmap progress, or development placeholders in production-facing flows.
 - Keep onboarding understandable to a first-time user without requiring product or technical context.
+- Production-grade screens should externalize stable strings and dimension values early so localized copy, polish passes, and layout tuning remain low-risk.
 
 ### Localization Requirement
 
@@ -459,6 +462,17 @@ Suggested test split:
 - Room integration tests for persistence
 - Compose UI tests for core screens
 
+For flows that use repository -> use case -> ViewModel layering, keep tests aligned across that stack:
+
+- repository tests for emitted persistence values
+- use case tests for delegation and flow output
+- ViewModel tests for UI state mapping and flow-driven behavior
+
+UI test prioritization guidance:
+
+- Start by covering the screens and interactions that define the current product slice, such as onboarding, primary entry actions, and critical navigation behavior.
+- Avoid investing heavily in UI tests for placeholder or transitional screens unless they represent a real user contract that should remain stable.
+
 ## 7. Implementation Phases
 
 ### Phase 1: Product Foundation
@@ -543,6 +557,18 @@ In practice, that means:
 - prefer polished, intentional flows over generic template behavior
 - keep architecture simple but durable
 - avoid shipping user-facing copy or UI that feels unfinished, internal, or prototype-like
+
+Collaboration protocol for implementation:
+
+- Lock major identity and scope decisions before broad implementation passes when possible.
+- Distinguish between:
+  - temporary experiments
+  - standards that should propagate into code structure and documentation
+- Run each feature slice in this order:
+  - clarify the decisions being locked
+  - implement the slice
+  - review and refine with product feedback
+- When feedback changes a project standard, update both the implementation and the requirement files so the change becomes durable.
 
 Compose screen construction guidance:
 

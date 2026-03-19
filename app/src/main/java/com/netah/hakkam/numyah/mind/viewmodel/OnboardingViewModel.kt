@@ -34,6 +34,14 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    fun onPageChanged(page: Int) {
+        val currentState = _uiState.value
+        val clampedPage = page.coerceIn(0, currentState.pageCount - 1)
+        if (clampedPage != currentState.currentPage) {
+            _uiState.value = currentState.copy(currentPage = clampedPage)
+        }
+    }
+
     fun onContinue(onFinished: () -> Unit) {
         val currentState = _uiState.value
         if (currentState.isLastPage) {

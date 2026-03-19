@@ -137,6 +137,12 @@ Testing priorities:
 - repository persistence
 - ViewModel state mapping
 - critical Compose screen flows
+- When a feature uses repository -> use case -> ViewModel layering, add unit tests across that stack instead of testing only one layer.
+- Repository tests should verify flow emissions and persistence side effects.
+- Use case tests should verify delegation and returned flow values.
+- ViewModel tests should verify state transitions, progression logic, and callback/completion behavior.
+- Compose UI tests should start with the stable, user-critical screens in the current slice.
+- Avoid spending test effort on placeholder screens unless they protect behavior we explicitly want to keep stable.
 
 UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
@@ -157,8 +163,21 @@ Compose screen construction guidance:
 - Prefer reusable UI sections when the same visual pattern may appear in more than one screen.
 - Decompose screens enough to improve readability and maintenance, but avoid creating meaningless wrapper composables.
 - For onboarding or other multi-state screens, keep page/state definitions explicit so images, copy, and behavior stay aligned in one place.
+- Resolve dimension and string resources as close as practical to the composable that consumes them. Avoid keeping child-only resource tokens in the parent screen scope after extraction.
+- When extracting UI sections, move their layout tokens and related visual rules with them so refactors reduce scope leakage instead of creating parameter churn.
+- Group `dimen` resources when they share the same semantic role, but do not collapse spacing, elevation, and shape into one token just because the raw value matches.
 
 When making implementation decisions:
 - Prefer choices that support clear interpretation, local reliability, and testability.
 - If the codebase and the spec conflict, follow `docs/product_spec.md`.
 - Apply the judgment of a senior UX designer, a senior Android developer, and a senior project manager. Balance user trust, visual quality, maintainable implementation, and realistic scope.
+
+Working-together protocol:
+- Treat identity-level decisions such as naming, package direction, tone, and scope boundaries as lock-first decisions whenever possible.
+- Structure each feature slice in three phases:
+  - locked decisions
+  - implementation
+  - review and refinement
+- Be explicit about whether a choice is a temporary experiment or a new project standard.
+- When a standard changes, update both the implementation and the requirement files in the same pass.
+- Prefer reducing assumption churn over rushing a larger implementation on unstable foundations.

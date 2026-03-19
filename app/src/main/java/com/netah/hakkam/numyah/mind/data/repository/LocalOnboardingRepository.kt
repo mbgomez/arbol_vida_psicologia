@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import androidx.core.content.edit
 
 class LocalOnboardingRepository @Inject constructor(
     private val sharedPreferences: SharedPreferences
@@ -14,7 +15,7 @@ class LocalOnboardingRepository @Inject constructor(
     }
 
     override fun setOnboardingCompleted(completed: Boolean): Flow<Boolean> = flow {
-        sharedPreferences.edit().putBoolean(KEY_ONBOARDING_COMPLETED, completed).apply()
+        sharedPreferences.edit { putBoolean(KEY_ONBOARDING_COMPLETED, completed) }
         emit(completed)
     }
 

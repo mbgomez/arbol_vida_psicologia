@@ -24,7 +24,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.model.Post
 import com.netah.hakkam.numyah.mind.ui.components.CardView
@@ -119,20 +118,6 @@ fun LoadingView() {
         CircularProgressIndicator(modifier = Modifier.semantics {
             this.contentDescription = description
         }
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultLoadingPreview() {
-    val postListState: State<List<Post>> = remember { mutableStateOf(emptyList()) }
-    val isLoadingState: State<Boolean> = remember { mutableStateOf(true) }
-    AppTheme {
-        MainContent(
-            postListState = postListState,
-            navigateToDetails = null,
-            isLoadingState = isLoadingState
         )
     }
 }
