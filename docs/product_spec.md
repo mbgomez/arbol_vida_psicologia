@@ -589,3 +589,102 @@ Before coding, define the v1 content set in detail:
 - 3 to 5 practices per sephira
 
 Once that content exists, implementation can proceed cleanly through the architecture above.
+
+## Current Locked Slice: Malchut Questionnaire Engine
+
+This section defines the current implementation slice that should be treated as the active project standard until reviewed and revised.
+
+### Slice Goal
+
+Build one production-shaped vertical slice of the assessment engine for `MALKUTH` only so the team can validate:
+
+- questionnaire content loading
+- local persistence
+- resume behavior
+- deterministic scoring
+- confidence-aware result language
+- the repository -> use case -> ViewModel -> UI flow
+
+The goal of this slice is to prove the real core loop in a way that can later be extended to the other nine sephirot without redesigning the engine.
+
+### In Scope
+
+- one sephira only: `MALKUTH`
+- `6` questions for the section
+- `LIKERT_5` as the only response format in this slice
+- local structured questionnaire content with a `version` field
+- generic domain models that are ready for future multi-sephira expansion
+- Room-backed persistence for:
+  - one active assessment session
+  - saved responses
+  - current progress position
+  - derived Malkuth score
+- save after every answer
+- resume from the last unanswered question
+- deterministic scoring across:
+  - `BALANCE`
+  - `DEFICIENCY`
+  - `EXCESS`
+- internal support for mixed or low-confidence outcomes
+- minimal user-facing flow:
+  - Malkuth intro
+  - one-question-at-a-time questionnaire
+  - progress indicator
+  - Malkuth result screen
+- confidence-aware UI wording such as "leans toward deficiency" when a hard classification is not strongly supported
+- repository, use case, ViewModel, and scoring tests for this slice
+- bilingual-ready architecture from the start
+
+### Out Of Scope
+
+- the other nine sephirot
+- cross-sephira Tree overview results
+- full assessment history
+- retake flows across prior completed sessions
+- Learn/About full content system
+- onboarding completion for the whole app
+- multiple question formats
+- adaptive or branching questionnaires
+- backend, sync, or auth dependency for the slice
+- compare-with-previous-results features
+- overgeneralized content management architecture
+
+### Locked Decisions For This Slice
+
+- The engine should be built in steps, but each step must contribute to one usable vertical slice.
+- The data and scoring model should be generic enough for all sephirot even though only Malkuth is seeded now.
+- Persistence should be real, not mocked, because local resume behavior is part of the product contract.
+- The slice should save progress after every answer.
+- The slice should support only one active assessment session at a time.
+- The slice should expose softened user-facing language when confidence is low rather than forcing a hard label.
+- The architecture should be bilingual-ready now even if content expansion continues later.
+- Use `Malkuth` as the in-app spelling standard for this slice.
+- Group the six questions into two themed pages of three questions each.
+
+### Acceptance Criteria
+
+This slice is complete when a user can:
+
+1. open the Malkuth assessment
+2. read a short Malkuth intro
+3. answer `6` Likert questions one at a time
+4. leave and return to the app and resume from the last unanswered question
+5. complete the section and receive a deterministic Malkuth result with confidence-aware wording
+
+Technical completion criteria:
+
+- questionnaire content is versioned and loaded locally
+- raw responses and derived scores are persisted locally
+- scoring logic is isolated from Android UI concerns and unit-testable
+- repository tests verify persistence and flow emissions
+- use case tests verify delegation and returned flows
+- ViewModel tests verify progression, resume state, and completion mapping
+
+### Review Trigger Before Scaling
+
+Do not scale this pattern to the full ten sephirot until the team has reviewed:
+
+- whether the Malkuth wording feels psychologically grounded and spiritually respectful
+- whether the scoring output feels interpretable and non-pathologizing
+- whether resume behavior is reliable and calm from a user experience perspective
+- whether the architecture remains simple enough to extend without duplication
