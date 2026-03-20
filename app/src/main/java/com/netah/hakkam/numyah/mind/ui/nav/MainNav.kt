@@ -23,7 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
-import com.netah.hakkam.numyah.mind.ui.screen.AssessmentPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
 import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
@@ -64,10 +64,7 @@ fun MainNavGraph(
         }
         composable(AppDestination.Assessment.route) {
             AppShell(navController = navController) { paddingValues ->
-                AssessmentPlaceholderScreen(
-                    paddingValues = paddingValues,
-                    onBackHome = { navController.navigate(AppDestination.Home.route) }
-                )
+                AssessmentRoute(paddingValues = paddingValues)
             }
         }
         composable(AppDestination.Results.route) {

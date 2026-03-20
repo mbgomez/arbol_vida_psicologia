@@ -79,6 +79,7 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
 - Keep user-facing labels and error wording out of the ViewModel. The ViewModel should expose semantic state, and the UI should resolve display text from resources.
 - Keep back/continue/progress/resume behavior owned by the ViewModel and use case layer rather than rebuilding that logic inside Compose screens.
 - Prefer explicit phase-based assessment UI states such as `Loading`, `Intro`, `Question`, `Completed`, and `Error` instead of one overloaded active-state model.
+- Keep the assessment screen layer thin by mapping semantic ViewModel state to resources and composables rather than re-owning progression or result logic in the UI.
 
 ## Expected User Outcome
 
@@ -191,6 +192,7 @@ Technical acceptance:
 - score calculation is deterministic and unit-tested
 - repository, use case, and ViewModel coverage exists for the slice
 - Room-backed repository verification should prefer local Robolectric tests unless device-only behavior is required
+- Compose UI coverage should protect the stable Malkuth contracts: intro, question interaction, completion, and retry behavior
 
 ## Review Questions
 

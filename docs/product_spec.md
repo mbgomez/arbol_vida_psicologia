@@ -410,6 +410,8 @@ For assessment slices, keep intro content, question progression, resume position
 
 For multi-phase assessment flows, prefer explicit UI states such as `Loading`, `Intro`, `Question`, `Completed`, and `Error` instead of one overloaded active-state object. Extract shared UI data such as progress and navigation into smaller submodels when that improves readability and testing.
 
+When building Compose screens on top of those flows, keep the screen layer thin: map semantic ViewModel state to resources and visual sections, and avoid rebuilding questionnaire progression, result classification, or persistence logic in the UI layer.
+
 ### Storage Proposal
 
 Use Room for v1 with the following tables:
@@ -487,6 +489,7 @@ UI test prioritization guidance:
 - Avoid investing heavily in UI tests for placeholder or transitional screens unless they represent a real user contract that should remain stable.
 - Prefer Robolectric-backed local JVM tests for Room repository and database verification when the behavior does not require device-only execution. Avoid growing new instrumented persistence tests by default unless the test specifically depends on Android runtime behavior that Robolectric cannot cover well.
 - For assessment flows, keep progression and persistence logic owned by the ViewModel/use case layer rather than duplicating that behavior in Compose UI code.
+- For assessment UI tests, prioritize stable user contracts such as intro visibility, question progression, answer interaction, completion rendering, and retry behavior before testing visual details.
 
 ## 7. Implementation Phases
 
