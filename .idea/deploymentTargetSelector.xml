@@ -5,9 +5,6 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.netah'">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="All Tests">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -15,6 +12,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="assessmentScreen_honestyNoticeState_updatesPreferenceAndContinues()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="assessmentScreen_completedState_showsSoftenedResult()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -50,6 +50,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.AssessmentHonestyNoticeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentIntroUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentQuestionUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
+import kotlin.math.roundToInt
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
 
 @Composable
@@ -203,12 +204,12 @@ private fun AssessmentIntroState(
         verticalArrangement = Arrangement.spacedBy(spacing)
     ) {
         Text(
-            text = stringResource(R.string.assessment_intro_eyebrow),
+            text = model.sephiraName,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.secondary
         )
         Text(
-            text = stringResource(R.string.assessment_intro_title),
+            text = model.sephiraName,
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.SemiBold
         )
@@ -329,7 +330,7 @@ private fun AssessmentCompletedState(
         verticalArrangement = Arrangement.spacedBy(spacing)
     ) {
         Text(
-            text = stringResource(R.string.assessment_result_title),
+            text = stringResource(R.string.assessment_result_title, model.sephiraName),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.SemiBold
         )
@@ -345,15 +346,15 @@ private fun AssessmentCompletedState(
                 append("\n\n")
                 append(stringResource(R.string.assessment_score_balance))
                 append(": ")
-                append(scoreText(model.balanceScore))
+                append(scorePercentText(model.balanceScore))
                 append("\n")
                 append(stringResource(R.string.assessment_score_deficiency))
                 append(": ")
-                append(scoreText(model.deficiencyScore))
+                append(scorePercentText(model.deficiencyScore))
                 append("\n")
                 append(stringResource(R.string.assessment_score_excess))
                 append(": ")
-                append(scoreText(model.excessScore))
+                append(scorePercentText(model.excessScore))
             }
         )
         AssessmentInfoCard(
@@ -649,6 +650,6 @@ private fun errorMessage(errorType: AssessmentErrorType): String {
     }
 }
 
-private fun scoreText(value: Double): String = String.format("%.2f", value)
+private fun scorePercentText(value: Double): String = "${(value * 100).roundToInt()}%"
 
 private const val ASSESSMENT_HONESTY_CHECKBOX_TAG = "assessment_honesty_checkbox"

@@ -25,8 +25,11 @@ class AssessmentSessionUseCaseTests {
     private lateinit var assessmentSessionRepository: AssessmentSessionRepository
     private lateinit var startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase
     private lateinit var observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase
+    private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
     private lateinit var saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase
     private lateinit var updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase
+    private lateinit var saveAssessmentScoreUseCase: SaveAssessmentScoreUseCase
+    private lateinit var advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase
     private lateinit var completeAssessmentUseCase: CompleteAssessmentUseCase
 
     @get:Rule
@@ -37,8 +40,11 @@ class AssessmentSessionUseCaseTests {
         assessmentSessionRepository = mockk(relaxed = true)
         startOrResumeAssessmentUseCase = StartOrResumeAssessmentUseCase(assessmentSessionRepository)
         observeActiveAssessmentUseCase = ObserveActiveAssessmentUseCase(assessmentSessionRepository)
+        observeLatestCompletedAssessmentUseCase = ObserveLatestCompletedAssessmentUseCase(assessmentSessionRepository)
         saveAssessmentAnswerUseCase = SaveAssessmentAnswerUseCase(assessmentSessionRepository)
         updateAssessmentProgressUseCase = UpdateAssessmentProgressUseCase(assessmentSessionRepository)
+        saveAssessmentScoreUseCase = SaveAssessmentScoreUseCase(assessmentSessionRepository)
+        advanceAssessmentSectionUseCase = AdvanceAssessmentSectionUseCase(assessmentSessionRepository)
         completeAssessmentUseCase = CompleteAssessmentUseCase(assessmentSessionRepository)
     }
 
@@ -78,6 +84,17 @@ class AssessmentSessionUseCaseTests {
         val result = observeActiveAssessmentUseCase.run().toList()
 
         verify(exactly = 1) { assessmentSessionRepository.observeActiveSession() }
+        assertEquals(listOf(expected), result)
+    }
+
+    @Test
+    fun observeLatestCompletedAssessmentUseCase_delegatesToRepository() = coroutinesRule.runBlockingTest {
+        val expected = testSnapshot(status = AssessmentStatus.COMPLETED, completedAt = 2000L)
+        every { assessmentSessionRepository.observeLatestCompletedSession() } returns flowOf(expected)
+
+        val result = observeLatestCompletedAssessmentUseCase.run().toList()
+
+        verify(exactly = 1) { assessmentSessionRepository.observeLatestCompletedSession() }
         assertEquals(listOf(expected), result)
     }
 
@@ -151,6 +168,65 @@ class AssessmentSessionUseCaseTests {
             assessmentSessionRepository.completeSession(
                 sessionId = 42L,
                 score = score
+            )
+        }
+        assertEquals(listOf(expected), result)
+    }
+
+    @Test
+    fun saveAssessmentScoreUseCase_delegatesSessionIdAndScore() = coroutinesRule.runBlockingTest {
+        val score = SephiraScore(
+            sessionId = 42L,
+            sephiraId = SephiraId.MALKUTH,
+            balanceScore = 0.62,
+            deficiencyScore = 0.20,
+            excessScore = 0.18,
+            dominantPole = Pole.BALANCE,
+            confidence = ConfidenceLevel.HIGH,
+            isLowConfidence = false
+        )
+        val expected = testSnapshot(scores = listOf(score))
+        every {
+            assessmentSessionRepository.saveSephiraScore(
+                sessionId = 42L,
+                score = score
+            )
+        } returns flowOf(expected)
+
+        val result = saveAssessmentScoreUseCase.run(42L to score).toList()
+
+        verify(exactly = 1) {
+            assessmentSessionRepository.saveSephiraScore(
+                sessionId = 42L,
+                score = score
+            )
+        }
+        assertEquals(listOf(expected), result)
+    }
+
+    @Test
+    fun advanceAssessmentSectionUseCase_delegatesNextSectionAndQuestionCount() = coroutinesRule.runBlockingTest {
+        val expected = testSnapshot()
+        val params = AdvanceAssessmentSectionParams(
+            sessionId = 42L,
+            sephiraId = SephiraId.YESOD,
+            totalQuestions = 6
+        )
+        every {
+            assessmentSessionRepository.advanceToSephira(
+                sessionId = 42L,
+                sephiraId = SephiraId.YESOD,
+                totalQuestions = 6
+            )
+        } returns flowOf(expected)
+
+        val result = advanceAssessmentSectionUseCase.run(params).toList()
+
+        verify(exactly = 1) {
+            assessmentSessionRepository.advanceToSephira(
+                sessionId = 42L,
+                sephiraId = SephiraId.YESOD,
+                totalQuestions = 6
             )
         }
         assertEquals(listOf(expected), result)

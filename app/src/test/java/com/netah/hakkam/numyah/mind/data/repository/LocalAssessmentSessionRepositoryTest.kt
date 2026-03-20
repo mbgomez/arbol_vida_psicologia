@@ -86,6 +86,57 @@ class LocalAssessmentSessionRepositoryTest {
     }
 
     @Test
+    fun advanceToSephira_updatesActiveSectionPosition() = runBlocking {
+        val session = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6
+        ).first()
+
+        val updated = repository.advanceToSephira(
+            sessionId = session.sessionId,
+            sephiraId = SephiraId.YESOD,
+            totalQuestions = 6
+        ).first()
+
+        assertEquals(SephiraId.YESOD, updated.currentSephiraId)
+        assertEquals(0, updated.currentPageIndex)
+        assertEquals(0, updated.currentQuestionIndex)
+        assertEquals(6, updated.totalQuestions)
+    }
+
+    @Test
+    fun observeLatestCompletedSession_returnsMostRecentCompletedSnapshot() = runBlocking {
+        val session = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6
+        ).first()
+
+        val score = SephiraScore(
+            sessionId = session.sessionId,
+            sephiraId = SephiraId.MALKUTH,
+            balanceScore = 0.65,
+            deficiencyScore = 0.20,
+            excessScore = 0.15,
+            dominantPole = Pole.BALANCE,
+            confidence = ConfidenceLevel.HIGH,
+            isLowConfidence = false
+        )
+
+        repository.completeSession(
+            sessionId = session.sessionId,
+            score = score
+        ).first()
+
+        val latest = repository.observeLatestCompletedSession().first()
+
+        assertNotNull(latest)
+        assertEquals(session.sessionId, latest?.sessionId)
+        assertEquals(Pole.BALANCE, latest?.scores?.first()?.dominantPole)
+    }
+
+    @Test
     fun completeSession_savesScoreAndEndsActiveSession() = runBlocking {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",

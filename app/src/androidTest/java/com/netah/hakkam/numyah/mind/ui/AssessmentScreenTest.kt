@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.ui
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -9,11 +10,13 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentAnswerOptionUiModel
@@ -106,6 +109,7 @@ class AssessmentScreenTest {
                     uiState = AssessmentUiState.Intro(
                         AssessmentIntroUiModel(
                             questionnaireTitle = "Malkuth reflection",
+                            sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
                             shortMeaning = "Meaning",
                             introText = "Intro body",
@@ -131,7 +135,7 @@ class AssessmentScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_intro_title)).assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("Malkuth", useUnmergedTree = true)[0].assertIsDisplayed()
         composeTestRule.onNodeWithText("Intro body").assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_start))
             .assertHasClickAction()
@@ -151,6 +155,7 @@ class AssessmentScreenTest {
                     uiState = AssessmentUiState.Intro(
                         AssessmentIntroUiModel(
                             questionnaireTitle = "Malkuth reflection",
+                            sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
                             shortMeaning = "Meaning",
                             introText = "Intro body",
@@ -196,6 +201,7 @@ class AssessmentScreenTest {
                     uiState = AssessmentUiState.Question(
                         AssessmentQuestionUiModel(
                             questionnaireTitle = "Malkuth reflection",
+                            sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
                             currentPageTitle = "Money",
                             currentPageDescription = "Resources",
@@ -253,6 +259,7 @@ class AssessmentScreenTest {
                     uiState = AssessmentUiState.Question(
                         AssessmentQuestionUiModel(
                             questionnaireTitle = "Malkuth reflection",
+                            sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
                             currentPageTitle = "Money",
                             currentPageDescription = "Resources",
@@ -303,6 +310,7 @@ class AssessmentScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = AssessmentUiState.Completed(
                         AssessmentCompletedUiModel(
+                            sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
                             dominantPole = Pole.DEFICIENCY,
                             confidence = ConfidenceLevel.LOW,
@@ -324,13 +332,16 @@ class AssessmentScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_title, "Malkuth")).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_leans_deficiency)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_daily_life_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_next_step_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_home_action)).performClick()
+        composeTestRule.onAllNodesWithText("22%", substring = true, useUnmergedTree = true).assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("51%", substring = true, useUnmergedTree = true).assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("27%", substring = true, useUnmergedTree = true).assertCountEquals(1)
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_daily_life_title)).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_next_step_title)).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_home_action)).performScrollTo().performClick()
 
         assertTrue(returnedHome)
     }

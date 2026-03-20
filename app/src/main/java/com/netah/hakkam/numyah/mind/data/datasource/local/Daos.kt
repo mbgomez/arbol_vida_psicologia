@@ -42,6 +42,9 @@ interface AssessmentSessionDao {
     @Query("SELECT * FROM assessmentsessiontable WHERE isActive = 1 AND status = 'IN_PROGRESS' ORDER BY startedAt DESC LIMIT 1")
     fun observeActiveInProgressSession(): Flow<AssessmentSessionTable?>
 
+    @Query("SELECT * FROM assessmentsessiontable WHERE status = 'COMPLETED' ORDER BY completedAt DESC LIMIT 1")
+    fun observeLatestCompletedSession(): Flow<AssessmentSessionTable?>
+
     @Query("SELECT * FROM assessmentsessiontable WHERE id = :sessionId LIMIT 1")
     fun observeSession(sessionId: Long): Flow<AssessmentSessionTable?>
 
@@ -57,6 +60,9 @@ interface AssessmentSessionDao {
     @Query("SELECT * FROM assessmentsessiontable WHERE isActive = 1 AND status = 'IN_PROGRESS' ORDER BY startedAt DESC LIMIT 1")
     suspend fun getActiveInProgressSession(): AssessmentSessionTable?
 
+    @Query("SELECT * FROM assessmentsessiontable WHERE status = 'COMPLETED' ORDER BY completedAt DESC LIMIT 1")
+    suspend fun getLatestCompletedSession(): AssessmentSessionTable?
+
     @Query("SELECT * FROM responsetable WHERE sessionId = :sessionId ORDER BY questionOrder ASC")
     suspend fun getResponsesForSession(sessionId: Long): List<ResponseTable>
 
@@ -65,6 +71,19 @@ interface AssessmentSessionDao {
 
     @Query("UPDATE assessmentsessiontable SET currentPageIndex = :pageIndex, currentQuestionIndex = :questionIndex WHERE id = :sessionId")
     suspend fun updateProgress(sessionId: Long, pageIndex: Int, questionIndex: Int)
+
+    @Query(
+        "UPDATE assessmentsessiontable " +
+            "SET currentSephiraId = :sephiraId, currentPageIndex = :pageIndex, currentQuestionIndex = :questionIndex, totalQuestions = :totalQuestions " +
+            "WHERE id = :sessionId"
+    )
+    suspend fun advanceToSephira(
+        sessionId: Long,
+        sephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId,
+        pageIndex: Int,
+        questionIndex: Int,
+        totalQuestions: Int
+    )
 
     @Query("UPDATE assessmentsessiontable SET status = :status, completedAt = :completedAt, isActive = :isActive WHERE id = :sessionId")
     suspend fun updateCompletion(sessionId: Long, status: AssessmentStatus, completedAt: Long, isActive: Boolean)

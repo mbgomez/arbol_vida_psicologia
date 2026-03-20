@@ -100,7 +100,7 @@ The domain should center on a local-first assessment engine.
   - `NETZACH`
   - `HOD`
   - `YESOD`
-  - `MALKHUT`
+  - `MALKUTH`
 - `Pole`
   - `BALANCE`
   - `DEFICIENCY`
@@ -160,6 +160,13 @@ The domain should center on a local-first assessment engine.
   - status
   - currentSephira
   - currentQuestionIndex
+
+Locked session-model standard:
+
+- One `AssessmentSession` spans the full ten-sephirot assessment.
+- Completing a sephira section saves progress and may persist that sephira's derived score, but does not complete the overall session.
+- The overall session becomes `COMPLETED` only after the final sephira is finished and the Tree-wide results overview can be shown.
+- Resume behavior should return the user to the current sephira and last unanswered question within that larger session.
 
 - `Response`
   - sessionId
@@ -224,6 +231,52 @@ User-facing copy rules:
 - Avoid copy that references implementation state, roadmap progress, or development placeholders in production-facing flows.
 - Keep onboarding understandable to a first-time user without requiring product or technical context.
 - Production-grade screens should externalize stable strings and dimension values early so localized copy, polish passes, and layout tuning remain low-risk.
+- When result confidence is low, use softened interpretation such as "leans toward balance" or "current tendency" rather than definitive labels.
+- Result language should frame patterns as present-state tendencies, not fixed identity or diagnosis.
+
+Locked workflow learning:
+
+- Future sephira content should be seeded manually from the authored question set rather than generated from prior slices by default.
+
+### Locked Content Structure Standard
+
+The Malkuth slice establishes the default content structure for future sephirot.
+
+Each sephira questionnaire definition should include:
+
+- versioned bilingual content
+- `shortMeaning`
+- `introText`
+- `pages`
+- `questions`
+
+Each page should include:
+
+- page id
+- title
+- description
+- ordered `questionIds`
+
+Each question should include:
+
+- question id
+- `sephiraId`
+- `pageId`
+- localized prompt
+- `format`
+- `targetPole`
+- `weight`
+
+This content structure is now the default standard unless a later review explicitly changes it in both docs and implementation.
+
+Locked scaling learning:
+
+- The reusable sephira slice is:
+  - intro content
+  - paged questionnaire
+  - saved section score
+  - short section-complete interpretation
+- This slice should be repeated consistently before introducing additional per-sephira UX variations.
 
 ### Localization Requirement
 
@@ -282,6 +335,11 @@ Each question should define:
 
 This allows some questions to reflect mixed patterns without overcomplicating the UI.
 
+Locked decision:
+
+- `weight` is a real scoring field and should remain in the authored content model.
+- Until weighted scoring is fully applied in implementation, authored v1 content should continue using `1.0` by default so the content contract stays stable without implying tuned weighting that the engine does not yet honor.
+
 ### Per-Sephira Calculation
 
 For each sephira:
@@ -290,6 +348,14 @@ For each sephira:
 2. Normalize by the maximum possible score for that section.
 3. Compute percentages for the three poles.
 4. Choose the dominant pole using threshold rules.
+
+The Malkuth slice establishes the default v1 scoring pattern:
+
+- compute independent normalized scores for `balance`, `deficiency`, and `excess`
+- determine a dominant pole deterministically
+- compute explicit confidence
+- preserve low-confidence handling internally even when the UI shows a softened dominant tendency
+- save each sephira result as soon as that section is completed so progress and engagement do not depend on reaching the final Tree-wide overview
 
 ### Suggested Classification Rules
 
@@ -312,6 +378,8 @@ For each sephira:
 
 - `MIXED / LOW_CONFIDENCE` internal state if no rule is met
   - In UI, map this to the nearest dominant pole but show lower confidence and softer language such as "leans toward excess" rather than a hard label.
+
+These rules are the locked v1 baseline for scaling content and tests. Threshold tuning remains allowed, but only as an explicit scoring revision rather than an ad hoc per-sephira change.
 
 ### Confidence Score
 
@@ -523,6 +591,7 @@ UI test prioritization guidance:
 - build short sephira intro screens
 - build question flow UI
 - build progress tracking
+- build a short section-complete result after each sephira
 - build results overview
 - build sephira detail screen with explanations and practices
 - build optional Learn/About area if it fits the phase scope
@@ -594,6 +663,14 @@ Collaboration protocol for implementation:
   - review and refine with product feedback
 - When feedback changes a project standard, update both the implementation and the requirement files so the change becomes durable.
 
+Batch-planning protocol:
+
+- Before implementing a new sephira batch, lock:
+  - sephira order
+  - question count per sephira
+  - whether section-complete interpretation copy is included in the batch
+  - the minimum repository, ViewModel, and Compose coverage expected for that batch
+
 Compose screen construction guidance:
 
 - A screen should primarily coordinate layout and state, not hold every visual section inline.
@@ -614,7 +691,7 @@ Before coding, define the v1 content set in detail:
 
 Once that content exists, implementation can proceed cleanly through the architecture above.
 
-## Current Locked Slice: Malchut Questionnaire Engine
+## Current Locked Slice: Malkuth Questionnaire Engine
 
 This section defines the current implementation slice that should be treated as the active project standard until reviewed and revised.
 
@@ -686,6 +763,12 @@ The goal of this slice is to prove the real core loop in a way that can later be
 - Use `Malkuth` as the in-app spelling standard for this slice.
 - Group the six questions into two themed pages of three questions each.
 - Use a local JSON questionnaire source for this slice and cache parsed content into Room so the content pipeline remains compatible with offline use and future remote updates.
+
+Temporary slice shortcuts that are not project standards:
+
+- The current Malkuth-specific routing inside the assessment flow is temporary.
+- The current behavior where finishing the Malkuth slice also completes the entire assessment session is temporary and must be replaced before multi-sephira scaling.
+- The current implementation may keep `weight = 1.0` across all authored questions, but the field itself is not temporary and should remain part of the stable content contract.
 
 ### Acceptance Criteria
 

@@ -51,7 +51,7 @@ import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
 import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
-import com.netah.hakkam.numyah.mind.ui.screen.ResultsPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 
 @Composable
@@ -89,13 +89,13 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 AssessmentRoute(
                     paddingValues = paddingValues,
-                    onBackHome = { navController.navigate(AppDestination.Home.route) }
+                    onBackHome = { navController.navigate(AppDestination.Results.route) }
                 )
             }
         }
         composable(AppDestination.Results.route) {
             AppShell(navController = navController) { paddingValues ->
-                ResultsPlaceholderScreen(
+                ResultsRoute(
                     paddingValues = paddingValues,
                     onBackHome = { navController.navigate(AppDestination.Home.route) }
                 )
@@ -266,10 +266,7 @@ private fun AppShellHeader(title: String) {
 @Composable
 private fun destinationTitle(currentRoute: String?): String {
     return when (currentRoute) {
-        AppDestination.Assessment.route -> stringResource(
-            R.string.screen_assessment_with_sephira,
-            stringResource(R.string.assessment_intro_eyebrow)
-        )
+        AppDestination.Assessment.route -> stringResource(R.string.screen_assessment)
 
         else -> stringResource(
             destinationForRoute(currentRoute)?.titleRes ?: AppDestination.Home.titleRes

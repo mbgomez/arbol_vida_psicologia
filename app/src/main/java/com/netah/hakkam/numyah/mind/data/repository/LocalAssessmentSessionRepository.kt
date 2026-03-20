@@ -27,6 +27,8 @@ interface AssessmentSessionRepository {
 
     fun observeActiveSession(): Flow<AssessmentSessionSnapshot?>
 
+    fun observeLatestCompletedSession(): Flow<AssessmentSessionSnapshot?>
+
     fun saveAnswer(
         sessionId: Long,
         questionId: String,
@@ -41,6 +43,17 @@ interface AssessmentSessionRepository {
         sessionId: Long,
         pageIndex: Int,
         questionIndex: Int
+    ): Flow<AssessmentSessionSnapshot>
+
+    fun saveSephiraScore(
+        sessionId: Long,
+        score: SephiraScore
+    ): Flow<AssessmentSessionSnapshot>
+
+    fun advanceToSephira(
+        sessionId: Long,
+        sephiraId: SephiraId,
+        totalQuestions: Int
     ): Flow<AssessmentSessionSnapshot>
 
     fun completeSession(
@@ -85,6 +98,24 @@ class LocalAssessmentSessionRepository @Inject constructor(
 
     override fun observeActiveSession(): Flow<AssessmentSessionSnapshot?> {
         return assessmentSessionDao.observeActiveInProgressSession().flatMapLatest { session ->
+            if (session == null) {
+                flowOf(null)
+            } else {
+                combine(
+                    assessmentSessionDao.observeResponses(session.id),
+                    assessmentSessionDao.observeScores(session.id)
+                ) { responses, scores ->
+                    session.toSnapshot(
+                        responses = responses,
+                        scores = scores
+                    )
+                }
+            }
+        }
+    }
+
+    override fun observeLatestCompletedSession(): Flow<AssessmentSessionSnapshot?> {
+        return assessmentSessionDao.observeLatestCompletedSession().flatMapLatest { session ->
             if (session == null) {
                 flowOf(null)
             } else {
@@ -147,6 +178,37 @@ class LocalAssessmentSessionRepository @Inject constructor(
         val responses = assessmentSessionDao.getResponsesForSession(sessionId)
         val scores = assessmentSessionDao.getScoresForSession(sessionId)
         emit(completedSession.toSnapshot(responses = responses, scores = scores))
+    }
+
+    override fun saveSephiraScore(
+        sessionId: Long,
+        score: SephiraScore
+    ): Flow<AssessmentSessionSnapshot> = flow {
+        assessmentSessionDao.insertScore(score.toTable())
+        val session = assessmentSessionDao.getSessionById(sessionId)
+            ?: error("Expected session after saving sephira score")
+        val responses = assessmentSessionDao.getResponsesForSession(sessionId)
+        val scores = assessmentSessionDao.getScoresForSession(sessionId)
+        emit(session.toSnapshot(responses = responses, scores = scores))
+    }
+
+    override fun advanceToSephira(
+        sessionId: Long,
+        sephiraId: SephiraId,
+        totalQuestions: Int
+    ): Flow<AssessmentSessionSnapshot> = flow {
+        assessmentSessionDao.advanceToSephira(
+            sessionId = sessionId,
+            sephiraId = sephiraId,
+            pageIndex = 0,
+            questionIndex = 0,
+            totalQuestions = totalQuestions
+        )
+        val session = assessmentSessionDao.getSessionById(sessionId)
+            ?: error("Expected session after advancing to sephira")
+        val responses = assessmentSessionDao.getResponsesForSession(sessionId)
+        val scores = assessmentSessionDao.getScoresForSession(sessionId)
+        emit(session.toSnapshot(responses = responses, scores = scores))
     }
 
     override fun updateProgress(

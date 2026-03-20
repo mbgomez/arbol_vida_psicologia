@@ -9,12 +9,16 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
+import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.scoring.AssessmentScoringEngine
+import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionParams
+import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAnswerParams
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentScoreUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentParams
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
@@ -73,6 +77,7 @@ data class AssessmentNavigationUiModel(
 
 data class AssessmentIntroUiModel(
     val questionnaireTitle: String,
+    val sephiraId: SephiraId,
     val sephiraName: String,
     val shortMeaning: String,
     val introText: String,
@@ -82,6 +87,7 @@ data class AssessmentIntroUiModel(
 
 data class AssessmentQuestionUiModel(
     val questionnaireTitle: String,
+    val sephiraId: SephiraId,
     val sephiraName: String,
     val currentPageTitle: String,
     val currentPageDescription: String,
@@ -93,6 +99,7 @@ data class AssessmentQuestionUiModel(
 )
 
 data class AssessmentCompletedUiModel(
+    val sephiraId: SephiraId,
     val sephiraName: String,
     val dominantPole: Pole,
     val confidence: ConfidenceLevel,
@@ -110,6 +117,8 @@ class AssessmentViewModel @Inject constructor(
     private val startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase,
     private val saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase,
     private val updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase,
+    private val saveAssessmentScoreUseCase: SaveAssessmentScoreUseCase,
+    private val advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase,
     private val completeAssessmentUseCase: CompleteAssessmentUseCase,
     private val assessmentScoringEngine: AssessmentScoringEngine,
     private val locale: Locale
@@ -133,18 +142,25 @@ class AssessmentViewModel @Inject constructor(
             _uiState.value = AssessmentUiState.Loading
             try {
                 val questionnaire = getCurrentQuestionnaireUseCase.run(locale).first()
-                val section = questionnaire.sections.firstOrNull { it.sephiraId == targetSephira() }
-                if (section == null) {
+                val firstSection = questionnaire.sections.firstOrNull()
+                if (firstSection == null) {
                     _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)
                     return@launch
                 }
+
                 val sessionSnapshot = startOrResumeAssessmentUseCase.run(
                     StartOrResumeAssessmentParams(
                         questionnaireVersion = questionnaire.version,
-                        initialSephiraId = targetSephira(),
-                        totalQuestions = section.questions.size
+                        initialSephiraId = firstSection.sephiraId,
+                        totalQuestions = firstSection.questions.size
                     )
                 ).first()
+
+                if (currentSection(questionnaire, sessionSnapshot) == null) {
+                    _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)
+                    return@launch
+                }
+
                 questionnaireContent = questionnaire
                 currentSnapshot = sessionSnapshot
                 val shouldShowHonestyNotice = getAssessmentHonestyNoticeVisibilityUseCase.run().first()
@@ -243,17 +259,33 @@ class AssessmentViewModel @Inject constructor(
                         ).first()
 
                         if (nextPosition.isComplete) {
+                            val activeSephira = activeSephira(updatedSnapshot)
                             val score = assessmentScoringEngine.score(
                                 input = ScoreInput(
                                     questionnaire = questionnaire,
-                                    sephiraId = targetSephira(),
+                                    sephiraId = activeSephira,
                                     responses = updatedSnapshot.responses
                                 ),
                                 sessionId = updatedSnapshot.sessionId
                             )
-                            val completedSnapshot = completeAssessmentUseCase.run(updatedSnapshot.sessionId to score).first()
-                            currentSnapshot = completedSnapshot
-                            emitCompletedState(completedSnapshot)
+                            val nextSection = nextSection(questionnaire, activeSephira)
+                            if (nextSection == null) {
+                                val completedSnapshot = completeAssessmentUseCase.run(updatedSnapshot.sessionId to score).first()
+                                currentSnapshot = completedSnapshot
+                                emitCompletedState(completedSnapshot)
+                            } else {
+                                saveAssessmentScoreUseCase.run(updatedSnapshot.sessionId to score).first()
+                                val advancedSnapshot = advanceAssessmentSectionUseCase.run(
+                                    AdvanceAssessmentSectionParams(
+                                        sessionId = updatedSnapshot.sessionId,
+                                        sephiraId = nextSection.sephiraId,
+                                        totalQuestions = nextSection.questions.size
+                                    )
+                                ).first()
+                                currentSnapshot = advancedSnapshot
+                                introDismissed = false
+                                emitPhaseState()
+                            }
                         } else {
                             currentSnapshot = updatedSnapshot
                             emitPhaseState()
@@ -305,7 +337,7 @@ class AssessmentViewModel @Inject constructor(
     private fun emitPhaseState() {
         val questionnaire = questionnaireContent ?: return
         val snapshot = currentSnapshot ?: return
-        val section = questionnaire.sections.first { it.sephiraId == targetSephira() }
+        val section = currentSection(questionnaire, snapshot) ?: return
 
         if (!honestyNoticeDismissed) {
             _uiState.value = AssessmentUiState.HonestyNotice(
@@ -320,6 +352,7 @@ class AssessmentViewModel @Inject constructor(
             _uiState.value = AssessmentUiState.Intro(
                 AssessmentIntroUiModel(
                     questionnaireTitle = questionnaire.title,
+                    sephiraId = section.sephiraId,
                     sephiraName = section.displayName,
                     shortMeaning = section.shortMeaning,
                     introText = section.introText,
@@ -348,6 +381,7 @@ class AssessmentViewModel @Inject constructor(
         _uiState.value = AssessmentUiState.Question(
             AssessmentQuestionUiModel(
                 questionnaireTitle = questionnaire.title,
+                sephiraId = section.sephiraId,
                 sephiraName = section.displayName,
                 currentPageTitle = page.title,
                 currentPageDescription = page.description,
@@ -380,11 +414,13 @@ class AssessmentViewModel @Inject constructor(
 
     private fun emitCompletedState(snapshot: AssessmentSessionSnapshot) {
         val questionnaire = questionnaireContent ?: return
-        val section = questionnaire.sections.first { it.sephiraId == targetSephira() }
-        val score = snapshot.scores.firstOrNull { it.sephiraId == targetSephira() } ?: return
+        val activeSephira = activeSephira(snapshot)
+        val section = questionnaire.sections.first { it.sephiraId == activeSephira }
+        val score = snapshot.scores.firstOrNull { it.sephiraId == activeSephira } ?: return
 
         _uiState.value = AssessmentUiState.Completed(
             AssessmentCompletedUiModel(
+                sephiraId = section.sephiraId,
                 sephiraName = section.displayName,
                 dominantPole = score.dominantPole,
                 confidence = score.confidence,
@@ -399,8 +435,8 @@ class AssessmentViewModel @Inject constructor(
     private fun currentQuestion(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
-    ) = questionnaire.sections.first { it.sephiraId == targetSephira() }
-        .let { section ->
+    ) = currentSection(questionnaire, snapshot)
+        ?.let { section ->
             val page = section.pages[snapshot.currentPageIndex]
             val questionId = page.questionIds[snapshot.currentQuestionIndex]
             section.questions.first { it.id == questionId }
@@ -410,7 +446,8 @@ class AssessmentViewModel @Inject constructor(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
     ): AssessmentPosition {
-        val section = questionnaire.sections.first { it.sephiraId == targetSephira() }
+        val section = currentSection(questionnaire, snapshot)
+            ?: return AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex, true)
         val currentPage = section.pages[snapshot.currentPageIndex]
         return if (snapshot.currentQuestionIndex < currentPage.questionIds.lastIndex) {
             AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex + 1, false)
@@ -425,7 +462,7 @@ class AssessmentViewModel @Inject constructor(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
     ): AssessmentPosition? {
-        val section = questionnaire.sections.first { it.sephiraId == targetSephira() }
+        val section = currentSection(questionnaire, snapshot) ?: return null
         return when {
             snapshot.currentQuestionIndex > 0 -> {
                 AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex - 1, false)
@@ -448,15 +485,27 @@ class AssessmentViewModel @Inject constructor(
         return previousQuestions + questionIndex + 1
     }
 
-    private fun targetSephira(): SephiraId = MALKUTH_SEPHIRA
+    private fun currentSection(
+        questionnaire: QuestionnaireContent,
+        snapshot: AssessmentSessionSnapshot
+    ): SephiraSectionContent? = questionnaire.sections.firstOrNull { it.sephiraId == activeSephira(snapshot) }
+
+    private fun nextSection(
+        questionnaire: QuestionnaireContent,
+        currentSephiraId: SephiraId
+    ): SephiraSectionContent? {
+        val currentIndex = questionnaire.sections.indexOfFirst { it.sephiraId == currentSephiraId }
+        if (currentIndex == -1) {
+            return null
+        }
+        return questionnaire.sections.getOrNull(currentIndex + 1)
+    }
+
+    private fun activeSephira(snapshot: AssessmentSessionSnapshot): SephiraId = snapshot.currentSephiraId
 
     private data class AssessmentPosition(
         val pageIndex: Int,
         val questionIndex: Int,
         val isComplete: Boolean
     )
-
-    private companion object {
-        val MALKUTH_SEPHIRA: SephiraId = SephiraId.MALKUTH
-    }
 }

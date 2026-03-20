@@ -29,6 +29,12 @@ data class UpdateAssessmentProgressParams(
     val questionIndex: Int
 )
 
+data class AdvanceAssessmentSectionParams(
+    val sessionId: Long,
+    val sephiraId: SephiraId,
+    val totalQuestions: Int
+)
+
 class StartOrResumeAssessmentUseCase @Inject constructor(
     private val assessmentSessionRepository: AssessmentSessionRepository
 ) : FlowInteractor<StartOrResumeAssessmentParams, AssessmentSessionSnapshot>() {
@@ -46,6 +52,14 @@ class ObserveActiveAssessmentUseCase @Inject constructor(
 ) : FlowInteractorNoParams<AssessmentSessionSnapshot?>() {
     override fun buildUseCase(): Flow<AssessmentSessionSnapshot?> {
         return assessmentSessionRepository.observeActiveSession()
+    }
+}
+
+class ObserveLatestCompletedAssessmentUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractorNoParams<AssessmentSessionSnapshot?>() {
+    override fun buildUseCase(): Flow<AssessmentSessionSnapshot?> {
+        return assessmentSessionRepository.observeLatestCompletedSession()
     }
 }
 
@@ -73,6 +87,29 @@ class UpdateAssessmentProgressUseCase @Inject constructor(
             sessionId = params.sessionId,
             pageIndex = params.pageIndex,
             questionIndex = params.questionIndex
+        )
+    }
+}
+
+class SaveAssessmentScoreUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<Pair<Long, SephiraScore>, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: Pair<Long, SephiraScore>): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.saveSephiraScore(
+            sessionId = params.first,
+            score = params.second
+        )
+    }
+}
+
+class AdvanceAssessmentSectionUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<AdvanceAssessmentSectionParams, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: AdvanceAssessmentSectionParams): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.advanceToSephira(
+            sessionId = params.sessionId,
+            sephiraId = params.sephiraId,
+            totalQuestions = params.totalQuestions
         )
     }
 }

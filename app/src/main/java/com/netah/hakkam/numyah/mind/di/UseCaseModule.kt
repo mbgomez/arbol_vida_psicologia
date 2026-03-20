@@ -5,6 +5,7 @@ import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
 import com.netah.hakkam.numyah.mind.data.repository.IPostRepository
 import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
+import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
@@ -12,7 +13,9 @@ import com.netah.hakkam.numyah.mind.domain.usecase.GetCachedPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentScoreUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
@@ -89,6 +92,14 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideObserveLatestCompletedAssessmentUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = ObserveLatestCompletedAssessmentUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
     fun provideSaveAssessmentAnswerUseCase(
         assessmentSessionRepository: AssessmentSessionRepository
     ) = SaveAssessmentAnswerUseCase(
@@ -100,6 +111,22 @@ class UseCaseModule {
     fun provideUpdateAssessmentProgressUseCase(
         assessmentSessionRepository: AssessmentSessionRepository
     ) = UpdateAssessmentProgressUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideSaveAssessmentScoreUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = SaveAssessmentScoreUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideAdvanceAssessmentSectionUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = AdvanceAssessmentSectionUseCase(
         assessmentSessionRepository = assessmentSessionRepository
     )
 

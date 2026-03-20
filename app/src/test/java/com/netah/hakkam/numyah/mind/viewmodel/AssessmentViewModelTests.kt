@@ -17,10 +17,12 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.scoring.AssessmentScoringEngine
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAnswerParams
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentScoreUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentParams
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
@@ -49,6 +51,8 @@ class AssessmentViewModelTests {
     private lateinit var startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase
     private lateinit var saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase
     private lateinit var updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase
+    private lateinit var saveAssessmentScoreUseCase: SaveAssessmentScoreUseCase
+    private lateinit var advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase
     private lateinit var completeAssessmentUseCase: CompleteAssessmentUseCase
     private lateinit var assessmentScoringEngine: AssessmentScoringEngine
 
@@ -63,6 +67,8 @@ class AssessmentViewModelTests {
         startOrResumeAssessmentUseCase = mockk(relaxed = true)
         saveAssessmentAnswerUseCase = mockk(relaxed = true)
         updateAssessmentProgressUseCase = mockk(relaxed = true)
+        saveAssessmentScoreUseCase = mockk(relaxed = true)
+        advanceAssessmentSectionUseCase = mockk(relaxed = true)
         completeAssessmentUseCase = mockk(relaxed = true)
         assessmentScoringEngine = mockk(relaxed = true)
     }
@@ -293,6 +299,8 @@ class AssessmentViewModelTests {
             startOrResumeAssessmentUseCase = startOrResumeAssessmentUseCase,
             saveAssessmentAnswerUseCase = saveAssessmentAnswerUseCase,
             updateAssessmentProgressUseCase = updateAssessmentProgressUseCase,
+            saveAssessmentScoreUseCase = saveAssessmentScoreUseCase,
+            advanceAssessmentSectionUseCase = advanceAssessmentSectionUseCase,
             completeAssessmentUseCase = completeAssessmentUseCase,
             assessmentScoringEngine = assessmentScoringEngine,
             locale = locale

@@ -82,6 +82,72 @@ Testing standard:
 - Compose UI tests should focus first on stable, user-facing flows that define the current slice of work.
 - Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
 
+Assessment content standard:
+
+- Each sephira should ship as versioned, bilingual questionnaire content.
+- The standard section shape is:
+  - `shortMeaning`
+  - `introText`
+  - `pages`
+  - `questions`
+- Each question should keep its scoring metadata in content, including at minimum:
+  - `targetPole`
+  - `weight`
+- The Malkuth slice establishes this content shape as the default for future sephirot.
+
+Assessment flow standard:
+
+- The standard per-sephira flow is:
+  - honesty notice
+  - sephira intro
+  - paged questionnaire
+  - softened result summary
+- Low-confidence outcomes should use softened language such as "leans toward deficiency" rather than hard identity labels.
+- Result copy should describe current tendencies, mixed signals, and gentle next steps rather than fixed categories.
+
+Scoring standard:
+
+- Scoring should remain deterministic and per-sephira.
+- Persist both raw responses and derived pole scores.
+- Keep confidence and low-confidence handling explicit so the UI can soften interpretation without hiding the underlying score state.
+- Keep scoring logic isolated and unit-testable.
+
+Current temporary decisions:
+
+- The current Malkuth-specific ViewModel routing is an implementation shortcut, not the long-term feature standard.
+- The current behavior where one sephira completion also completes the whole assessment session is temporary and must be replaced before scaling to all ten sephirot.
+- The current threshold values used for dominant-pole classification are the v1 baseline, but should still be treated as tunable until validated across more than Malkuth.
+- Placeholder or builder-facing copy outside the production assessment flow should not be copied forward as product voice.
+
+Locked foundation decisions before scaling:
+
+- Canonical spelling is `Malkuth` in user-facing copy and `MALKUTH` in code identifiers and content ids.
+- One assessment session must span the full ten-sephirot assessment. Completing one sephira should save section progress and score data, but should not mark the whole assessment session complete.
+- `weight` remains part of the authored question model and is intended to be real scoring input, not decorative metadata. Until the engine applies it, authored content should continue using `1.0` as the default.
+
+Learnings from the Malkuth slice:
+
+- The reusable product unit is:
+  - sephira intro
+  - paged questions
+  - scored interpretation
+- Shared UI surfaces should stay generic. The active sephira name, intro meaning, and interpretive language should come from authored content rather than hardcoded shared strings.
+- Content seeding for future sephirot should stay author-driven. The engine is generic, but questionnaire content should be added intentionally rather than inferred.
+- Saved data should distinguish between:
+  - per-sephira scores
+  - the latest completed assessment
+  - the eventual full Tree of Life overview
+- Scrollable Compose screens should be tested against real semantics structure. Do not assume every visible phrase is exposed as its own standalone text node.
+- The preferred engagement model is:
+  - save a result after each sephira
+  - show a short section-complete reflection
+  - reserve the larger synthesis for the end of the assessment
+- For each new sephira batch, lock these before implementation:
+  - sephira order
+  - question count
+  - whether the batch includes section-complete interpretation copy
+  - the minimum tests required for the batch
+
 ## Delivery Standard
 
 Future work in this repository should be approached with the judgment of:
