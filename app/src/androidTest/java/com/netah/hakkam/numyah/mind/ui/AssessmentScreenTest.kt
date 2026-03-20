@@ -3,7 +3,10 @@ package com.netah.hakkam.numyah.mind.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
@@ -29,6 +32,30 @@ class AssessmentScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Test
+    fun assessmentScreen_loadingState_displaysProgressIndicator() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentUiState.Loading,
+                    onStart = {},
+                    onSelectAnswer = {},
+                    onContinue = {},
+                    onBack = {},
+                    onRetry = {},
+                    onBackHome = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription(
+            context.getString(R.string.progress_indicator_desccription)
+        ).assertIsDisplayed()
+    }
 
     @Test
     fun assessmentScreen_introState_displaysContentAndStarts() {
@@ -59,7 +86,8 @@ class AssessmentScreenTest {
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
-                    onRetry = {}
+                    onRetry = {},
+                    onBackHome = {}
                 )
             }
         }
@@ -71,6 +99,46 @@ class AssessmentScreenTest {
             .performClick()
 
         assertTrue(started)
+    }
+
+    @Test
+    fun assessmentScreen_introState_resumeMode_displaysResumeAction() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentUiState.Intro(
+                        AssessmentIntroUiModel(
+                            questionnaireTitle = "Malkuth reflection",
+                            sephiraName = "Malkuth",
+                            shortMeaning = "Meaning",
+                            introText = "Intro body",
+                            isResumeSession = true,
+                            progress = AssessmentProgressUiModel(
+                                currentPageIndex = 1,
+                                totalPages = 2,
+                                currentQuestionNumber = 0,
+                                totalQuestions = 6,
+                                overallProgress = 0f
+                            )
+                        )
+                    ),
+                    onStart = {},
+                    onSelectAnswer = {},
+                    onContinue = {},
+                    onBack = {},
+                    onRetry = {},
+                    onBackHome = {}
+                )
+            }
+        }
+
+        composeTestRule.onAllNodesWithText(
+            context.getString(R.string.assessment_resume),
+            useUnmergedTree = true
+        )[0].assertIsDisplayed()
     }
 
     @Test
@@ -115,7 +183,8 @@ class AssessmentScreenTest {
                     onSelectAnswer = { selectedAnswer = it },
                     onContinue = { continued = true },
                     onBack = { wentBack = true },
-                    onRetry = {}
+                    onRetry = {},
+                    onBackHome = {}
                 )
             }
         }
@@ -131,8 +200,57 @@ class AssessmentScreenTest {
     }
 
     @Test
+    fun assessmentScreen_questionState_withoutSelection_disablesContinue() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentUiState.Question(
+                        AssessmentQuestionUiModel(
+                            questionnaireTitle = "Malkuth reflection",
+                            sephiraName = "Malkuth",
+                            currentPageTitle = "Money",
+                            currentPageDescription = "Resources",
+                            currentQuestionPrompt = "I appreciate what I have.",
+                            answerOptions = listOf(
+                                AssessmentAnswerOptionUiModel("disagree", "Disagree", 1, false),
+                                AssessmentAnswerOptionUiModel("agree", "Agree", 3, false)
+                            ),
+                            selectedOptionId = null,
+                            progress = AssessmentProgressUiModel(
+                                currentPageIndex = 0,
+                                totalPages = 2,
+                                currentQuestionNumber = 1,
+                                totalQuestions = 6,
+                                overallProgress = 1f / 6f
+                            ),
+                            navigation = AssessmentNavigationUiModel(
+                                canGoBack = false,
+                                canContinue = false,
+                                isFirstQuestion = true,
+                                isLastQuestion = false
+                            )
+                        )
+                    ),
+                    onStart = {},
+                    onSelectAnswer = {},
+                    onContinue = {},
+                    onBack = {},
+                    onRetry = {},
+                    onBackHome = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_continue)).assertIsNotEnabled()
+    }
+
+    @Test
     fun assessmentScreen_completedState_showsSoftenedResult() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var returnedHome = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -153,7 +271,8 @@ class AssessmentScreenTest {
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
-                    onRetry = {}
+                    onRetry = {},
+                    onBackHome = { returnedHome = true }
                 )
             }
         }
@@ -161,6 +280,12 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_leans_deficiency)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_daily_life_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_next_step_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_home_action)).performClick()
+
+        assertTrue(returnedHome)
     }
 
     @Test
@@ -177,7 +302,8 @@ class AssessmentScreenTest {
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
-                    onRetry = { retried = true }
+                    onRetry = { retried = true },
+                    onBackHome = {}
                 )
             }
         }

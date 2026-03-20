@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,9 +31,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
@@ -46,6 +52,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
 @Composable
 fun AssessmentRoute(
     paddingValues: PaddingValues,
+    onBackHome: () -> Unit,
     viewModel: AssessmentViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +63,8 @@ fun AssessmentRoute(
         onSelectAnswer = viewModel::selectAnswer,
         onContinue = viewModel::continueAssessment,
         onBack = viewModel::goBack,
-        onRetry = viewModel::retry
+        onRetry = viewModel::retry,
+        onBackHome = onBackHome
     )
 }
 
@@ -68,7 +76,8 @@ fun AssessmentScreen(
     onSelectAnswer: (String) -> Unit,
     onContinue: () -> Unit,
     onBack: () -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onBackHome: () -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -87,7 +96,10 @@ fun AssessmentScreen(
                 onContinue = onContinue,
                 onBack = onBack
             )
-            is AssessmentUiState.Completed -> AssessmentCompletedState(model = uiState.model)
+            is AssessmentUiState.Completed -> AssessmentCompletedState(
+                model = uiState.model,
+                onBackHome = onBackHome
+            )
             is AssessmentUiState.Error -> AssessmentErrorState(
                 errorType = uiState.errorType,
                 onRetry = onRetry
@@ -98,12 +110,18 @@ fun AssessmentScreen(
 
 @Composable
 private fun AssessmentLoadingState() {
+    val loadingDescription = stringResource(R.string.progress_indicator_desccription)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.semantics {
+                contentDescription = loadingDescription
+            }
+        )
     }
 }
 
@@ -132,13 +150,14 @@ private fun AssessmentIntroState(
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.SemiBold
         )
+        AssessmentHeroImage()
         ProgressHeader(model.progress)
         AssessmentInfoCard(
-            title = model.sephiraName,
+            title = stringResource(R.string.assessment_intro_meaning_title),
             body = model.shortMeaning
         )
         AssessmentInfoCard(
-            title = model.sephiraName,
+            title = stringResource(R.string.assessment_intro_reflection_title),
             body = model.introText
         )
         if (model.isResumeSession) {
@@ -159,6 +178,19 @@ private fun AssessmentIntroState(
             )
         }
     }
+}
+
+@Composable
+private fun AssessmentHeroImage() {
+    Image(
+        painter = painterResource(R.mipmap.assessment_malkut),
+        contentDescription = stringResource(R.string.assessment_intro_image_description),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(dimensionResource(R.dimen.onboarding_hero_height))
+            .clip(RoundedCornerShape(dimensionResource(R.dimen.onboarding_hero_corner_radius))),
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable
@@ -220,7 +252,10 @@ private fun AssessmentQuestionState(
 }
 
 @Composable
-private fun AssessmentCompletedState(model: AssessmentCompletedUiModel) {
+private fun AssessmentCompletedState(
+    model: AssessmentCompletedUiModel,
+    onBackHome: () -> Unit
+) {
     val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
     val spacing = dimensionResource(R.dimen.onboarding_spacing_medium)
 
@@ -236,13 +271,16 @@ private fun AssessmentCompletedState(model: AssessmentCompletedUiModel) {
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.SemiBold
         )
+        AssessmentResultSummaryCard(model = model)
         AssessmentInfoCard(
-            title = model.sephiraName,
-            body = resultLabel(model)
+            title = stringResource(R.string.assessment_result_what_it_means_title),
+            body = resultMeaning(model)
         )
         AssessmentInfoCard(
             title = confidenceLabel(model.confidence),
             body = buildString {
+                append(resultConfidenceNote(model))
+                append("\n\n")
                 append(stringResource(R.string.assessment_score_balance))
                 append(": ")
                 append(scoreText(model.balanceScore))
@@ -256,6 +294,51 @@ private fun AssessmentCompletedState(model: AssessmentCompletedUiModel) {
                 append(scoreText(model.excessScore))
             }
         )
+        AssessmentInfoCard(
+            title = stringResource(R.string.assessment_result_daily_life_title),
+            body = resultDailyLife(model)
+        )
+        AssessmentInfoCard(
+            title = stringResource(R.string.assessment_result_next_step_title),
+            body = resultNextStep(model)
+        )
+        Button(
+            onClick = onBackHome,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.assessment_result_home_action))
+        }
+    }
+}
+
+@Composable
+private fun AssessmentResultSummaryCard(model: AssessmentCompletedUiModel) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(dimensionResource(R.dimen.onboarding_spacing_large)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
+        ) {
+            Text(
+                text = model.sephiraName,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                text = resultLabel(model),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = resultSummary(model),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -412,6 +495,76 @@ private fun resultLabel(model: AssessmentCompletedUiModel): String {
         model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
             stringResource(R.string.assessment_result_deficiency)
         else -> stringResource(R.string.assessment_result_excess)
+    }
+}
+
+@Composable
+private fun resultSummary(model: AssessmentCompletedUiModel): String {
+    return when {
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_summary_leans_balance)
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_summary_leans_deficiency)
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.EXCESS ->
+            stringResource(R.string.assessment_result_summary_leans_excess)
+        model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_summary_balance)
+        model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_summary_deficiency)
+        else -> stringResource(R.string.assessment_result_summary_excess)
+    }
+}
+
+@Composable
+private fun resultMeaning(model: AssessmentCompletedUiModel): String {
+    return when {
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_meaning_leans_balance)
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_meaning_leans_deficiency)
+        model.isLowConfidence && model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.EXCESS ->
+            stringResource(R.string.assessment_result_meaning_leans_excess)
+        model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_meaning_balance)
+        model.dominantPole == com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_meaning_deficiency)
+        else -> stringResource(R.string.assessment_result_meaning_excess)
+    }
+}
+
+@Composable
+private fun resultDailyLife(model: AssessmentCompletedUiModel): String {
+    return when (model.dominantPole) {
+        com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_daily_life_balance)
+        com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_daily_life_deficiency)
+        com.netah.hakkam.numyah.mind.domain.model.Pole.EXCESS ->
+            stringResource(R.string.assessment_result_daily_life_excess)
+    }
+}
+
+@Composable
+private fun resultNextStep(model: AssessmentCompletedUiModel): String {
+    return when (model.dominantPole) {
+        com.netah.hakkam.numyah.mind.domain.model.Pole.BALANCE ->
+            stringResource(R.string.assessment_result_next_step_balance)
+        com.netah.hakkam.numyah.mind.domain.model.Pole.DEFICIENCY ->
+            stringResource(R.string.assessment_result_next_step_deficiency)
+        com.netah.hakkam.numyah.mind.domain.model.Pole.EXCESS ->
+            stringResource(R.string.assessment_result_next_step_excess)
+    }
+}
+
+@Composable
+private fun resultConfidenceNote(model: AssessmentCompletedUiModel): String {
+    return when (model.confidence) {
+        com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel.HIGH ->
+            stringResource(R.string.assessment_confidence_note_high)
+        com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel.MEDIUM ->
+            stringResource(R.string.assessment_confidence_note_medium)
+        com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel.LOW ->
+            stringResource(R.string.assessment_confidence_note_low)
     }
 }
 
