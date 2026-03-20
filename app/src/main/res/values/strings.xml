@@ -53,6 +53,11 @@
     <string name="assessment_intro_eyebrow">Malkuth</string>
     <string name="assessment_intro_title">Grounding in material life</string>
     <string name="assessment_intro_image_description">Illustration for the Malkuth assessment intro</string>
+    <string name="assessment_honesty_title">A small note before you begin</string>
+    <string name="assessment_honesty_card_title">This reflection works best with honesty</string>
+    <string name="assessment_honesty_body">This reflection is most useful when your answers are honest about how things feel today.\n\nThere are no right answers here. You do not need to present your best self, only your real current experience.</string>
+    <string name="assessment_honesty_skip_label">Do not show this again</string>
+    <string name="assessment_honesty_continue">Continue</string>
     <string name="assessment_intro_meaning_title">What Malkuth points to</string>
     <string name="assessment_intro_reflection_title">What you will reflect on here</string>
     <string name="assessment_start">Start reflection</string>

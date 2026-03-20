@@ -17,9 +17,11 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.scoring.AssessmentScoringEngine
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAnswerParams
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentParams
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressParams
@@ -42,6 +44,8 @@ import org.junit.Test
 class AssessmentViewModelTests {
 
     private lateinit var getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase
+    private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase
     private lateinit var saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase
     private lateinit var updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase
@@ -54,6 +58,8 @@ class AssessmentViewModelTests {
     @Before
     fun setup() {
         getCurrentQuestionnaireUseCase = mockk(relaxed = true)
+        getAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
+        setAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
         startOrResumeAssessmentUseCase = mockk(relaxed = true)
         saveAssessmentAnswerUseCase = mockk(relaxed = true)
         updateAssessmentProgressUseCase = mockk(relaxed = true)
@@ -62,8 +68,9 @@ class AssessmentViewModelTests {
     }
 
     @Test
-    fun init_withFreshSession_emitsIntroState() = coroutinesRule.runBlockingTest {
+    fun init_withFreshSessionAndHonestyEnabled_emitsHonestyNoticeState() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
         every {
             startOrResumeAssessmentUseCase.run(
                 StartOrResumeAssessmentParams(
@@ -75,16 +82,15 @@ class AssessmentViewModelTests {
         } returns flowOf(testSnapshot())
 
         val viewModel = createViewModel()
-        val state = viewModel.uiState.value as AssessmentUiState.Intro
+        val state = viewModel.uiState.value as AssessmentUiState.HonestyNotice
 
-        assertFalse(state.model.isResumeSession)
-        assertEquals("Malkuth", state.model.sephiraName)
-        assertEquals(0f, state.model.progress.overallProgress)
+        assertFalse(state.model.isDoNotShowAgainChecked)
     }
 
     @Test
     fun init_withSavedResponses_emitsQuestionState() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
         every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(
             testSnapshot(
                 currentQuestionIndex = 1,
@@ -121,6 +127,7 @@ class AssessmentViewModelTests {
                 sections = emptyList()
             )
         )
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
 
         val viewModel = createViewModel()
         val state = viewModel.uiState.value as AssessmentUiState.Error
@@ -129,21 +136,25 @@ class AssessmentViewModelTests {
     }
 
     @Test
-    fun startAssessment_movesFromIntroToQuestion() = coroutinesRule.runBlockingTest {
+    fun continueFromHonestyNotice_movesToIntroAndPersistsPreference() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
         every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(testSnapshot())
+        every { setAssessmentHonestyNoticeVisibilityUseCase.run(false) } returns flowOf(false)
 
         val viewModel = createViewModel()
-        viewModel.startAssessment()
+        viewModel.setDoNotShowHonestyNoticeAgain(true)
+        viewModel.continueFromHonestyNotice()
 
-        val state = viewModel.uiState.value as AssessmentUiState.Question
-        assertEquals("Q1", state.model.currentQuestionPrompt)
-        assertFalse(state.model.navigation.canGoBack)
+        val state = viewModel.uiState.value as AssessmentUiState.Intro
+        verify(exactly = 1) { setAssessmentHonestyNoticeVisibilityUseCase.run(false) }
+        assertEquals("Malkuth", state.model.sephiraName)
     }
 
     @Test
     fun selectAnswer_savesCurrentAnswerWithoutAdvancing() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
         every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(testSnapshot())
         every {
             saveAssessmentAnswerUseCase.run(
@@ -207,6 +218,7 @@ class AssessmentViewModelTests {
             isLowConfidence = true
         )
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaire)
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
         every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(inProgressSnapshot)
         every {
             saveAssessmentAnswerUseCase.run(
@@ -243,6 +255,7 @@ class AssessmentViewModelTests {
     @Test
     fun goBack_updatesProgressToPreviousQuestion() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
         every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(
             testSnapshot(currentQuestionIndex = 1)
         )
@@ -275,6 +288,8 @@ class AssessmentViewModelTests {
     private fun createViewModel(locale: Locale = Locale.ENGLISH): AssessmentViewModel {
         return AssessmentViewModel(
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             startOrResumeAssessmentUseCase = startOrResumeAssessmentUseCase,
             saveAssessmentAnswerUseCase = saveAssessmentAnswerUseCase,
             updateAssessmentProgressUseCase = updateAssessmentProgressUseCase,

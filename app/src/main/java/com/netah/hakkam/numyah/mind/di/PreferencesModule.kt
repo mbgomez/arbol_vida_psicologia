@@ -2,8 +2,8 @@ package com.netah.hakkam.numyah.mind.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.netah.hakkam.numyah.mind.data.repository.LocalOnboardingRepository
-import com.netah.hakkam.numyah.mind.data.repository.OnboardingRepository
+import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
+import com.netah.hakkam.numyah.mind.data.repository.LocalAppPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +25,7 @@ object PreferencesModule {
 
     @Provides
     @Singleton
-    fun provideOnboardingRepository(
+    fun provideAppPreferencesRepository(
         sharedPreferences: SharedPreferences
-    ): OnboardingRepository = LocalOnboardingRepository(sharedPreferences)
+    ): AppPreferencesRepository = LocalAppPreferencesRepository(sharedPreferences)
 }

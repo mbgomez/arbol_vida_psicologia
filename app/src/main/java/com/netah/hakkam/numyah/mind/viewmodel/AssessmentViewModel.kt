@@ -11,9 +11,11 @@ import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.scoring.AssessmentScoringEngine
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAnswerParams
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentParams
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressParams
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 
 sealed interface AssessmentUiState {
     data object Loading : AssessmentUiState
+    data class HonestyNotice(val model: AssessmentHonestyNoticeUiModel) : AssessmentUiState
     data class Intro(val model: AssessmentIntroUiModel) : AssessmentUiState
     data class Question(val model: AssessmentQuestionUiModel) : AssessmentUiState
     data class Completed(val model: AssessmentCompletedUiModel) : AssessmentUiState
@@ -47,6 +50,10 @@ data class AssessmentAnswerOptionUiModel(
     val label: String,
     val numericValue: Int,
     val isSelected: Boolean
+)
+
+data class AssessmentHonestyNoticeUiModel(
+    val isDoNotShowAgainChecked: Boolean
 )
 
 data class AssessmentProgressUiModel(
@@ -98,6 +105,8 @@ data class AssessmentCompletedUiModel(
 @HiltViewModel
 class AssessmentViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
+    private val getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase,
+    private val setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase,
     private val startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase,
     private val saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase,
     private val updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase,
@@ -111,6 +120,8 @@ class AssessmentViewModel @Inject constructor(
 
     private var questionnaireContent: QuestionnaireContent? = null
     private var currentSnapshot: AssessmentSessionSnapshot? = null
+    private var honestyNoticeDismissed: Boolean = false
+    private var doNotShowHonestyNoticeAgain: Boolean = false
     private var introDismissed: Boolean = false
 
     init {
@@ -136,6 +147,12 @@ class AssessmentViewModel @Inject constructor(
                 ).first()
                 questionnaireContent = questionnaire
                 currentSnapshot = sessionSnapshot
+                val shouldShowHonestyNotice = getAssessmentHonestyNoticeVisibilityUseCase.run().first()
+                honestyNoticeDismissed = !shouldShowHonestyNotice ||
+                    sessionSnapshot.responses.isNotEmpty() ||
+                    sessionSnapshot.currentPageIndex > 0 ||
+                    sessionSnapshot.currentQuestionIndex > 0
+                doNotShowHonestyNoticeAgain = false
                 introDismissed = sessionSnapshot.responses.isNotEmpty() ||
                     sessionSnapshot.currentPageIndex > 0 ||
                     sessionSnapshot.currentQuestionIndex > 0
@@ -149,6 +166,24 @@ class AssessmentViewModel @Inject constructor(
     fun startAssessment() {
         introDismissed = true
         emitPhaseState()
+    }
+
+    fun setDoNotShowHonestyNoticeAgain(checked: Boolean) {
+        doNotShowHonestyNoticeAgain = checked
+        val state = _uiState.value as? AssessmentUiState.HonestyNotice ?: return
+        _uiState.value = state.copy(
+            model = state.model.copy(isDoNotShowAgainChecked = checked)
+        )
+    }
+
+    fun continueFromHonestyNotice() {
+        viewModelScope.launch {
+            setAssessmentHonestyNoticeVisibilityUseCase
+                .run(!doNotShowHonestyNoticeAgain)
+                .first()
+            honestyNoticeDismissed = true
+            emitPhaseState()
+        }
     }
 
     fun selectAnswer(optionId: String) {
@@ -271,6 +306,15 @@ class AssessmentViewModel @Inject constructor(
         val questionnaire = questionnaireContent ?: return
         val snapshot = currentSnapshot ?: return
         val section = questionnaire.sections.first { it.sephiraId == targetSephira() }
+
+        if (!honestyNoticeDismissed) {
+            _uiState.value = AssessmentUiState.HonestyNotice(
+                AssessmentHonestyNoticeUiModel(
+                    isDoNotShowAgainChecked = doNotShowHonestyNoticeAgain
+                )
+            )
+            return
+        }
 
         if (!introDismissed) {
             _uiState.value = AssessmentUiState.Intro(

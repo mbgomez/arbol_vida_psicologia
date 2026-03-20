@@ -13,11 +13,11 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LocalOnboardingRepositoryTests {
+class LocalAppPreferencesRepositoryTests {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-    private lateinit var repository: LocalOnboardingRepository
+    private lateinit var repository: LocalAppPreferencesRepository
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -29,7 +29,7 @@ class LocalOnboardingRepositoryTests {
         every { sharedPreferences.edit() } returns editor
         every { editor.putBoolean(any(), any()) } returns editor
 
-        repository = LocalOnboardingRepository(sharedPreferences)
+        repository = LocalAppPreferencesRepository(sharedPreferences)
     }
 
     @Test
@@ -50,5 +50,25 @@ class LocalOnboardingRepositoryTests {
 
         verify(exactly = 1) { sharedPreferences.getBoolean("onboarding_completed", false) }
         assertEquals(true, result)
+    }
+
+    @Test
+    fun setAssessmentHonestyNoticeVisible_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
+        val result = repository.setAssessmentHonestyNoticeVisible(false).first()
+
+        verify(exactly = 1) { sharedPreferences.edit() }
+        verify(exactly = 1) { editor.putBoolean("show_assessment_honesty_notice", false) }
+        verify(exactly = 1) { editor.apply() }
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun shouldShowAssessmentHonestyNotice_readsStoredValue() = coroutinesRule.runBlockingTest {
+        every { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) } returns false
+
+        val result = repository.shouldShowAssessmentHonestyNotice().first()
+
+        verify(exactly = 1) { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) }
+        assertEquals(false, result)
     }
 }

@@ -52,6 +52,11 @@
     <string name="assessment_intro_eyebrow">Malkuth</string>
     <string name="assessment_intro_title">Enraizamiento en la vida material</string>
     <string name="assessment_intro_image_description">Ilustracion para la introduccion de la evaluacion de Malkuth</string>
+    <string name="assessment_honesty_title">Una nota breve antes de comenzar</string>
+    <string name="assessment_honesty_card_title">Esta reflexion funciona mejor con honestidad</string>
+    <string name="assessment_honesty_body">Esta reflexion es mas util cuando tus respuestas son honestas sobre como te sientes hoy.\n\nNo hay respuestas correctas aqui. No necesitas mostrar tu mejor version, solo tu experiencia real en este momento.</string>
+    <string name="assessment_honesty_skip_label">No volver a mostrar esto</string>
+    <string name="assessment_honesty_continue">Continuar</string>
     <string name="assessment_intro_meaning_title">Lo que senala Malkuth</string>
     <string name="assessment_intro_reflection_title">Lo que reflexionaras aqui</string>
     <string name="assessment_start">Comenzar reflexion</string>

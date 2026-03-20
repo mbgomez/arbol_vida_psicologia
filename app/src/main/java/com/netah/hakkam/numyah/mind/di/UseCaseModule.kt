@@ -4,14 +4,16 @@ package com.netah.hakkam.numyah.mind.di
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
 import com.netah.hakkam.numyah.mind.data.repository.IPostRepository
-import com.netah.hakkam.numyah.mind.data.repository.OnboardingRepository
+import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCachedPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressUseCase
@@ -37,13 +39,29 @@ class UseCaseModule {
 
     @Singleton
     @Provides
-    fun provideGetOnboardingStatusUseCase(onboardingRepository: OnboardingRepository) =
-        GetOnboardingStatusUseCase(onboardingRepository = onboardingRepository)
+    fun provideGetOnboardingStatusUseCase(appPreferencesRepository: AppPreferencesRepository) =
+        GetOnboardingStatusUseCase(appPreferencesRepository = appPreferencesRepository)
 
     @Singleton
     @Provides
-    fun provideSetOnboardingCompletedUseCase(onboardingRepository: OnboardingRepository) =
-        SetOnboardingCompletedUseCase(onboardingRepository = onboardingRepository)
+    fun provideSetOnboardingCompletedUseCase(appPreferencesRepository: AppPreferencesRepository) =
+        SetOnboardingCompletedUseCase(appPreferencesRepository = appPreferencesRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetAssessmentHonestyNoticeVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = GetAssessmentHonestyNoticeVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideSetAssessmentHonestyNoticeVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = SetAssessmentHonestyNoticeVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
 
     @Singleton
     @Provides

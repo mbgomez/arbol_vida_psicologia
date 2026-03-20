@@ -21,6 +21,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentCompletedUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentErrorType
+import com.netah.hakkam.numyah.mind.viewmodel.AssessmentHonestyNoticeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentIntroUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentQuestionUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
@@ -60,6 +63,8 @@ fun AssessmentRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onStart = viewModel::startAssessment,
+        onContinueFromHonestyNotice = viewModel::continueFromHonestyNotice,
+        onHonestyPreferenceChanged = viewModel::setDoNotShowHonestyNoticeAgain,
         onSelectAnswer = viewModel::selectAnswer,
         onContinue = viewModel::continueAssessment,
         onBack = viewModel::goBack,
@@ -73,6 +78,8 @@ fun AssessmentScreen(
     paddingValues: PaddingValues,
     uiState: AssessmentUiState,
     onStart: () -> Unit,
+    onContinueFromHonestyNotice: () -> Unit,
+    onHonestyPreferenceChanged: (Boolean) -> Unit,
     onSelectAnswer: (String) -> Unit,
     onContinue: () -> Unit,
     onBack: () -> Unit,
@@ -86,6 +93,11 @@ fun AssessmentScreen(
     ) {
         when (uiState) {
             AssessmentUiState.Loading -> AssessmentLoadingState()
+            is AssessmentUiState.HonestyNotice -> AssessmentHonestyNoticeState(
+                model = uiState.model,
+                onCheckedChange = onHonestyPreferenceChanged,
+                onContinue = onContinueFromHonestyNotice
+            )
             is AssessmentUiState.Intro -> AssessmentIntroState(
                 model = uiState.model,
                 onStart = onStart
@@ -122,6 +134,56 @@ private fun AssessmentLoadingState() {
                 contentDescription = loadingDescription
             }
         )
+    }
+}
+
+@Composable
+private fun AssessmentHonestyNoticeState(
+    model: AssessmentHonestyNoticeUiModel,
+    onCheckedChange: (Boolean) -> Unit,
+    onContinue: () -> Unit
+) {
+    val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
+    val spacing = dimensionResource(R.dimen.onboarding_spacing_medium)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = horizontalPadding, vertical = spacing),
+        verticalArrangement = Arrangement.spacedBy(spacing)
+    ) {
+        Text(
+            text = stringResource(R.string.assessment_honesty_title),
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        AssessmentInfoCard(
+            title = stringResource(R.string.assessment_honesty_card_title),
+            body = stringResource(R.string.assessment_honesty_body)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
+        ) {
+            Checkbox(
+                checked = model.isDoNotShowAgainChecked,
+                modifier = Modifier.testTag(ASSESSMENT_HONESTY_CHECKBOX_TAG),
+                onCheckedChange = { checked -> onCheckedChange(checked) }
+            )
+            Text(
+                text = stringResource(R.string.assessment_honesty_skip_label),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Button(
+            onClick = onContinue,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.assessment_honesty_continue))
+        }
     }
 }
 
@@ -588,3 +650,5 @@ private fun errorMessage(errorType: AssessmentErrorType): String {
 }
 
 private fun scoreText(value: Double): String = String.format("%.2f", value)
+
+private const val ASSESSMENT_HONESTY_CHECKBOX_TAG = "assessment_honesty_checkbox"

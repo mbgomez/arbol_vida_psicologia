@@ -40,6 +40,7 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
   - `EXCESS`
 - internal mixed or low-confidence support
 - minimal end-to-end UI:
+  - pre-assessment honesty notice with local "do not show again" preference
   - Malchut intro
   - question flow
   - progress state
@@ -80,16 +81,21 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
 - Keep back/continue/progress/resume behavior owned by the ViewModel and use case layer rather than rebuilding that logic inside Compose screens.
 - Prefer explicit phase-based assessment UI states such as `Loading`, `Intro`, `Question`, `Completed`, and `Error` instead of one overloaded active-state model.
 - Keep the assessment screen layer thin by mapping semantic ViewModel state to resources and composables rather than re-owning progression or result logic in the UI.
+- Keep lightweight app preferences in a shared preferences repository rather than creating one repository per toggle or first-run flag.
+- Show a short honesty notice before the first assessment intro, with a local "do not show again" preference, because reflective value depends on answering from current reality rather than aspiration.
+- Make the result screen useful to a first-time user by including plain-language interpretation, how the pattern can show up in life, and one gentle next step.
+- When Compose UI tests need to target a specific control inside a repeated text pattern, prefer adding a small explicit test tag over relying on brittle text matching alone.
 
 ## Expected User Outcome
 
 At the end of this slice, a user should be able to:
 
 1. enter the Malchut assessment flow
-2. read a short intro to Malchut
-3. answer `6` questions one at a time
-4. close and reopen the app and continue where they left off
-5. finish and see a Malchut result such as:
+2. see a short honesty notice before the intro, with an optional "do not show again" preference
+3. read a short intro to Malchut
+4. answer `6` questions one at a time
+5. close and reopen the app and continue where they left off
+6. finish and see a Malchut result such as:
    - balanced
    - leans toward deficiency
    - leans toward excess
@@ -180,7 +186,9 @@ Validate language, score feel, reliability, and extension readiness before addin
 Product acceptance:
 
 - the flow feels calm, clear, and mobile-friendly
+- the pre-assessment honesty framing feels supportive rather than moralizing
 - the result language feels grounded and non-pathologizing
+- the result screen gives clear value even to a user with no prior Kabbalah knowledge
 - the user can resume without confusion
 
 Technical acceptance:

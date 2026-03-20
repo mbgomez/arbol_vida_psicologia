@@ -19,15 +19,16 @@ The app should launch with bilingual support for English and Spanish.
 1. User opens the app.
 2. User sees short onboarding that explains the Tree of Life framework, reflection-focused positioning, privacy, and time commitment.
 3. User starts a new assessment.
-4. Before each sephira section, the user sees a short intro that explains the sephira in practical psychological language.
-5. User answers questionnaire sections for each sephira in sequence.
-6. After each section, progress is saved locally.
-7. When the final section is complete, the scoring engine evaluates each sephira.
-8. User lands on the results overview screen with all ten sephirot and their states.
-9. User taps any sephira to open a deeper detail screen.
-10. User reviews psychological meaning, signs of deficiency or excess, strengths of balance, and suggested practices.
-11. User can open an optional Learn/About area for deeper Kabbalah context and longer educational content.
-12. User can save the result, retake the assessment later, or compare with a previous run in a future version.
+4. Before the first questionnaire intro, the user sees a brief honesty notice that frames the reflection and can be dismissed permanently with a local preference.
+5. Before each sephira section, the user sees a short intro that explains the sephira in practical psychological language.
+6. User answers questionnaire sections for each sephira in sequence.
+7. After each section, progress is saved locally.
+8. When the final section is complete, the scoring engine evaluates each sephira.
+9. User lands on the results overview screen with all ten sephirot and their states.
+10. User taps any sephira to open a deeper detail screen.
+11. User reviews psychological meaning, signs of deficiency or excess, strengths of balance, and suggested practices.
+12. User can open an optional Learn/About area for deeper Kabbalah context and longer educational content.
+13. User can save the result, retake the assessment later, or compare with a previous run in a future version.
 
 ### Secondary Flows
 
@@ -41,8 +42,10 @@ The app should launch with bilingual support for English and Spanish.
 
 - One question at a time or one short cluster at a time.
 - Clear progress and section context.
+- A short pre-assessment honesty prompt should frame the questionnaire as useful only when answered from the user's real current experience, not their ideal self.
 - Language should be psychologically accessible, spiritually respectful, and free of deterministic claims.
 - Results should emphasize tendencies, not labels.
+- Result screens should provide plain-language interpretation, likely real-life expression, and a gentle next step, not only a pole label or raw scores.
 - Onboarding should be a dedicated first-run experience rather than a reused in-app shell screen.
 - Onboarding should be trust-building and substantial enough to orient the user, but still lighter than the deeper educational material in Learn/About.
 - Onboarding copy must be written from the user's perspective and should never read like implementation notes, roadmap language, or builder-facing commentary.
@@ -382,6 +385,8 @@ Recommended rule:
 - data, domain, and DI should stay outside the UI tree
 - When a feature already uses repository and use case abstractions, prefer flow-based repositories and thin use cases rather than direct repository access from ViewModels
 - ViewModels should expose semantic UI state rather than localized user-facing copy. Resolve display strings such as error text, result labels, and action wording in the UI layer from resources whenever possible.
+- Small local preferences such as onboarding completion and "do not show again" notices should share one app preferences repository rather than multiplying narrow repositories by screen.
+- Compose UI tests should prefer small explicit hooks such as stable tags for interactive controls when text alone would make assertions ambiguous or brittle.
 
 ### Layer Responsibilities
 
@@ -490,6 +495,7 @@ UI test prioritization guidance:
 - Prefer Robolectric-backed local JVM tests for Room repository and database verification when the behavior does not require device-only execution. Avoid growing new instrumented persistence tests by default unless the test specifically depends on Android runtime behavior that Robolectric cannot cover well.
 - For assessment flows, keep progression and persistence logic owned by the ViewModel/use case layer rather than duplicating that behavior in Compose UI code.
 - For assessment UI tests, prioritize stable user contracts such as intro visibility, question progression, answer interaction, completion rendering, and retry behavior before testing visual details.
+- For assessment result screens, test the presence of the interpretive sections and the primary completion action, not only the raw classification label.
 
 ## 7. Implementation Phases
 

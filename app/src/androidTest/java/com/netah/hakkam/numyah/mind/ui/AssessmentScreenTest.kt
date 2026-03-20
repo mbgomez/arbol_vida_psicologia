@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
@@ -18,6 +19,7 @@ import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentAnswerOptionUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentCompletedUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentErrorType
+import com.netah.hakkam.numyah.mind.viewmodel.AssessmentHonestyNoticeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentIntroUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentNavigationUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentProgressUiModel
@@ -43,6 +45,8 @@ class AssessmentScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = AssessmentUiState.Loading,
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
@@ -55,6 +59,39 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithContentDescription(
             context.getString(R.string.progress_indicator_desccription)
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun assessmentScreen_honestyNoticeState_updatesPreferenceAndContinues() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var doNotShowAgain = false
+        var continued = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentUiState.HonestyNotice(
+                        AssessmentHonestyNoticeUiModel(isDoNotShowAgainChecked = false)
+                    ),
+                    onStart = {},
+                    onContinueFromHonestyNotice = { continued = true },
+                    onHonestyPreferenceChanged = { doNotShowAgain = it },
+                    onSelectAnswer = {},
+                    onContinue = {},
+                    onBack = {},
+                    onRetry = {},
+                    onBackHome = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_honesty_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("assessment_honesty_checkbox").performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_honesty_continue)).performClick()
+
+        assertTrue(doNotShowAgain)
+        assertTrue(continued)
     }
 
     @Test
@@ -83,6 +120,8 @@ class AssessmentScreenTest {
                         )
                     ),
                     onStart = { started = true },
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
@@ -126,6 +165,8 @@ class AssessmentScreenTest {
                         )
                     ),
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
@@ -180,6 +221,8 @@ class AssessmentScreenTest {
                         )
                     ),
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = { selectedAnswer = it },
                     onContinue = { continued = true },
                     onBack = { wentBack = true },
@@ -235,6 +278,8 @@ class AssessmentScreenTest {
                         )
                     ),
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
@@ -268,6 +313,8 @@ class AssessmentScreenTest {
                         )
                     ),
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
@@ -299,6 +346,8 @@ class AssessmentScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = AssessmentUiState.Error(AssessmentErrorType.LOAD),
                     onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
                     onBack = {},
