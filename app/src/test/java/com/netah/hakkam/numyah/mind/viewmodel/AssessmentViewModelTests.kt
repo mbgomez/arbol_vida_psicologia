@@ -17,6 +17,7 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.scoring.AssessmentScoringEngine
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionParams
 import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
@@ -256,6 +257,151 @@ class AssessmentViewModelTests {
         assertEquals(Pole.BALANCE, state.model.dominantPole)
         assertTrue(state.model.isLowConfidence)
         assertEquals(ConfidenceLevel.LOW, state.model.confidence)
+        assertFalse(state.model.hasNextSephira)
+        assertEquals(null, state.model.nextSephiraName)
+    }
+
+    @Test
+    fun continueAssessment_onLastQuestionWithNextSection_showsCurrentSephiraResultBeforeAdvance() = coroutinesRule.runBlockingTest {
+        val questionnaire = questionnaireWithTwoSections()
+        val completedMalkuthSnapshot = testSnapshot(
+            questionnaireVersion = "tree-v1",
+            totalQuestions = 1,
+            responses = listOf(
+                SavedResponse("q_last", "agree", 3, 0, 1L)
+            )
+        )
+        val savedScore = SephiraScore(
+            sessionId = 1L,
+            sephiraId = SephiraId.MALKUTH,
+            balanceScore = 0.30,
+            deficiencyScore = 0.20,
+            excessScore = 0.50,
+            dominantPole = Pole.EXCESS,
+            confidence = ConfidenceLevel.MEDIUM,
+            isLowConfidence = false
+        )
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaire)
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
+        every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(completedMalkuthSnapshot)
+        every {
+            saveAssessmentAnswerUseCase.run(
+                SaveAnswerParams(
+                    sessionId = 1L,
+                    questionId = "q_last",
+                    selectedOptionId = "agree",
+                    numericValue = 3,
+                    questionOrder = 0,
+                    nextPageIndex = 0,
+                    nextQuestionIndex = 0
+                )
+            )
+        } returns flowOf(completedMalkuthSnapshot)
+        every { assessmentScoringEngine.score(any<ScoreInput>(), 1L) } returns savedScore
+        every { saveAssessmentScoreUseCase.run(1L to savedScore) } returns flowOf(
+            completedMalkuthSnapshot.copy(scores = listOf(savedScore))
+        )
+
+        val viewModel = createViewModel(locale = Locale.ENGLISH)
+        viewModel.startAssessment()
+        viewModel.continueAssessment()
+
+        val state = viewModel.uiState.value as AssessmentUiState.Completed
+        assertEquals("Malkuth", state.model.sephiraName)
+        assertTrue(state.model.hasNextSephira)
+        assertEquals("Yesod", state.model.nextSephiraName)
+        verify(exactly = 1) { saveAssessmentScoreUseCase.run(1L to savedScore) }
+        verify(exactly = 0) { advanceAssessmentSectionUseCase.run(any()) }
+    }
+
+    @Test
+    fun continueFromCompletedResult_advancesToNextSectionIntro() = coroutinesRule.runBlockingTest {
+        val questionnaire = questionnaireWithTwoSections()
+        val completedMalkuthSnapshot = testSnapshot(
+            questionnaireVersion = "tree-v1",
+            totalQuestions = 1,
+            responses = listOf(
+                SavedResponse("q_last", "agree", 3, 0, 1L)
+            )
+        )
+        val savedScore = SephiraScore(
+            sessionId = 1L,
+            sephiraId = SephiraId.MALKUTH,
+            balanceScore = 0.30,
+            deficiencyScore = 0.20,
+            excessScore = 0.50,
+            dominantPole = Pole.EXCESS,
+            confidence = ConfidenceLevel.MEDIUM,
+            isLowConfidence = false
+        )
+        val advancedSnapshot = testSnapshot(
+            questionnaireVersion = "tree-v1",
+            totalQuestions = 1,
+            currentSephiraId = SephiraId.YESOD,
+            responses = listOf(
+                SavedResponse("q_last", "agree", 3, 0, 1L)
+            ),
+            scores = listOf(savedScore)
+        )
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaire)
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
+        every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(completedMalkuthSnapshot)
+        every { assessmentScoringEngine.score(any<ScoreInput>(), 1L) } returns savedScore
+        every { saveAssessmentScoreUseCase.run(1L to savedScore) } returns flowOf(
+            completedMalkuthSnapshot.copy(scores = listOf(savedScore))
+        )
+        every {
+            saveAssessmentAnswerUseCase.run(
+                SaveAnswerParams(
+                    sessionId = 1L,
+                    questionId = "q_last",
+                    selectedOptionId = "agree",
+                    numericValue = 3,
+                    questionOrder = 0,
+                    nextPageIndex = 0,
+                    nextQuestionIndex = 0
+                )
+            )
+        } returns flowOf(completedMalkuthSnapshot)
+        every {
+            advanceAssessmentSectionUseCase.run(
+                AdvanceAssessmentSectionParams(
+                    sessionId = 1L,
+                    sephiraId = SephiraId.YESOD,
+                    totalQuestions = 1
+                )
+            )
+        } returns flowOf(advancedSnapshot)
+
+        val viewModel = createViewModel(locale = Locale.ENGLISH)
+        viewModel.startAssessment()
+        viewModel.continueAssessment()
+        viewModel.continueFromCompletedResult()
+
+        val state = viewModel.uiState.value as AssessmentUiState.Intro
+        assertEquals("Yesod", state.model.sephiraName)
+        assertFalse(state.model.isResumeSession)
+    }
+
+    @Test
+    fun init_whenCurrentSectionHasNoOwnProgress_doesNotShowResumeLabel() = coroutinesRule.runBlockingTest {
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaireWithTwoSections())
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
+        every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(
+            testSnapshot(
+                questionnaireVersion = "tree-v1",
+                currentSephiraId = SephiraId.YESOD,
+                responses = listOf(
+                    SavedResponse("q_last", "agree", 3, 0, 1L)
+                )
+            )
+        )
+
+        val viewModel = createViewModel()
+        val state = viewModel.uiState.value as AssessmentUiState.Intro
+
+        assertEquals("Yesod", state.model.sephiraName)
+        assertFalse(state.model.isResumeSession)
     }
 
     @Test
@@ -364,25 +510,60 @@ class AssessmentViewModelTests {
         )
     }
 
+    private fun questionnaireWithTwoSections(): QuestionnaireContent {
+        return QuestionnaireContent(
+            version = "tree-v1",
+            title = "Tree of Life reflection",
+            responseScale = ResponseScaleDefinition(
+                format = QuestionFormat.LIKERT_5,
+                options = listOf(AnswerOption("agree", "Agree", 3))
+            ),
+            sections = listOf(
+                SephiraSectionContent(
+                    sephiraId = SephiraId.MALKUTH,
+                    displayName = "Malkuth",
+                    shortMeaning = "Meaning",
+                    introText = "Intro",
+                    pages = listOf(QuestionPageContent("page_1", "Money", "Resources", listOf("q_last"))),
+                    questions = listOf(
+                        QuestionContent("q_last", SephiraId.MALKUTH, "page_1", "Q Last", QuestionFormat.LIKERT_5, Pole.BALANCE)
+                    )
+                ),
+                SephiraSectionContent(
+                    sephiraId = SephiraId.YESOD,
+                    displayName = "Yesod",
+                    shortMeaning = "Foundation",
+                    introText = "Yesod intro",
+                    pages = listOf(QuestionPageContent("yesod_page_1", "Bonding", "Connection", listOf("yesod_q1"))),
+                    questions = listOf(
+                        QuestionContent("yesod_q1", SephiraId.YESOD, "yesod_page_1", "Yesod Q1", QuestionFormat.LIKERT_5, Pole.BALANCE)
+                    )
+                )
+            )
+        )
+    }
+
     private fun testSnapshot(
         questionnaireVersion: String = "malkuth-v1",
         totalQuestions: Int = 6,
+        currentSephiraId: SephiraId = SephiraId.MALKUTH,
         currentPageIndex: Int = 0,
         currentQuestionIndex: Int = 0,
-        responses: List<SavedResponse> = emptyList()
+        responses: List<SavedResponse> = emptyList(),
+        scores: List<SephiraScore> = emptyList()
     ): AssessmentSessionSnapshot {
         return AssessmentSessionSnapshot(
             sessionId = 1L,
             questionnaireVersion = questionnaireVersion,
             status = AssessmentStatus.IN_PROGRESS,
-            currentSephiraId = SephiraId.MALKUTH,
+            currentSephiraId = currentSephiraId,
             currentPageIndex = currentPageIndex,
             currentQuestionIndex = currentQuestionIndex,
             totalQuestions = totalQuestions,
             startedAt = 1L,
             completedAt = null,
             responses = responses,
-            scores = emptyList()
+            scores = scores
         )
     }
 }

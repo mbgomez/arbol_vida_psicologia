@@ -14,6 +14,9 @@ class AssessmentScoringEngine @Inject constructor() {
     fun score(input: ScoreInput, sessionId: Long): SephiraScore {
         val section = input.questionnaire.sections.first { it.sephiraId == input.sephiraId }
         val questionsById = section.questions.associateBy { it.id }
+        val sectionResponses = input.responses.filter { response ->
+            questionsById.containsKey(response.questionId)
+        }
 
         val maxLikertValue = when (input.questionnaire.responseScale.format) {
             QuestionFormat.LIKERT_5 -> 4
@@ -22,7 +25,7 @@ class AssessmentScoringEngine @Inject constructor() {
         }.toDouble()
 
         val poleQuestionCounts = section.questions.groupingBy { it.targetPole }.eachCount()
-        val responsesByPole = input.responses.groupBy { response ->
+        val responsesByPole = sectionResponses.groupBy { response ->
             questionsById.getValue(response.questionId).targetPole
         }
 
@@ -43,7 +46,11 @@ class AssessmentScoringEngine @Inject constructor() {
             deficiencyScore = deficiencyScore,
             excessScore = excessScore
         )
-        val completionRate = if (section.questions.isEmpty()) 0.0 else input.responses.size.toDouble() / section.questions.size.toDouble()
+        val completionRate = if (section.questions.isEmpty()) {
+            0.0
+        } else {
+            sectionResponses.size.toDouble() / section.questions.size.toDouble()
+        }
         val dominanceGap = if (scorePairs.size > 1) scorePairs[0].second - scorePairs[1].second else scorePairs[0].second
         val confidence = resolveConfidence(completionRate = completionRate, dominanceGap = dominanceGap, isLowConfidence = isLowConfidence)
 

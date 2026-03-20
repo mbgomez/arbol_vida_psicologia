@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentCompletedUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentErrorType
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentHonestyNoticeUiModel
@@ -68,6 +69,7 @@ fun AssessmentRoute(
         onHonestyPreferenceChanged = viewModel::setDoNotShowHonestyNoticeAgain,
         onSelectAnswer = viewModel::selectAnswer,
         onContinue = viewModel::continueAssessment,
+        onContinueFromCompleted = viewModel::continueFromCompletedResult,
         onBack = viewModel::goBack,
         onRetry = viewModel::retry,
         onBackHome = onBackHome
@@ -83,6 +85,7 @@ fun AssessmentScreen(
     onHonestyPreferenceChanged: (Boolean) -> Unit,
     onSelectAnswer: (String) -> Unit,
     onContinue: () -> Unit,
+    onContinueFromCompleted: () -> Unit,
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onBackHome: () -> Unit
@@ -111,6 +114,7 @@ fun AssessmentScreen(
             )
             is AssessmentUiState.Completed -> AssessmentCompletedState(
                 model = uiState.model,
+                onContinue = onContinueFromCompleted,
                 onBackHome = onBackHome
             )
             is AssessmentUiState.Error -> AssessmentErrorState(
@@ -213,7 +217,7 @@ private fun AssessmentIntroState(
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.SemiBold
         )
-        AssessmentHeroImage()
+        AssessmentHeroImage(sephiraId = model.sephiraId)
         ProgressHeader(model.progress)
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_intro_meaning_title),
@@ -244,9 +248,9 @@ private fun AssessmentIntroState(
 }
 
 @Composable
-private fun AssessmentHeroImage() {
+private fun AssessmentHeroImage(sephiraId: SephiraId) {
     Image(
-        painter = painterResource(R.mipmap.assessment_malkut),
+        painter = painterResource(sephiraHeroImageRes(sephiraId)),
         contentDescription = stringResource(R.string.assessment_intro_image_description),
         modifier = Modifier
             .fillMaxWidth()
@@ -254,6 +258,16 @@ private fun AssessmentHeroImage() {
             .clip(RoundedCornerShape(dimensionResource(R.dimen.onboarding_hero_corner_radius))),
         contentScale = ContentScale.Crop
     )
+}
+
+private fun sephiraHeroImageRes(sephiraId: SephiraId): Int {
+    return when (sephiraId) {
+        SephiraId.MALKUTH -> R.mipmap.assessment_malkut
+        SephiraId.YESOD -> R.mipmap.assessment_yesod
+        SephiraId.HOD -> R.mipmap.assessment_hod
+        SephiraId.NETZACH -> R.mipmap.assessment_netzaj
+        else -> R.mipmap.assessment_malkut
+    }
 }
 
 @Composable
@@ -317,6 +331,7 @@ private fun AssessmentQuestionState(
 @Composable
 private fun AssessmentCompletedState(
     model: AssessmentCompletedUiModel,
+    onContinue: () -> Unit,
     onBackHome: () -> Unit
 ) {
     val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
@@ -366,10 +381,25 @@ private fun AssessmentCompletedState(
             body = resultNextStep(model)
         )
         Button(
-            onClick = onBackHome,
+            onClick = {
+                if (model.hasNextSephira) {
+                    onContinue()
+                } else {
+                    onBackHome()
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.assessment_result_home_action))
+            Text(
+                text = if (model.hasNextSephira && model.nextSephiraName != null) {
+                    stringResource(
+                        R.string.assessment_result_continue_action,
+                        model.nextSephiraName
+                    )
+                } else {
+                    stringResource(R.string.assessment_result_home_action)
+                }
+            )
         }
     }
 }

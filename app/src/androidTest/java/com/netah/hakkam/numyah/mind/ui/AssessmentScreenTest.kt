@@ -52,6 +52,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = {}
@@ -82,6 +83,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = { doNotShowAgain = it },
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = {}
@@ -128,6 +130,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = {}
@@ -174,6 +177,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = {}
@@ -231,6 +235,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = { selectedAnswer = it },
                     onContinue = { continued = true },
+                    onContinueFromCompleted = {},
                     onBack = { wentBack = true },
                     onRetry = {},
                     onBackHome = {}
@@ -289,6 +294,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = {}
@@ -317,7 +323,9 @@ class AssessmentScreenTest {
                             balanceScore = 0.22,
                             deficiencyScore = 0.51,
                             excessScore = 0.27,
-                            isLowConfidence = true
+                            isLowConfidence = true,
+                            hasNextSephira = false,
+                            nextSephiraName = null
                         )
                     ),
                     onStart = {},
@@ -325,6 +333,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = {},
                     onBackHome = { returnedHome = true }
@@ -332,13 +341,14 @@ class AssessmentScreenTest {
             }
         }
 
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_title, "Malkuth")).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_leans_deficiency)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
-        composeTestRule.onAllNodesWithText("22%", substring = true, useUnmergedTree = true).assertCountEquals(1)
-        composeTestRule.onAllNodesWithText("51%", substring = true, useUnmergedTree = true).assertCountEquals(1)
-        composeTestRule.onAllNodesWithText("27%", substring = true, useUnmergedTree = true).assertCountEquals(1)
+        composeTestRule.onNodeWithText("22%", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("51%", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("27%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_daily_life_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_next_step_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_home_action)).performScrollTo().performClick()
@@ -361,6 +371,7 @@ class AssessmentScreenTest {
                     onHonestyPreferenceChanged = {},
                     onSelectAnswer = {},
                     onContinue = {},
+                    onContinueFromCompleted = {},
                     onBack = {},
                     onRetry = { retried = true },
                     onBackHome = {}
@@ -372,5 +383,50 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_retry)).performClick()
 
         assertTrue(retried)
+    }
+
+    @Test
+    fun assessmentScreen_completedState_withNextSephira_usesContinueAction() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var continued = false
+        var returnedHome = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentUiState.Completed(
+                        AssessmentCompletedUiModel(
+                            sephiraId = SephiraId.MALKUTH,
+                            sephiraName = "Malkuth",
+                            dominantPole = Pole.BALANCE,
+                            confidence = ConfidenceLevel.MEDIUM,
+                            balanceScore = 0.55,
+                            deficiencyScore = 0.20,
+                            excessScore = 0.25,
+                            isLowConfidence = false,
+                            hasNextSephira = true,
+                            nextSephiraName = "Yesod"
+                        )
+                    ),
+                    onStart = {},
+                    onContinueFromHonestyNotice = {},
+                    onHonestyPreferenceChanged = {},
+                    onSelectAnswer = {},
+                    onContinue = {},
+                    onContinueFromCompleted = { continued = true },
+                    onBack = {},
+                    onRetry = {},
+                    onBackHome = { returnedHome = true }
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_result_continue_action, "Yesod")
+        ).performScrollTo().performClick()
+
+        assertTrue(continued)
+        assertEquals(false, returnedHome)
     }
 }

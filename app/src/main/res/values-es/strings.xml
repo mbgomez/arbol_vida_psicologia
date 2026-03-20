@@ -57,7 +57,7 @@
     <string name="assessment_honesty_body">Esta reflexion es mas util cuando tus respuestas son honestas sobre como te sientes hoy.\n\nNo hay respuestas correctas aqui. No necesitas mostrar tu mejor version, solo tu experiencia real en este momento.</string>
     <string name="assessment_honesty_skip_label">No volver a mostrar esto</string>
     <string name="assessment_honesty_continue">Continuar</string>
-    <string name="assessment_intro_meaning_title">Lo que senala Malkuth</string>
+    <string name="assessment_intro_meaning_title">Lo que senala esta sefira</string>
     <string name="assessment_intro_reflection_title">Lo que reflexionaras aqui</string>
     <string name="assessment_start">Comenzar reflexion</string>
     <string name="assessment_resume">Retomar reflexion</string>
@@ -104,6 +104,7 @@
     <string name="assessment_result_next_step_balance">Sigue observando lo que te ayuda a mantenerte enraizado sin volverte rigido. Los habitos pequenos y repetibles son mas utiles aqui que perseguir la perfeccion.</string>
     <string name="assessment_result_next_step_deficiency">Un siguiente paso amable es fortalecer un acto basico de cuidado: comida, descanso, movimiento, consciencia del dinero o atencion al entorno. La meta no es la intensidad. Es la constancia.</string>
     <string name="assessment_result_next_step_excess">Un siguiente paso amable es aflojar una zona de sobrecontrol y preguntar que se sentiria de apoyo en vez de exigente. La meta no es abandonar la estructura, sino volverla mas humana.</string>
+    <string name="assessment_result_continue_action">Continuar a %1$s</string>
     <string name="assessment_result_home_action">Abrir vista general de resultados</string>
     <string name="assessment_error_load">La evaluacion no pudo cargarse en este momento.</string>
     <string name="assessment_error_save">Tu respuesta no pudo guardarse. Intentalo de nuevo.</string>
@@ -121,6 +122,15 @@
     <string name="results_error_body">Tus resultados guardados no pudieron cargarse en este momento. Intentalo de nuevo.</string>
     <string name="results_overview_title">Ultima vista general del Arbol de la Vida</string>
     <string name="results_overview_subtitle">%1$d de %2$d sefirot tienen resultados guardados en esta evaluacion completada.</string>
+    <string name="results_ranking_title">Como se esta ordenando el arbol actual</string>
+    <string name="results_ranking_body">Las tarjetas de abajo estan ordenadas de mas desequilibrio a mas balance, usando carencia mas exceso como la tension principal mientras siguen mostrando las tres fuerzas.</string>
+    <string name="results_needs_attention_title">Necesita mas atencion</string>
+    <string name="results_needs_attention_body">%1$s es la sefira que ahora mismo carga mas tension, con un puntaje de desequilibrio de %2$d.</string>
+    <string name="results_most_balanced_title">La mas equilibrada ahora</string>
+    <string name="results_most_balanced_body">%1$s es la que ahora mismo se ve mas asentada, con %2$d de balance.</string>
+    <string name="results_rank_badge">Puesto %1$d de %2$d</string>
+    <string name="results_imbalance_badge">Desequilibrio %1$d</string>
+    <string name="results_percent_value">%1$d%%</string>
     <string name="results_score_summary">Balance %1$s, Carencia %2$s, Exceso %3$s</string>
     <string name="placeholder_history_title">Placeholder de historial</string>
     <string name="placeholder_history_body">Las evaluaciones completadas y sus repeticiones apareceran aqui cuando agreguemos persistencia local de sesiones y resultados.</string>

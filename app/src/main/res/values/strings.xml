@@ -58,7 +58,7 @@
     <string name="assessment_honesty_body">This reflection is most useful when your answers are honest about how things feel today.\n\nThere are no right answers here. You do not need to present your best self, only your real current experience.</string>
     <string name="assessment_honesty_skip_label">Do not show this again</string>
     <string name="assessment_honesty_continue">Continue</string>
-    <string name="assessment_intro_meaning_title">What Malkuth points to</string>
+    <string name="assessment_intro_meaning_title">What this sephira points to</string>
     <string name="assessment_intro_reflection_title">What you will reflect on here</string>
     <string name="assessment_start">Start reflection</string>
     <string name="assessment_resume">Resume reflection</string>
@@ -105,6 +105,7 @@
     <string name="assessment_result_next_step_balance">Keep noticing what helps you stay grounded without becoming rigid. Small, repeatable habits are more useful here than pushing for perfection.</string>
     <string name="assessment_result_next_step_deficiency">A gentle next step is to strengthen one basic act of care: food, rest, movement, money awareness, or tending to your environment. The goal is not intensity. It is steadiness.</string>
     <string name="assessment_result_next_step_excess">A gentle next step is to loosen one area of overcontrol and ask what would feel supportive instead of demanding. The goal is not to abandon structure, but to make it more humane.</string>
+    <string name="assessment_result_continue_action">Continue to %1$s</string>
     <string name="assessment_result_home_action">Open results overview</string>
     <string name="assessment_error_load">The assessment could not be loaded right now.</string>
     <string name="assessment_error_save">Your answer could not be saved. Please try again.</string>
@@ -122,6 +123,15 @@
     <string name="results_error_body">Your saved results could not be loaded right now. Please try again.</string>
     <string name="results_overview_title">Latest Tree of Life overview</string>
     <string name="results_overview_subtitle">%1$d of %2$d sephirot have saved results in this completed assessment.</string>
+    <string name="results_ranking_title">How the current tree is settling</string>
+    <string name="results_ranking_body">The cards below are sorted from more unbalanced to more balanced, using deficiency plus excess as the main tension score while still showing all three forces.</string>
+    <string name="results_needs_attention_title">Needs more attention</string>
+    <string name="results_needs_attention_body">%1$s is currently carrying the most tension, with an imbalance score of %2$d.</string>
+    <string name="results_most_balanced_title">Most in balance right now</string>
+    <string name="results_most_balanced_body">%1$s currently looks the most settled, with %2$d balance.</string>
+    <string name="results_rank_badge">Rank %1$d of %2$d</string>
+    <string name="results_imbalance_badge">Imbalance %1$d</string>
+    <string name="results_percent_value">%1$d%%</string>
     <string name="results_score_summary">Balance %1$s, Deficiency %2$s, Excess %3$s</string>
     <string name="placeholder_history_title">History placeholder</string>
     <string name="placeholder_history_body">Completed assessments and retakes will appear here once local persistence for sessions and results is added.</string>

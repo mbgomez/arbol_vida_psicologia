@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -53,6 +55,8 @@ import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
 import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
+import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
+import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
 
 @Composable
 fun MainNavGraph(
@@ -86,10 +90,16 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.Assessment.route) {
-            AppShell(navController = navController) { paddingValues ->
+            val assessmentViewModel: AssessmentViewModel = hiltViewModel()
+            val assessmentUiState by assessmentViewModel.uiState.collectAsState()
+            AppShell(
+                navController = navController,
+                titleOverride = assessmentScreenTitle(assessmentUiState)
+            ) { paddingValues ->
                 AssessmentRoute(
                     paddingValues = paddingValues,
-                    onBackHome = { navController.navigate(AppDestination.Results.route) }
+                    onBackHome = { navController.navigate(AppDestination.Results.route) },
+                    viewModel = assessmentViewModel
                 )
             }
         }
@@ -122,12 +132,13 @@ fun MainNavGraph(
 @Composable
 private fun AppShell(
     navController: NavHostController,
+    titleOverride: String? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
-    val currentTitle = destinationTitle(currentRoute)
+    val currentTitle = titleOverride ?: destinationTitle(currentRoute)
     var showExitAssessmentDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -215,6 +226,20 @@ private fun AppShell(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun assessmentScreenTitle(uiState: AssessmentUiState): String? {
+    val sephiraName = when (uiState) {
+        is AssessmentUiState.Intro -> uiState.model.sephiraName
+        is AssessmentUiState.Question -> uiState.model.sephiraName
+        is AssessmentUiState.Completed -> uiState.model.sephiraName
+        else -> null
+    }
+
+    return sephiraName?.let {
+        stringResource(R.string.screen_assessment_with_sephira, it)
     }
 }
 

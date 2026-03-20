@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 sealed interface ResultsUiState {
     data object Loading : ResultsUiState
@@ -30,6 +31,8 @@ data class ResultsOverviewUiModel(
     val subtitle: String,
     val completedCount: Int,
     val totalCount: Int,
+    val mostBalanced: ResultsSephiraUiModel?,
+    val needsAttention: ResultsSephiraUiModel?,
     val sephirot: List<ResultsSephiraUiModel>
 )
 
@@ -40,7 +43,11 @@ data class ResultsSephiraUiModel(
     val isLowConfidence: Boolean,
     val balanceScore: Double,
     val deficiencyScore: Double,
-    val excessScore: Double
+    val excessScore: Double,
+    val balancePercent: Int,
+    val deficiencyPercent: Int,
+    val excessPercent: Int,
+    val imbalancePercent: Int
 )
 
 @HiltViewModel
@@ -76,8 +83,11 @@ class ResultsViewModel @Inject constructor(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
     ): ResultsOverviewUiModel {
-        val orderedScores = questionnaire.sections.mapNotNull { section ->
+        val rankedScores = questionnaire.sections.mapNotNull { section ->
             snapshot.scores.firstOrNull { it.sephiraId == section.sephiraId }?.let { score ->
+                val balancePercent = scorePercent(score.balanceScore)
+                val deficiencyPercent = scorePercent(score.deficiencyScore)
+                val excessPercent = scorePercent(score.excessScore)
                 ResultsSephiraUiModel(
                     sephiraName = section.displayName,
                     dominantPole = score.dominantPole,
@@ -85,17 +95,47 @@ class ResultsViewModel @Inject constructor(
                     isLowConfidence = score.isLowConfidence,
                     balanceScore = score.balanceScore,
                     deficiencyScore = score.deficiencyScore,
-                    excessScore = score.excessScore
+                    excessScore = score.excessScore,
+                    balancePercent = balancePercent,
+                    deficiencyPercent = deficiencyPercent,
+                    excessPercent = excessPercent,
+                    imbalancePercent = deficiencyPercent + excessPercent
                 )
             }
-        }
+        }.sortedWith(
+            compareByDescending<ResultsSephiraUiModel> { it.imbalancePercent }
+                .thenBy { it.balancePercent }
+        )
+
+        val mostBalanced = rankedScores.minWithOrNull(
+            compareBy<ResultsSephiraUiModel> { it.imbalancePercent }
+                .thenByDescending { it.balancePercent }
+        )
+        val needsAttention = rankedScores.maxWithOrNull(
+            compareBy<ResultsSephiraUiModel> { it.imbalancePercent }
+                .thenBy { it.balancePercent }
+        )
 
         return ResultsOverviewUiModel(
             title = questionnaire.title,
-            subtitle = snapshot.completedAt?.let { "Most recent completed reflection" } ?: "Current completed reflection",
-            completedCount = orderedScores.size,
+            subtitle = snapshot.completedAt?.let {
+                if (locale.language == "es") {
+                    "Reflexion completada mas reciente"
+                } else {
+                    "Most recent completed reflection"
+                }
+            } ?: if (locale.language == "es") {
+                "Reflexion completada actual"
+            } else {
+                "Current completed reflection"
+            },
+            completedCount = rankedScores.size,
             totalCount = questionnaire.sections.size,
-            sephirot = orderedScores
+            mostBalanced = mostBalanced,
+            needsAttention = needsAttention,
+            sephirot = rankedScores
         )
     }
+
+    private fun scorePercent(value: Double): Int = (value * 100).roundToInt()
 }
