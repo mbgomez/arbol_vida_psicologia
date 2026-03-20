@@ -29,6 +29,7 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
 - `6` questions
 - `LIKERT_5` response scale only
 - local structured seed content with questionnaire versioning
+- local JSON questionnaire content parsed through the app content layer and cached into Room for offline reuse
 - generic domain contracts prepared for future multi-sephira expansion
 - one active assessment session at a time
 - save progress after every answer
@@ -69,6 +70,8 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
 - Use softened result language when the result is low-confidence.
 - Keep copy and localization separate from scoring logic.
 - Treat bilingual readiness as a standard even if content rollout is phased.
+- Use a mock-endpoint style local JSON questionnaire source and save the parsed content into Room so the same slice can support offline reads and future remote-content evolution.
+- Use `Long` for runtime-created records such as sessions, `String` for authored content identifiers such as questions and pages, and enums for closed questionnaire vocabularies.
 - Use `Malkuth` as the in-app spelling standard for this project slice.
 - Group the questions into two themed pages of three questions each.
 - Keep questions authored in thematic order rather than randomized for this slice.
@@ -178,10 +181,12 @@ Product acceptance:
 Technical acceptance:
 
 - questionnaire content is versioned and local
+- questionnaire content is parsed from the local JSON source and cached into Room
 - every answer is saved locally
 - the active session restores reliably
 - score calculation is deterministic and unit-tested
 - repository, use case, and ViewModel coverage exists for the slice
+- Room-backed repository verification should prefer local Robolectric tests unless device-only behavior is required
 
 ## Review Questions
 

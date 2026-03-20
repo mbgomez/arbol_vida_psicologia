@@ -421,6 +421,14 @@ Questionnaire content can be seeded from local JSON on first launch or from code
 
 Seeded content should be structured to support multilingual copy from the start.
 
+For the assessment engine, use local JSON as the mock-endpoint content shape in v1, parse it through the content layer, and cache the normalized questionnaire into Room so the same flow supports offline reuse and future remote-content evolution.
+
+ID standard:
+
+- use `Long` for runtime-created database records such as assessment sessions
+- use `String` for authored content identifiers such as questionnaire versions, question IDs, page IDs, and answer option IDs
+- use enums for closed app vocabularies such as `SephiraId`, `Pole`, `QuestionFormat`, `AssessmentStatus`, and `ConfidenceLevel`
+
 ### Navigation Proposal
 
 Navigation graph:
@@ -472,6 +480,7 @@ UI test prioritization guidance:
 
 - Start by covering the screens and interactions that define the current product slice, such as onboarding, primary entry actions, and critical navigation behavior.
 - Avoid investing heavily in UI tests for placeholder or transitional screens unless they represent a real user contract that should remain stable.
+- Prefer Robolectric-backed local JVM tests for Room repository and database verification when the behavior does not require device-only execution. Avoid growing new instrumented persistence tests by default unless the test specifically depends on Android runtime behavior that Robolectric cannot cover well.
 
 ## 7. Implementation Phases
 
@@ -613,6 +622,7 @@ The goal of this slice is to prove the real core loop in a way that can later be
 - `6` questions for the section
 - `LIKERT_5` as the only response format in this slice
 - local structured questionnaire content with a `version` field
+- local JSON questionnaire content with a `version` field, cached into Room after load for offline reuse
 - generic domain models that are ready for future multi-sephira expansion
 - Room-backed persistence for:
   - one active assessment session
@@ -660,6 +670,7 @@ The goal of this slice is to prove the real core loop in a way that can later be
 - The architecture should be bilingual-ready now even if content expansion continues later.
 - Use `Malkuth` as the in-app spelling standard for this slice.
 - Group the six questions into two themed pages of three questions each.
+- Use a local JSON questionnaire source for this slice and cache parsed content into Room so the content pipeline remains compatible with offline use and future remote updates.
 
 ### Acceptance Criteria
 

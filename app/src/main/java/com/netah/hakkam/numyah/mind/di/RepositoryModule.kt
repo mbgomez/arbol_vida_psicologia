@@ -2,7 +2,14 @@ package com.netah.hakkam.numyah.mind.di
 
 
 import com.netah.hakkam.numyah.mind.data.datasource.local.PostDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
 import com.netah.hakkam.numyah.mind.data.datasource.remote.InternetConnectionChecker
+import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
+import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
+import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
+import com.netah.hakkam.numyah.mind.data.repository.LocalAssessmentContentRepository
+import com.netah.hakkam.numyah.mind.data.repository.LocalAssessmentSessionRepository
 import com.netah.hakkam.numyah.mind.data.datasource.remote.PostService
 import com.netah.hakkam.numyah.mind.data.repository.IPostRepository
 import com.netah.hakkam.numyah.mind.data.repository.PostRepository
@@ -29,6 +36,24 @@ class RepositoryModule {
         internetConnectionChecker = internetConnectionChecker,
         postDao = postDao,
         postMapper = postMapper
+    )
+
+    @Singleton
+    @Provides
+    fun provideAssessmentContentRepository(
+        jsonAssessmentContentDataSource: JsonAssessmentContentDataSource,
+        questionnaireContentDao: QuestionnaireContentDao
+    ): AssessmentContentRepository = LocalAssessmentContentRepository(
+        jsonAssessmentContentDataSource = jsonAssessmentContentDataSource,
+        questionnaireContentDao = questionnaireContentDao
+    )
+
+    @Singleton
+    @Provides
+    fun provideAssessmentSessionRepository(
+        assessmentSessionDao: AssessmentSessionDao
+    ): AssessmentSessionRepository = LocalAssessmentSessionRepository(
+        assessmentSessionDao = assessmentSessionDao
     )
 
 }

@@ -40,6 +40,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -74,6 +78,8 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.retrofit)
     implementation(libs.moshi)
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.kotlin)
     implementation(libs.logging.interceptor)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -86,8 +92,10 @@ dependencies {
     ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.core)
     testImplementation(libs.mockk)
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.robolectric)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

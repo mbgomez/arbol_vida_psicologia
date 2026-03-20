@@ -1,0 +1,71 @@
+package com.netah.hakkam.numyah.mind.domain.usecase
+
+import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
+import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
+import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
+import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+
+data class StartOrResumeAssessmentParams(
+    val questionnaireVersion: String,
+    val initialSephiraId: SephiraId,
+    val totalQuestions: Int
+)
+
+data class SaveAnswerParams(
+    val sessionId: Long,
+    val questionId: String,
+    val selectedOptionId: String,
+    val numericValue: Int,
+    val questionOrder: Int,
+    val nextPageIndex: Int,
+    val nextQuestionIndex: Int
+)
+
+class StartOrResumeAssessmentUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<StartOrResumeAssessmentParams, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: StartOrResumeAssessmentParams): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.startOrResumeSession(
+            questionnaireVersion = params.questionnaireVersion,
+            initialSephiraId = params.initialSephiraId,
+            totalQuestions = params.totalQuestions
+        )
+    }
+}
+
+class ObserveActiveAssessmentUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractorNoParams<AssessmentSessionSnapshot?>() {
+    override fun buildUseCase(): Flow<AssessmentSessionSnapshot?> {
+        return assessmentSessionRepository.observeActiveSession()
+    }
+}
+
+class SaveAssessmentAnswerUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<SaveAnswerParams, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: SaveAnswerParams): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.saveAnswer(
+            sessionId = params.sessionId,
+            questionId = params.questionId,
+            selectedOptionId = params.selectedOptionId,
+            numericValue = params.numericValue,
+            questionOrder = params.questionOrder,
+            nextPageIndex = params.nextPageIndex,
+            nextQuestionIndex = params.nextQuestionIndex
+        )
+    }
+}
+
+class CompleteAssessmentUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<Pair<Long, SephiraScore>, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: Pair<Long, SephiraScore>): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.completeSession(
+            sessionId = params.first,
+            score = params.second
+        )
+    }
+}

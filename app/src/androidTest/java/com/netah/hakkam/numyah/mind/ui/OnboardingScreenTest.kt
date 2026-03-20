@@ -34,7 +34,8 @@ class OnboardingScreenTest {
                     uiState = OnboardingUiState(),
                     onBack = {},
                     onContinue = {},
-                    onSkip = {}
+                    onSkip = {},
+                    onPageChanged = {}
                 )
             }
         }
@@ -65,7 +66,8 @@ class OnboardingScreenTest {
                             currentPage = (uiState.currentPage + 1).coerceAtMost(uiState.pageCount - 1)
                         )
                     },
-                    onSkip = {}
+                    onSkip = {},
+                    onPageChanged = { page -> uiState = uiState.copy(currentPage = page) }
                 )
             }
         }
@@ -92,7 +94,8 @@ class OnboardingScreenTest {
                     uiState = OnboardingUiState(),
                     onBack = {},
                     onContinue = {},
-                    onSkip = { skipped = true }
+                    onSkip = { skipped = true },
+                    onPageChanged = {}
                 )
             }
         }
