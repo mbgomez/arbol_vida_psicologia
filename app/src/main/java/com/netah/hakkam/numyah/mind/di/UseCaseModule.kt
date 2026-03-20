@@ -14,6 +14,7 @@ import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCas
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -73,6 +74,14 @@ class UseCaseModule {
     fun provideSaveAssessmentAnswerUseCase(
         assessmentSessionRepository: AssessmentSessionRepository
     ) = SaveAssessmentAnswerUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideUpdateAssessmentProgressUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = UpdateAssessmentProgressUseCase(
         assessmentSessionRepository = assessmentSessionRepository
     )
 

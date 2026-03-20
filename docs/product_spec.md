@@ -381,6 +381,7 @@ Recommended rule:
 - ViewModels should live under `viewmodel/*`
 - data, domain, and DI should stay outside the UI tree
 - When a feature already uses repository and use case abstractions, prefer flow-based repositories and thin use cases rather than direct repository access from ViewModels
+- ViewModels should expose semantic UI state rather than localized user-facing copy. Resolve display strings such as error text, result labels, and action wording in the UI layer from resources whenever possible.
 
 ### Layer Responsibilities
 
@@ -404,6 +405,10 @@ Use one ViewModel per screen or tightly related flow, under the `viewmodel` pack
 - `HistoryViewModel`
 
 Prefer `StateFlow`-based UI state rather than exposing mutable Compose state directly. This will make business logic easier to test.
+
+For assessment slices, keep intro content, question progression, resume position, completion behavior, and result mapping inside the same ViewModel-driven state contract even if the UI later renders intro and questions as separate screens or phases.
+
+For multi-phase assessment flows, prefer explicit UI states such as `Loading`, `Intro`, `Question`, `Completed`, and `Error` instead of one overloaded active-state object. Extract shared UI data such as progress and navigation into smaller submodels when that improves readability and testing.
 
 ### Storage Proposal
 
@@ -481,6 +486,7 @@ UI test prioritization guidance:
 - Start by covering the screens and interactions that define the current product slice, such as onboarding, primary entry actions, and critical navigation behavior.
 - Avoid investing heavily in UI tests for placeholder or transitional screens unless they represent a real user contract that should remain stable.
 - Prefer Robolectric-backed local JVM tests for Room repository and database verification when the behavior does not require device-only execution. Avoid growing new instrumented persistence tests by default unless the test specifically depends on Android runtime behavior that Robolectric cannot cover well.
+- For assessment flows, keep progression and persistence logic owned by the ViewModel/use case layer rather than duplicating that behavior in Compose UI code.
 
 ## 7. Implementation Phases
 

@@ -37,6 +37,12 @@ interface AssessmentSessionRepository {
         nextQuestionIndex: Int
     ): Flow<AssessmentSessionSnapshot>
 
+    fun updateProgress(
+        sessionId: Long,
+        pageIndex: Int,
+        questionIndex: Int
+    ): Flow<AssessmentSessionSnapshot>
+
     fun completeSession(
         sessionId: Long,
         score: SephiraScore
@@ -141,6 +147,23 @@ class LocalAssessmentSessionRepository @Inject constructor(
         val responses = assessmentSessionDao.getResponsesForSession(sessionId)
         val scores = assessmentSessionDao.getScoresForSession(sessionId)
         emit(completedSession.toSnapshot(responses = responses, scores = scores))
+    }
+
+    override fun updateProgress(
+        sessionId: Long,
+        pageIndex: Int,
+        questionIndex: Int
+    ): Flow<AssessmentSessionSnapshot> = flow {
+        assessmentSessionDao.updateProgress(
+            sessionId = sessionId,
+            pageIndex = pageIndex,
+            questionIndex = questionIndex
+        )
+        val session = assessmentSessionDao.getSessionById(sessionId)
+            ?: error("Expected session after progress update")
+        val responses = assessmentSessionDao.getResponsesForSession(sessionId)
+        val scores = assessmentSessionDao.getScoresForSession(sessionId)
+        emit(session.toSnapshot(responses = responses, scores = scores))
     }
 }
 

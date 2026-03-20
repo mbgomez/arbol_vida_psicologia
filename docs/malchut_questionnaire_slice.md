@@ -75,6 +75,10 @@ This slice reduces risk by proving the real product loop for one sephira in a wa
 - Use `Malkuth` as the in-app spelling standard for this project slice.
 - Group the questions into two themed pages of three questions each.
 - Keep questions authored in thematic order rather than randomized for this slice.
+- Keep intro content, questionnaire progression, and result mapping inside one ViewModel-driven state contract for the slice.
+- Keep user-facing labels and error wording out of the ViewModel. The ViewModel should expose semantic state, and the UI should resolve display text from resources.
+- Keep back/continue/progress/resume behavior owned by the ViewModel and use case layer rather than rebuilding that logic inside Compose screens.
+- Prefer explicit phase-based assessment UI states such as `Loading`, `Intro`, `Question`, `Completed`, and `Error` instead of one overloaded active-state model.
 
 ## Expected User Outcome
 

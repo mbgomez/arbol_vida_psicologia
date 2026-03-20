@@ -23,6 +23,12 @@ data class SaveAnswerParams(
     val nextQuestionIndex: Int
 )
 
+data class UpdateAssessmentProgressParams(
+    val sessionId: Long,
+    val pageIndex: Int,
+    val questionIndex: Int
+)
+
 class StartOrResumeAssessmentUseCase @Inject constructor(
     private val assessmentSessionRepository: AssessmentSessionRepository
 ) : FlowInteractor<StartOrResumeAssessmentParams, AssessmentSessionSnapshot>() {
@@ -55,6 +61,18 @@ class SaveAssessmentAnswerUseCase @Inject constructor(
             questionOrder = params.questionOrder,
             nextPageIndex = params.nextPageIndex,
             nextQuestionIndex = params.nextQuestionIndex
+        )
+    }
+}
+
+class UpdateAssessmentProgressUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<UpdateAssessmentProgressParams, AssessmentSessionSnapshot>() {
+    override fun buildUseCase(params: UpdateAssessmentProgressParams): Flow<AssessmentSessionSnapshot> {
+        return assessmentSessionRepository.updateProgress(
+            sessionId = params.sessionId,
+            pageIndex = params.pageIndex,
+            questionIndex = params.questionIndex
         )
     }
 }
