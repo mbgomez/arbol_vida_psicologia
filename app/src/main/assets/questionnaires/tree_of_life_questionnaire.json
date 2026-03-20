@@ -1,0 +1,543 @@
+{
+  "version": "tree-of-life-v1",
+  "title": {
+    "en": "Tree of Life reflection",
+    "es": "Reflexion del Arbol de la Vida"
+  },
+  "responseScale": [
+    {
+      "id": "strongly_disagree",
+      "label": {
+        "en": "Strongly disagree",
+        "es": "Muy en desacuerdo"
+      },
+      "numericValue": 0
+    },
+    {
+      "id": "disagree",
+      "label": {
+        "en": "Disagree",
+        "es": "En desacuerdo"
+      },
+      "numericValue": 1
+    },
+    {
+      "id": "neither",
+      "label": {
+        "en": "Neither agree nor disagree",
+        "es": "Ni de acuerdo ni en desacuerdo"
+      },
+      "numericValue": 2
+    },
+    {
+      "id": "agree",
+      "label": {
+        "en": "Agree",
+        "es": "De acuerdo"
+      },
+      "numericValue": 3
+    },
+    {
+      "id": "strongly_agree",
+      "label": {
+        "en": "Strongly agree",
+        "es": "Muy de acuerdo"
+      },
+      "numericValue": 4
+    }
+  ],
+  "sections": [
+    {
+      "sephiraId": "MALKUTH",
+      "displayName": {
+        "en": "Malkuth",
+        "es": "Malkuth"
+      },
+      "shortMeaning": {
+        "en": "Malkuth represents your relationship with the material world. In psychological terms, it reflects how you relate to the body, daily life, possessions, and practical reality.",
+        "es": "Malkuth representa tu relacion con el mundo material. En terminos psicologicos, refleja como te relacionas con el cuerpo, la vida cotidiana, las posesiones y la realidad practica."
+      },
+      "introText": {
+        "en": "This section explores how you relate to material life through money, possessions, health, and the body. It looks for balance, deficiency, and excess without reducing you to a fixed label.",
+        "es": "Esta seccion explora como te relacionas con la vida material a traves del dinero, las posesiones, la salud y el cuerpo. Busca balance, carencia y exceso sin reducirte a una etiqueta fija."
+      },
+      "pages": [
+        {
+          "id": "malkuth_resources",
+          "title": {
+            "en": "Money, riches, and possessions",
+            "es": "Dinero, riqueza y posesiones"
+          },
+          "description": {
+            "en": "Reflect on how you care for resources, security, and material stability.",
+            "es": "Reflexiona sobre como cuidas tus recursos, tu seguridad y tu estabilidad material."
+          },
+          "questionIds": [
+            "malkuth_resources_excess",
+            "malkuth_resources_deficiency",
+            "malkuth_resources_balance"
+          ]
+        },
+        {
+          "id": "malkuth_body",
+          "title": {
+            "en": "Body, health, and diet",
+            "es": "Cuerpo, salud y dieta"
+          },
+          "description": {
+            "en": "Reflect on the way you care for your body through daily physical habits.",
+            "es": "Reflexiona sobre la forma en que cuidas tu cuerpo a traves de habitos fisicos cotidianos."
+          },
+          "questionIds": [
+            "malkuth_body_excess",
+            "malkuth_body_deficiency",
+            "malkuth_body_balance"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "malkuth_resources_excess",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_resources",
+          "prompt": {
+            "en": "I spend a great deal of my time and energy trying to accumulate money or possessions.",
+            "es": "Dedico gran parte de mi tiempo y energia a intentar acumular dinero o posesiones."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "malkuth_resources_deficiency",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_resources",
+          "prompt": {
+            "en": "I avoid taking care of my money or possessions because I feel other parts of life matter more.",
+            "es": "Evito cuidar mi dinero o mis posesiones porque siento que otras areas de la vida importan mas."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "malkuth_resources_balance",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_resources",
+          "prompt": {
+            "en": "I appreciate what I have while still looking for practical ways to improve my material stability.",
+            "es": "Aprecio lo que tengo mientras sigo buscando formas practicas de mejorar mi estabilidad material."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        },
+        {
+          "id": "malkuth_body_excess",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_body",
+          "prompt": {
+            "en": "I am very strict with my diet, exercise, or health routines because I feel my body must be carefully controlled.",
+            "es": "Soy muy estricto con mi dieta, el ejercicio o mis rutinas de salud porque siento que mi cuerpo debe estar cuidadosamente controlado."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "malkuth_body_deficiency",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_body",
+          "prompt": {
+            "en": "I focus more on enjoying the moment than on keeping track of my diet, exercise, or physical health.",
+            "es": "Me enfoco mas en disfrutar el momento que en llevar un seguimiento de mi dieta, ejercicio o salud fisica."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "malkuth_body_balance",
+          "sephiraId": "MALKUTH",
+          "pageId": "malkuth_body",
+          "prompt": {
+            "en": "I try to care for my body through balanced habits and a realistic weekly routine.",
+            "es": "Intento cuidar mi cuerpo a traves de habitos equilibrados y una rutina semanal realista."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "sephiraId": "YESOD",
+      "displayName": {
+        "en": "Yesod",
+        "es": "Yesod"
+      },
+      "shortMeaning": {
+        "en": "Yesod reflects the emotional and relational foundation that connects your inner life with how you bond, trust, and share yourself with others.",
+        "es": "Yesod refleja la base emocional y relacional que conecta tu vida interior con la forma en que te vinculas, confias y te compartes con otras personas."
+      },
+      "introText": {
+        "en": "This section explores closeness, confidence, and the way you move between connection and privacy. It looks for balance, deficiency, and excess without turning your answers into a fixed label.",
+        "es": "Esta seccion explora la cercania, la confianza y la forma en que te mueves entre la conexion y la privacidad. Busca balance, carencia y exceso sin convertir tus respuestas en una etiqueta fija."
+      },
+      "pages": [
+        {
+          "id": "yesod_social_life",
+          "title": {
+            "en": "Social life and time alone",
+            "es": "Vida social y tiempo a solas"
+          },
+          "description": {
+            "en": "Reflect on how you move between companionship and personal space.",
+            "es": "Reflexiona sobre como te mueves entre la compania y el espacio personal."
+          },
+          "questionIds": [
+            "yesod_social_life_excess",
+            "yesod_social_life_deficiency",
+            "yesod_social_life_balance"
+          ]
+        },
+        {
+          "id": "yesod_ego_confidence",
+          "title": {
+            "en": "Ego and self-confidence",
+            "es": "Ego y confianza en ti"
+          },
+          "description": {
+            "en": "Reflect on how visible, secure, and responsive you feel in relation to others' opinions.",
+            "es": "Reflexiona sobre cuan visible, seguro y receptivo te sientes frente a las opiniones de otras personas."
+          },
+          "questionIds": [
+            "yesod_ego_confidence_excess",
+            "yesod_ego_confidence_deficiency",
+            "yesod_ego_confidence_balance"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "yesod_social_life_excess",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_social_life",
+          "prompt": {
+            "en": "I feel uneasy spending time on my own, so I try to fill most of my free time with friends or family.",
+            "es": "Me siento inquieto cuando paso tiempo a solas, asi que intento llenar casi todo mi tiempo libre con amigos o familia."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "yesod_social_life_deficiency",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_social_life",
+          "prompt": {
+            "en": "I often keep to myself, or only to pets and solitary activities, even when more connection could be good for me.",
+            "es": "A menudo me quedo solo, o solo con mascotas y actividades solitarias, incluso cuando un poco mas de conexion podria hacerme bien."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "yesod_social_life_balance",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_social_life",
+          "prompt": {
+            "en": "Sometimes I spend time with others and other times on my own, and I find both genuinely enjoyable.",
+            "es": "A veces paso tiempo con otras personas y otras veces por mi cuenta, y disfruto de verdad ambas cosas."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        },
+        {
+          "id": "yesod_ego_confidence_excess",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_ego_confidence",
+          "prompt": {
+            "en": "I put a lot of energy into being seen as successful, and praise from others affects me more than I would like.",
+            "es": "Pongo mucha energia en ser visto como una persona exitosa, y los elogios de otras personas me afectan mas de lo que me gustaria."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "yesod_ego_confidence_deficiency",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_ego_confidence",
+          "prompt": {
+            "en": "I try to stay unnoticed because criticism feels hard to tolerate, even when it keeps me from showing up fully.",
+            "es": "Intento pasar desapercibido porque me cuesta tolerar la critica, incluso cuando eso me impide mostrarme por completo."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "yesod_ego_confidence_balance",
+          "sephiraId": "YESOD",
+          "pageId": "yesod_ego_confidence",
+          "prompt": {
+            "en": "I do not depend too much on what people think of me, although I still listen when someone sees something I could improve.",
+            "es": "No dependo demasiado de lo que otras personas piensen de mi, aunque sigo escuchando cuando alguien ve algo que podria mejorar."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "sephiraId": "HOD",
+      "displayName": {
+        "en": "Hod",
+        "es": "Hod"
+      },
+      "shortMeaning": {
+        "en": "Hod reflects communication, truthfulness, and the way you give form to your emotions through words and interpretation.",
+        "es": "Hod refleja la comunicacion, la veracidad y la forma en que das forma a tus emociones a traves de las palabras y la interpretacion."
+      },
+      "introText": {
+        "en": "This section explores verbal expression, listening, honesty, and the way you communicate yourself to the world around you. It looks for grounded expression rather than rigid labels.",
+        "es": "Esta seccion explora la expresion verbal, la escucha, la honestidad y la forma en que te comunicas con el mundo que te rodea. Busca una expresion enraizada en lugar de etiquetas rigidas."
+      },
+      "pages": [
+        {
+          "id": "hod_emotional_communication",
+          "title": {
+            "en": "Verbal emotional communication",
+            "es": "Comunicacion verbal emocional"
+          },
+          "description": {
+            "en": "Reflect on how much space you take, or give, in conversation.",
+            "es": "Reflexiona sobre cuanto espacio tomas, o das, en la conversacion."
+          },
+          "questionIds": [
+            "hod_emotional_communication_excess",
+            "hod_emotional_communication_deficiency",
+            "hod_emotional_communication_balance"
+          ]
+        },
+        {
+          "id": "hod_truth_telling",
+          "title": {
+            "en": "Truth and everyday communication",
+            "es": "Verdad y comunicacion cotidiana"
+          },
+          "description": {
+            "en": "Reflect on how you handle truthfulness, tact, and accuracy in daily speech.",
+            "es": "Reflexiona sobre como manejas la veracidad, el tacto y la precision en el habla cotidiana."
+          },
+          "questionIds": [
+            "hod_truth_telling_excess",
+            "hod_truth_telling_deficiency",
+            "hod_truth_telling_balance"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "hod_emotional_communication_excess",
+          "sephiraId": "HOD",
+          "pageId": "hod_emotional_communication",
+          "prompt": {
+            "en": "I often dominate conversations by bringing them back to my life and emotions, even when others also need space.",
+            "es": "A menudo domino las conversaciones llevandolas de nuevo a mi vida y mis emociones, incluso cuando otras personas tambien necesitan espacio."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "hod_emotional_communication_deficiency",
+          "sephiraId": "HOD",
+          "pageId": "hod_emotional_communication",
+          "prompt": {
+            "en": "I stay mostly in listening mode because sharing my own experience or feelings feels harder than it should.",
+            "es": "Me quedo casi siempre en modo escucha porque compartir mi propia experiencia o mis emociones me resulta mas dificil de lo que deberia."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "hod_emotional_communication_balance",
+          "sephiraId": "HOD",
+          "pageId": "hod_emotional_communication",
+          "prompt": {
+            "en": "I like dynamic conversations where others tell me about themselves and I also share my own experience.",
+            "es": "Me gustan las conversaciones dinamicas en las que otras personas me cuentan sobre ellas y yo tambien comparto mi propia experiencia."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        },
+        {
+          "id": "hod_truth_telling_excess",
+          "sephiraId": "HOD",
+          "pageId": "hod_truth_telling",
+          "prompt": {
+            "en": "I bend or hide the truth more often than I should, and sometimes it becomes hard to keep track of what I have said.",
+            "es": "Distorsiono u oculto la verdad mas a menudo de lo que deberia, y a veces se vuelve dificil recordar lo que he dicho."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "hod_truth_telling_deficiency",
+          "sephiraId": "HOD",
+          "pageId": "hod_truth_telling",
+          "prompt": {
+            "en": "I can become so blunt about telling the truth that I leave little room for tact, timing, or emotional sensitivity.",
+            "es": "Puedo volverme tan directo al decir la verdad que dejo poco espacio para el tacto, el momento adecuado o la sensibilidad emocional."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "hod_truth_telling_balance",
+          "sephiraId": "HOD",
+          "pageId": "hod_truth_telling",
+          "prompt": {
+            "en": "I tend to say the truth, although sometimes I also tell small white lies.",
+            "es": "Tiendo a decir la verdad, aunque a veces tambien digo pequenas mentiras piadosas."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "sephiraId": "NETZACH",
+      "displayName": {
+        "en": "Netzach",
+        "es": "Netzach"
+      },
+      "shortMeaning": {
+        "en": "Netzach reflects desire, vitality, pleasure, and the nonverbal force of emotion as it moves through the body and behavior.",
+        "es": "Netzach refleja el deseo, la vitalidad, el placer y la fuerza no verbal de la emocion tal como se mueve por el cuerpo y la conducta."
+      },
+      "introText": {
+        "en": "This section explores pleasure, impulse, and emotional expression in action. It looks for a humane balance between enjoyment, self-control, and emotional freedom.",
+        "es": "Esta seccion explora el placer, el impulso y la expresion emocional en la accion. Busca un balance humano entre el disfrute, el autocontrol y la libertad emocional."
+      },
+      "pages": [
+        {
+          "id": "netzach_pleasure",
+          "title": {
+            "en": "Pleasure and enjoyment",
+            "es": "Placer y disfrute"
+          },
+          "description": {
+            "en": "Reflect on how you relate to pleasure, desire, and self-restraint.",
+            "es": "Reflexiona sobre como te relacionas con el placer, el deseo y la contencion."
+          },
+          "questionIds": [
+            "netzach_pleasure_excess",
+            "netzach_pleasure_deficiency",
+            "netzach_pleasure_balance"
+          ]
+        },
+        {
+          "id": "netzach_nonverbal_emotion",
+          "title": {
+            "en": "Nonverbal emotional expression",
+            "es": "Expresion emocional no verbal"
+          },
+          "description": {
+            "en": "Reflect on how visibly and appropriately your emotions come through.",
+            "es": "Reflexiona sobre cuan visible y adecuada resulta la expresion de tus emociones."
+          },
+          "questionIds": [
+            "netzach_nonverbal_emotion_excess",
+            "netzach_nonverbal_emotion_deficiency",
+            "netzach_nonverbal_emotion_balance"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "netzach_pleasure_excess",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_pleasure",
+          "prompt": {
+            "en": "I can have a hard time moderating pleasure or impulse, and it is easy for enjoyable habits to take up more space than is good for me.",
+            "es": "Puedo tener dificultad para moderar el placer o el impulso, y es facil que habitos agradables ocupen mas espacio del que me hace bien."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "netzach_pleasure_deficiency",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_pleasure",
+          "prompt": {
+            "en": "I keep myself so restrained that I leave very little room for enjoyment or pleasure in my life.",
+            "es": "Me mantengo tan contenido que dejo muy poco espacio para el disfrute o el placer en mi vida."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "netzach_pleasure_balance",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_pleasure",
+          "prompt": {
+            "en": "Sometimes I enjoy a glass of wine, or something similar, with friends, and I do not punish myself for allowing some pleasure in my life.",
+            "es": "A veces disfruto una copa de vino, o algo parecido, con amigos, y no me castigo por permitirme algo de placer en mi vida."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        },
+        {
+          "id": "netzach_nonverbal_emotion_excess",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_nonverbal_emotion",
+          "prompt": {
+            "en": "My emotions can spill out so quickly that I might cry, shout, laugh, or get angry before I have grounded myself.",
+            "es": "Mis emociones pueden desbordarse tan rapido que puedo llorar, gritar, reir o enojarme antes de haberme centrado."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "EXCESS",
+          "weight": 1.0
+        },
+        {
+          "id": "netzach_nonverbal_emotion_deficiency",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_nonverbal_emotion",
+          "prompt": {
+            "en": "I rarely let my emotions show outwardly, to the point that other people may experience me as distant or cold.",
+            "es": "Rara vez dejo que mis emociones se noten por fuera, hasta el punto de que otras personas pueden vivirme como distante o frio."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "DEFICIENCY",
+          "weight": 1.0
+        },
+        {
+          "id": "netzach_nonverbal_emotion_balance",
+          "sephiraId": "NETZACH",
+          "pageId": "netzach_nonverbal_emotion",
+          "prompt": {
+            "en": "Sometimes I show my emotions, but I also understand in which situations it is appropriate to express them.",
+            "es": "A veces muestro mis emociones, pero tambien entiendo en que situaciones es apropiado expresarlas."
+          },
+          "format": "LIKERT_5",
+          "targetPole": "BALANCE",
+          "weight": 1.0
+        }
+      ]
+    }
+  ]
+}

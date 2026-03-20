@@ -83,6 +83,6 @@ class JsonAssessmentContentDataSource(
     }
 
     private companion object {
-        const val QUESTIONNAIRE_ASSET_PATH = "questionnaires/malkuth_questionnaire.json"
+        const val QUESTIONNAIRE_ASSET_PATH = "questionnaires/tree_of_life_questionnaire.json"
     }
 }
