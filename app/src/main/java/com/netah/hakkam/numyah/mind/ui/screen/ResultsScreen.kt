@@ -198,7 +198,7 @@ private fun ResultsSummaryCard(model: ResultsOverviewUiModel) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = model.subtitle,
+                text = stringResource(R.string.results_overview_status_latest),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

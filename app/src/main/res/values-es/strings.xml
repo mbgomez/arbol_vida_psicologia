@@ -122,6 +122,7 @@
     <string name="results_error_body">Tus resultados guardados no pudieron cargarse en este momento. Intentalo de nuevo.</string>
     <string name="results_overview_title">Ultima vista general del Arbol de la Vida</string>
     <string name="results_overview_subtitle">%1$d de %2$d sefirot tienen resultados guardados en esta evaluacion completada.</string>
+    <string name="results_overview_status_latest">Reflexion completada mas reciente</string>
     <string name="results_ranking_title">Como se esta ordenando el arbol actual</string>
     <string name="results_ranking_body">Las tarjetas de abajo estan ordenadas de mas desequilibrio a mas balance, usando carencia mas exceso como la tension principal mientras siguen mostrando las tres fuerzas.</string>
     <string name="results_needs_attention_title">Necesita mas atencion</string>

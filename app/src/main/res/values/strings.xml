@@ -123,6 +123,7 @@
     <string name="results_error_body">Your saved results could not be loaded right now. Please try again.</string>
     <string name="results_overview_title">Latest Tree of Life overview</string>
     <string name="results_overview_subtitle">%1$d of %2$d sephirot have saved results in this completed assessment.</string>
+    <string name="results_overview_status_latest">Most recent completed reflection</string>
     <string name="results_ranking_title">How the current tree is settling</string>
     <string name="results_ranking_body">The cards below are sorted from more unbalanced to more balanced, using deficiency plus excess as the main tension score while still showing all three forces.</string>
     <string name="results_needs_attention_title">Needs more attention</string>

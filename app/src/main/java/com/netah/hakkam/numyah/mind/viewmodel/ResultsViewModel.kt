@@ -28,7 +28,6 @@ sealed interface ResultsUiState {
 
 data class ResultsOverviewUiModel(
     val title: String,
-    val subtitle: String,
     val completedCount: Int,
     val totalCount: Int,
     val mostBalanced: ResultsSephiraUiModel?,
@@ -118,17 +117,6 @@ class ResultsViewModel @Inject constructor(
 
         return ResultsOverviewUiModel(
             title = questionnaire.title,
-            subtitle = snapshot.completedAt?.let {
-                if (locale.language == "es") {
-                    "Reflexion completada mas reciente"
-                } else {
-                    "Most recent completed reflection"
-                }
-            } ?: if (locale.language == "es") {
-                "Reflexion completada actual"
-            } else {
-                "Current completed reflection"
-            },
             completedCount = rankedScores.size,
             totalCount = questionnaire.sections.size,
             mostBalanced = mostBalanced,
