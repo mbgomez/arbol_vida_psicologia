@@ -54,6 +54,7 @@ The app should launch with bilingual support for English and Spanish.
 - The first-run experience should feel polished and product-grade, with intentional layout, strong hierarchy, and a professional visual treatment.
 - Refactored Compose screens should keep resource lookup and visual tokens close to the UI section that uses them, so extracted sub-composables remain self-contained and easier to maintain.
 - Shared dimension tokens should be grouped by semantic role, not just by matching numeric value.
+- Local execution workflow should stay explicit: Android Studio runs, Gradle builds, emulator checks, and manual testing are performed by the user, while implementation changes should include targeted verification steps for the user to run.
 
 ## 3. Screen List
 
@@ -237,6 +238,7 @@ User-facing copy rules:
 Locked workflow learning:
 
 - Future sephira content should be seeded manually from the authored question set rather than generated from prior slices by default.
+- Manual verification and project execution are user-owned. The implementation workflow should assume the user runs builds, tests, and interactive checks locally and reports the first failure or mismatch back into the collaboration loop.
 
 ### Locked Content Structure Standard
 

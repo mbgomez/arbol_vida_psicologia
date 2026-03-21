@@ -81,6 +81,7 @@ Testing standard:
 - ViewModel tests should verify state mapping, progression rules, and completion behavior.
 - Compose UI tests should focus first on stable, user-facing flows that define the current slice of work.
 - Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
+- Local builds, Gradle test runs, emulator checks, and manual verification are run by the user. Implementation work should include clear run instructions and focused checks for the user to execute.
 
 Assessment content standard:
 
@@ -181,3 +182,4 @@ To work effectively on future slices:
 - Treat reversible experiments differently from project standards. When a choice becomes a standard, reflect it in code and docs in the same pass.
 - Prefer reducing rework over maximizing speed when assumptions are still unstable.
 - Use product judgment plus structured execution together: strong critique on user experience, followed by concrete implementation and verification.
+- Assume the user owns local execution. Manual testing, Android Studio runs, and build or test commands should be requested from the user when verification is needed, rather than assumed to be run by the coding agent.
