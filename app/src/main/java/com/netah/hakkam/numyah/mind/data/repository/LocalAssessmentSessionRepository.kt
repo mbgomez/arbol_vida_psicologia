@@ -1,9 +1,9 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
-import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
-import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.ResponseTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraScoreTable
+import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionDao
+import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionTable
+import com.netah.hakkam.numyah.mind.data.local.database.ResponseTable
+import com.netah.hakkam.numyah.mind.data.local.database.SephiraScoreTable
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel

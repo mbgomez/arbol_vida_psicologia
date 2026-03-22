@@ -1,21 +1,10 @@
-package com.netah.hakkam.numyah.mind.data.datasource
+package com.netah.hakkam.numyah.mind.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
-import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.AnswerOptionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionPageTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.ResponseTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.RoomTypeConverters
-import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraSectionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraScoreTable
 
 private const val DATABASE_NAME = "numyah_mind.db"
 
@@ -41,7 +30,7 @@ abstract class NumyahMindDatabase : RoomDatabase() {
 
 }
 
-object DatabaseFactory {
+object NumyahMindDatabaseFactory {
     fun getDBInstance(context: Context) =
         Room.databaseBuilder(context, NumyahMindDatabase::class.java, DATABASE_NAME)
             .fallbackToDestructiveMigration()

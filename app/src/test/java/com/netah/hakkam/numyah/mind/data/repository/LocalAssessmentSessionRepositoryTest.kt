@@ -3,7 +3,7 @@ package com.netah.hakkam.numyah.mind.data.repository
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.netah.hakkam.numyah.mind.data.datasource.NumyahMindDatabase
+import com.netah.hakkam.numyah.mind.data.local.database.NumyahMindDatabase
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId

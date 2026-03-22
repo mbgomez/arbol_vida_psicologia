@@ -94,4 +94,12 @@ class LocalAppPreferencesRepositoryTests {
 
         assertEquals(AppThemeMode.SYSTEM, result)
     }
+
+    @Test
+    fun markLearningSectionCompleted_savesSectionKey() = coroutinesRule.runBlockingTest {
+        val result = repository.markLearningSectionCompleted("tree-course", "intro").first()
+
+        assertEquals(setOf("tree-course::intro"), result)
+        assertEquals(setOf("tree-course::intro"), repository.getCompletedLearningSections().first())
+    }
 }

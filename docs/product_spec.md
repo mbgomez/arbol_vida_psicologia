@@ -8,7 +8,7 @@ The product should feel insightful, grounded, and non-pathologizing. It is a sel
 
 Canonical product name: `Numyah Mind`.
 
-The app's educational content should be grounded in the project's own Kabbalah reference document in [Tree of life - overview - psychology.docx](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\Tree%20of%20life%20-%20overview%20-%20psychology.docx), adapted into app-friendly copy rather than pasted directly.
+The app's educational content should be grounded in the project's own Kabbalah reference document in [Tree of life - overview - psychology.docx](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\Tree%20of%20life%20-%20overview%20-%20psychology.docx). Assessment and onboarding content should be adapted into app-friendly copy, while Learn content may stay much closer to the authored Kabbalistic teaching voice.
 
 The app should launch with bilingual support for English and Spanish.
 
@@ -262,7 +262,10 @@ The project's Kabbalah document should be adapted into four content layers:
 - `Learn/About content`
   - deeper material such as broader Kabbalah framing, structure of the Tree, and optional terminology
 
-The document should be treated as the content source, but the app copy should be edited for clarity, brevity, and consistency.
+The document should be treated as the content source, but the app uses two different voice standards:
+
+- assessment and onboarding copy should be edited toward clarity, brevity, and psychologically grounded product language
+- Learn copy should preserve the authored Kabbalistic teaching voice much more closely, with only light cleanup for readability, structure, and mobile presentation
 
 User-facing copy rules:
 
@@ -347,6 +350,31 @@ Localization rules:
 - Content architecture should separate copy from scoring logic.
 - The source document may remain as the authoring base, but app-ready copy should be produced as localized English and Spanish strings.
 - Question meaning should remain equivalent across languages, especially where scoring depends on nuanced wording.
+
+Learn content architecture should follow the same local-first principle:
+
+- seed Learn content from local JSON in a shape that can later be served by an endpoint
+- organize Learn content as:
+  - `version`
+  - `courses`
+  - per-course `sections`
+- treat Learn as the place for the more direct Kabbalistic teaching voice rather than rewriting it into the same softer tone used in assessment content
+- keep course metadata explicit:
+  - stable `id`
+  - localized title
+  - localized subtitle
+  - localized description
+  - estimated reading time
+  - total planned section count
+- keep section metadata explicit:
+  - stable `id`
+  - localized title
+  - localized summary
+  - reading time
+  - display order
+  - localized body paragraphs
+- the first seeded course should follow the source document closely, using one introduction section plus one section per sephira
+- unfinished sephira sections should be allowed to arrive gradually without redesigning the Learn flow
 
 ## 5. Scoring Model
 
@@ -758,6 +786,8 @@ Locked refactor standards to preserve during new work:
 - screens above the current readability threshold should be decomposed before new complexity is added to them
 - if the authored content model keeps `weight`, the scoring engine should eventually use it as real scoring input
 - destructive Room migration fallback is not the long-term persistence standard for the product
+- full Room migration/schema hardening is deferred until the first Google Play release-preparation pass
+- deeper content/version hardening is deferred until the app is ready to add more sephirot beyond the current finalized content set
 
 ## Recommended Next Step After This Spec
 

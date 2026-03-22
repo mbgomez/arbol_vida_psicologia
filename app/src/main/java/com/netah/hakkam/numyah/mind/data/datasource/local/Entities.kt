@@ -1,4 +1,4 @@
-package com.netah.hakkam.numyah.mind.data.datasource.local
+package com.netah.hakkam.numyah.mind.data.local.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

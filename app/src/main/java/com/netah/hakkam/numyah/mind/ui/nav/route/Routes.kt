@@ -19,6 +19,20 @@ sealed class AppDestination(
     data object Results : AppDestination("results", R.string.screen_results)
     data object History : AppDestination("history", R.string.screen_history)
     data object Learn : AppDestination("learn", R.string.screen_learn)
+    data object LearnCourse : AppDestination("learn/course/{courseId}", R.string.screen_learn) {
+        const val courseIdArg = "courseId"
+
+        fun createRoute(courseId: String): String = "learn/course/$courseId"
+    }
+    data object LearnSection :
+        AppDestination("learn/course/{courseId}/section/{sectionId}", R.string.screen_learn) {
+        const val courseIdArg = "courseId"
+        const val sectionIdArg = "sectionId"
+
+        fun createRoute(courseId: String, sectionId: String): String {
+            return "learn/course/$courseId/section/$sectionId"
+        }
+    }
     data object Settings : AppDestination("settings", R.string.screen_settings)
     data object SettingsPrivacy : AppDestination("settings/privacy", R.string.screen_settings_privacy)
     data object SettingsAbout : AppDestination("settings/about", R.string.screen_settings_about)
@@ -43,6 +57,8 @@ fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Results.route -> AppDestination.Results
     AppDestination.History.route -> AppDestination.History
     AppDestination.Learn.route -> AppDestination.Learn
+    AppDestination.LearnCourse.route -> AppDestination.LearnCourse
+    AppDestination.LearnSection.route -> AppDestination.LearnSection
     AppDestination.Settings.route -> AppDestination.Settings
     AppDestination.SettingsPrivacy.route -> AppDestination.SettingsPrivacy
     AppDestination.SettingsAbout.route -> AppDestination.SettingsAbout

@@ -80,7 +80,8 @@ Content guidance:
 - Use short sephira-specific intro copy before each questionnaire section.
 - Use fuller adapted content on each sephira result detail screen.
 - Put broader and denser conceptual material in an optional Learn/About area.
-- Adapt the source document into app-friendly English rather than copying it verbatim.
+- Adapt the source document into app-friendly English for onboarding, assessment intros, and other product-facing flows.
+- For Learn/About courses, preserve the authored Kabbalistic teaching voice much more closely, using only light cleanup for readability, sectioning, and mobile presentation unless a different Learn standard is explicitly locked.
 - When in doubt, prefer clear psychological phrasing first and Kabbalah terminology second.
 - Onboarding and other user-facing flows must be written from the user's perspective, not from a builder, roadmap, or implementation perspective.
 
@@ -126,11 +127,15 @@ Data and content rules:
 - The app should work offline for the core v1 experience.
 - Questionnaire content should be versioned.
 - Prefer local JSON or structured seed content for questions and sephira definitions in v1.
+- Prefer local JSON or structured seed content for Learn courses and section reading content in v1, using a shape that can later map cleanly to an endpoint.
 - Persist assessment sessions, answers, and sephira results locally with Room.
 - Plan content and UI strings for English and Spanish from the start.
 - Keep localized copy separate from scoring rules and domain logic.
 - When the architecture uses repositories plus use cases, prefer repository methods that return `Flow` and thin use cases that expose those flows to ViewModels.
 - The remaining sephirot should be added little by little as their questions and definitions are finalized. Do not assume all remaining sephirot are ready for one bulk implementation pass.
+- Learn course sections should also be allowed to arrive little by little as authored content is finalized. Do not assume the full course body is ready in one pass.
+- Deeper questionnaire/content version hardening should be treated as a later expansion task when new sephirot batches are ready to enter implementation.
+- Full Room hardening work such as schema export, explicit migrations, and migration tests should be treated as a release-preparation task for the first Google Play version rather than an immediate refactor requirement.
 
 Testing priorities:
 - scoring engine correctness
@@ -189,3 +194,11 @@ Locked refactor direction:
 - Prefer converging on one package and UI pattern over preserving multiple competing approaches.
 - Treat shared UI patterns, semantic design tokens, Room hardening, and bilingual cleanup as project standards rather than optional polish.
 - Before adding complexity to large files such as assessment, settings, results, or navigation shell code, prefer decomposition and standardization first.
+
+Refactor lessons to preserve:
+- Remove or quarantine non-product template residue early so it does not keep shaping new implementation.
+- Prefer route-driven shell behavior over duplicated local navigation state.
+- Extract shared UI only when it reflects real repeated product patterns, then make it the default path for new screens.
+- Keep onboarding-specific visual tokens scoped to onboarding unless they are truly app-wide.
+- Use documentation updates in the same pass whenever a refactor decision becomes a project standard.
+- Treat manual smoke testing as part of refactor verification for navigation, shell, and visual regressions.

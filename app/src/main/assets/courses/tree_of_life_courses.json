@@ -1,0 +1,137 @@
+{
+  "version": "learning-v1",
+  "title": {
+    "en": "Courses",
+    "es": "Cursos"
+  },
+  "courses": [
+    {
+      "id": "tree-of-life-overview",
+      "title": {
+        "en": "Tree of Life overview",
+        "es": "Panorama del Arbol de la Vida"
+      },
+      "subtitle": {
+        "en": "A first Kabbalistic approach to the Tree of Life",
+        "es": "Una primera aproximacion cabalistica al Arbol de la Vida"
+      },
+      "description": {
+        "en": "This course follows the authored Kabbalistic teaching voice of the source document much more closely than the assessment content. It begins with an introduction and then moves through each sephira. For now, the available sections are Introduction, Malkuth, and Yesod.",
+        "es": "Este curso sigue mucho mas de cerca la voz de ensenanza cabalistica del documento fuente que el contenido de evaluacion. Comienza con una introduccion y despues recorre cada sefira. Por ahora, las secciones disponibles son Introduccion, Malkuth y Yesod."
+      },
+      "estimatedMinutes": 26,
+      "totalSectionCount": 11,
+      "sections": [
+        {
+          "id": "introduction",
+          "title": {
+            "en": "Introduction",
+            "es": "Introduccion"
+          },
+          "summary": {
+            "en": "A first approach to the Tree of Life as one of the central tools of Kabbalah, with emphasis on the ten sephirot, the channels, balance, and disequilibrium.",
+            "es": "Una primera aproximacion al Arbol de la Vida como una de las herramientas centrales de la Kabbalah, con enfasis en las diez sefirot, los canales, el equilibrio y el desequilibrio."
+          },
+          "readingTimeMinutes": 9,
+          "order": 1,
+          "content": [
+            {
+              "en": "Before we do a dive into the mysteries of Kabbalah, I would like to start by talking about one of the most important tools: the Tree of Life. It appears in Kabbalistic writing from the first centuries of the last millennium, and it is a map through which everything in this known universe can be described, from the universe itself to human beings, including the relationships between them and other creatures. Still, we should not mistake the map for the territory. In the same way that a map of London does not mean the airport is only a few meters from the city centre, the Tree should not be confused with the reality it helps us read.",
+              "es": "Antes de hacer una inmersion en los misterios de la Kabbalah, me gustaria empezar hablando de una de las herramientas mas importantes: el Arbol de la Vida. Aparece en escritos cabalisticos desde los primeros siglos del ultimo milenio y es un mapa a traves del cual puede describirse todo lo que existe en este universo conocido, desde el universo mismo hasta los seres humanos, incluyendo las relaciones entre ellos y otras criaturas. Aun asi, no debemos confundir el mapa con el territorio. Del mismo modo que un mapa de Londres no significa que el aeropuerto este a solo unos metros del centro, el Arbol no debe confundirse con la realidad que nos ayuda a leer."
+            },
+            {
+              "en": "The Tree of Life is formed by ten sephirot, singular sephira, and twenty-two channels represented by the twenty-two letters of Hebrew, also known as the alephbet. The ten sephirot are connected through these channels. There are other representations of the Tree of Life with different channel arrangements, but in this course we follow the small approach laid out in the source text. Each sephira represents a different energy or vibration, and the channels between them do as well.",
+              "es": "El Arbol de la Vida esta formado por diez sefirot, en singular sefira, y veintidos canales representados por las veintidos letras del hebreo, tambien conocidas como alefbet. Las diez sefirot estan conectadas por estos canales. Existen otras representaciones del Arbol de la Vida con distintos arreglos de canales, pero en este curso seguimos el pequeno enfoque planteado en el texto fuente. Cada sefira representa una energia o vibracion distinta, y tambien lo hacen los canales entre ellas."
+            },
+            {
+              "en": "As was described before, the Tree of Life is a schema from which everything is created. In this brief introduction we place the focus on one of the five Olamot, Yetzirah, also known as the universe of Formation, and more specifically on its psychological side. For this introduction we begin at the tenth sephira, Malkuth, because it is the closest to us, where the energies constrain the most and become matter. From there we climb the ladder following the lightning bolt or flash, known in Kabbalah as the path of the serpent, moving in a countdown from the tenth sephira to the first.",
+              "es": "Como ya se ha dicho, el Arbol de la Vida es un esquema desde el cual se crea todo. En esta breve introduccion ponemos el foco en uno de los cinco Olamot, Yetzirah, tambien conocido como el universo de la Formacion, y mas concretamente en su lado psicologico. Para esta introduccion empezamos en la decima sefira, Malkuth, porque es la mas cercana a nosotros, donde las energias se constrinen mas y se convierten en materia. Desde ahi subimos la escalera siguiendo el relampago o destello, conocido en Kabbalah como el camino de la serpiente, moviendonos en una cuenta regresiva desde la decima sefira hasta la primera."
+            },
+            {
+              "en": "It is important to clarify that every single sephira has the same relevance. They may be drawn above each other, but that does not mean one is above another in importance. The map is not the territory. It is also important to remark that, even though we are explaining them separately here as a first approach, they are all working on us all the time, at the same time. Some may feel less connected to us, but there is always a connection to them and to each channel.",
+              "es": "Es importante aclarar que cada sefira tiene la misma relevancia. Puede que se dibujen unas por encima de otras, pero eso no significa que una este por encima de otra en importancia. El mapa no es el territorio. Tambien es importante remarcar que, aunque aqui las expliquemos por separado como una primera aproximacion, todas estan actuando en nosotros todo el tiempo, al mismo tiempo. Algunas pueden sentirse menos conectadas con nosotros, pero siempre existe una conexion con ellas y con cada canal."
+            },
+            {
+              "en": "A sephira has two main attributes represented in Kabbalah as ohr, light, and kli, vessel. These can be understood in several ways, such as power and form or the capacity to give and receive. Depending on how the energy coming into a sephira is used or shared, it can be found in two basic states with three main outcomes: middah, measure or quality, which is the equilibrium or balance state, and klippah, shell or husk, which is the disequilibrium or unbalanced state. There is one point of balance where the energies are working in their natural way, and two points of unbalance: one by lack of energy, where too little of our energy is spent there, and one by excess of energy, where too much energy is spent there.",
+              "es": "Una sefira tiene dos atributos principales representados en Kabbalah como ohr, luz, y kli, vasija. Estos pueden entenderse de varias maneras, como poder y forma o la capacidad de dar y recibir. Segun como se use o comparta la energia que llega a una sefira, puede encontrarse en dos estados basicos con tres resultados principales: middah, medida o cualidad, que es el estado de equilibrio o balance, y klippah, cascara u envoltura, que es el estado de desequilibrio. Existe un punto de balance donde las energias trabajan de forma natural y dos puntos de desbalance: uno por falta de energia, donde se gasta muy poca energia en ello, y otro por exceso de energia, donde se gasta demasiada energia en ello."
+            },
+            {
+              "en": "We also need to remark that the Tree of Life is a whole system, a whole environment where all the elements interact with each other and care for each other, even when we do not. If one element of the system, one sephira, becomes unbalanced, the others will try to help it and rebalance the system by giving more energy to the one that asks for it, or by overworking to compensate for a lack of energy elsewhere. This can work for a while, but if the rhythm is maintained, other sephirot will also become unbalanced, and the whole system may follow.",
+              "es": "Tambien debemos remarcar que el Arbol de la Vida es un sistema completo, un entorno entero donde todos los elementos interactuan entre si y se cuidan entre si, incluso cuando nosotros no lo hacemos. Si un elemento del sistema, una sefira, se desequilibra, las demas intentaran ayudarla y reequilibrar el sistema dando mas energia a la que la pide o sobretrabajando para compensar la falta de energia en otro lugar. Esto puede funcionar durante un tiempo, pero si el ritmo se mantiene, otras sefirot tambien se desequilibraran y puede hacerlo el sistema entero."
+            }
+          ]
+        },
+        {
+          "id": "malkuth",
+          "title": {
+            "en": "Malkuth",
+            "es": "Malkuth"
+          },
+          "summary": {
+            "en": "The kingdom, the realm of matter, and the way we relate to money, body, possessions, and practical reality through balance, lack, and excess.",
+            "es": "El reino, el ambito de la materia y la forma en que nos relacionamos con el dinero, el cuerpo, las posesiones y la realidad practica a traves del balance, la falta y el exceso."
+          },
+          "readingTimeMinutes": 8,
+          "order": 2,
+          "content": [
+            {
+              "en": "This sephira represents the energy of matter, and here, because we are talking about our psyche, it represents how we interact with matter and how we perceive it. If we look for one element of matter that can be especially representative for many of us, money is an obvious example. For some it becomes almost a god in itself, and for others it becomes the root of evil. These two sides already offer a first glance at the basic klippot of Malkuth.",
+              "es": "Esta sefira representa la energia de la materia y aqui, porque estamos hablando de nuestra psique, representa como interactuamos con la materia y como la percibimos. Si buscamos un elemento de la materia que pueda ser especialmente representativo para muchos de nosotros, el dinero es un ejemplo evidente. Para algunos se vuelve casi un dios en si mismo y para otros se convierte en la raiz del mal. Estos dos lados ya ofrecen una primera mirada a las klippot basicas de Malkuth."
+            },
+            {
+              "en": "The klippah by excess of energy can be seen in people who spend all their time and effort trying to accumulate more and more riches, making that accumulation the purpose itself. This can lead to stress, dissatisfaction, and the idea that one has value only in proportion to the amount of money or possessions one has. In Kabbalah there is not a problem with money itself. What matters is the use we make of it. The same resource can be used to help, heal, and improve life, or it can be used in destructive ways.",
+              "es": "La klippah por exceso de energia puede verse en personas que gastan todo su tiempo y esfuerzo tratando de acumular cada vez mas riqueza, convirtiendo esa acumulacion en el proposito mismo. Esto puede llevar al estres, a la insatisfaccion y a la idea de que uno solo tiene valor en proporcion a la cantidad de dinero o posesiones que tiene. En Kabbalah no hay un problema con el dinero en si. Lo que importa es el uso que hacemos de el. El mismo recurso puede usarse para ayudar, sanar y mejorar la vida, o puede usarse de forma destructiva."
+            },
+            {
+              "en": "The opposite klippah, by lack of energy, can be seen in denying the value of money or the material realm, sometimes in the name of a spiritual life. A person may think that money will corrupt the spirit and stop growth, forgetting that we ourselves are also matter and that we need resources in order to continue growing. Something as basic as water, which many take for granted, reaches us through structures and resources that belong to the realm of Malkuth.",
+              "es": "La klippah opuesta, por falta de energia, puede verse al negar el valor del dinero o del mundo material, a veces en nombre de una vida espiritual. Una persona puede pensar que el dinero corrompera el espiritu y frenara el crecimiento, olvidando que nosotros mismos tambien somos materia y que necesitamos recursos para poder seguir creciendo. Algo tan basico como el agua, que muchas personas dan por hecho, nos llega a traves de estructuras y recursos que pertenecen al ambito de Malkuth."
+            },
+            {
+              "en": "So what could be the middah, the point of equilibrium? In the Torah tradition, specifically in Pirkei Avot 4:1, we read: Who is rich? He who is happy with his lot. This points to someone who can see the details of life and feel gratitude for them, while still being open to improvement. The balanced point is not suppression of growth. It is remembering that material increase should not become the final objective of existence. None of the sephirot are more important than the others.",
+              "es": "Entonces, cual podria ser la middah, el punto de equilibrio? En la tradicion de la Torah, especificamente en Pirkei Avot 4:1, leemos: Quien es rico? Aquel que es feliz con su parte. Esto apunta a alguien que puede ver los detalles de la vida y sentir gratitud por ellos, mientras sigue abierto a mejorar. El punto equilibrado no es la supresion del crecimiento. Es recordar que el aumento material no debe convertirse en el objetivo final de la existencia. Ninguna sefira es mas importante que las otras."
+            },
+            {
+              "en": "This same approach can be extended to other things from the realm of matter, such as food intake or our own body. It is good to seek the best achievable version of our material selves, but obsessing over the perfect body can also lead to serious imbalance. Malkuth asks us to reflect on ourselves and see how these things, and other expressions of material energy, are affecting our lives.",
+              "es": "Este mismo enfoque puede extenderse a otras cosas del reino de la materia, como la comida o nuestro propio cuerpo. Es bueno buscar la mejor version posible de nuestro ser material, pero obsesionarse con el cuerpo perfecto tambien puede llevar a un desequilibrio serio. Malkuth nos pide reflexionar sobre nosotros mismos y ver como estas cosas, y otras expresiones de la energia material, estan afectando nuestras vidas."
+            }
+          ]
+        },
+        {
+          "id": "yesod",
+          "title": {
+            "en": "Yesod",
+            "es": "Yesod"
+          },
+          "summary": {
+            "en": "Foundation, relationships, ego, self-esteem, and the movement between time with others and time with oneself.",
+            "es": "Fundamento, relaciones, ego, autoestima y el movimiento entre el tiempo con otras personas y el tiempo con uno mismo."
+          },
+          "readingTimeMinutes": 9,
+          "order": 3,
+          "content": [
+            {
+              "en": "The first question we could ask is why this sephira is called Foundation. One possible answer is that all the energies of the Tree of Life flow to Yesod before reaching Malkuth, in the same way that the foundation of a building supports the weight and helps hold the building together. In Yesod we find energies related to how others see us, how we interact with others, our relationships with family, friends, and partner, the ego, sexual activity, and self-esteem.",
+              "es": "La primera pregunta que podriamos hacernos es por que esta sefira se llama Fundamento. Una posible respuesta es que todas las energias del Arbol de la Vida fluyen hacia Yesod antes de llegar a Malkuth, del mismo modo que los cimientos de un edificio soportan el peso y ayudan a mantenerlo unido. En Yesod encontramos energias relacionadas con como nos ven los demas, como interactuamos con otras personas, nuestras relaciones con familia, amistades y pareja, el ego, la actividad sexual y la autoestima."
+            },
+            {
+              "en": "Before going to the examples of klippot and middah, it is useful to clarify how Kabbalah sees the ego. Here the ego can be understood as the construction of our identity through external forces. It is not our truest self. It is built through the cultural influences we receive during life, especially those present in the early stages when the ego is being formed. We can also define ego as the mask we put on depending on the group of people we are with. The mask at work is not the same as the mask with family, friends, or partner.",
+              "es": "Antes de ir a los ejemplos de klippot y middah, conviene aclarar como ve la Kabbalah el ego. Aqui el ego puede entenderse como la construccion de nuestra identidad a traves de fuerzas externas. No es nuestro ser mas verdadero. Se construye mediante las influencias culturales que recibimos a lo largo de la vida, especialmente las que estan presentes en las primeras etapas, cuando el ego se esta formando. Tambien podemos definir el ego como la mascara que nos ponemos segun el grupo de personas con el que estemos. La mascara del trabajo no es la misma que la mascara con familia, amistades o pareja."
+            },
+            {
+              "en": "Kabbalah does not seek the destruction of the ego. It sees it as a powerful tool for our journey, because it can be a strong motivator for reaching our goals in life. Still, we should not let it become the driver of our whole existence. Ego and self-esteem are interconnected. When self-esteem is good, ego can be more balanced. But when self-esteem is low, the ego may collapse into low confidence or swing upward in ways that create problems both for ourselves and for others.",
+              "es": "La Kabbalah no busca destruir el ego. Lo ve como una herramienta poderosa para nuestro camino, porque puede ser un gran motivador para alcanzar nuestras metas en la vida. Aun asi, no deberiamos dejar que se convierta en el conductor de toda nuestra existencia. Ego y autoestima estan conectados. Cuando la autoestima esta bien, el ego puede estar mas equilibrado. Pero cuando la autoestima es baja, el ego puede derrumbarse en falta de confianza o dispararse de maneras que crean problemas tanto para nosotros como para los demas."
+            },
+            {
+              "en": "A very close example for this sephira is our social relationships. Human beings are a highly collaborative species, even when we imagine ourselves independent. The klippah of excess energy appears in those who always seek the company of others, online or in person, and do not leave room to be with themselves. One of the reasons behind that movement can be avoidance: if they stay constantly surrounded, they do not have to face the feelings, memories, or suppressed emotions that may arise in solitude.",
+              "es": "Un ejemplo muy cercano para esta sefira son nuestras relaciones sociales. Los seres humanos somos una especie altamente colaborativa, incluso cuando nos imaginamos independientes. La klippah de exceso de energia aparece en quienes buscan siempre la compania de otras personas, en linea o en persona, y no dejan espacio para estar consigo mismos. Una de las razones detras de ese movimiento puede ser la evitacion: si permanecen siempre rodeados, no tienen que afrontar los sentimientos, recuerdos o emociones reprimidas que pueden aparecer en la soledad."
+            },
+            {
+              "en": "The klippah by lack of energy points in the opposite direction: people who mainly want to spend time by themselves and avoid socializing as much as possible. They may feel very confident alone, but other sides of the self only emerge when we interact with others. Kabbalah points out that other people can reveal our weaknesses and strengths in ways solitude cannot. The middah here is balance: finding time for others as well as time for ourselves, without using one as an escape from the other. When we learn to enjoy time with others without escaping ourselves, and time with ourselves without escaping others, we begin to understand one of the secrets of this sephira.",
+              "es": "La klippah por falta de energia apunta en la direccion contraria: personas que principalmente quieren pasar tiempo solas y evitar socializar tanto como sea posible. Pueden sentirse muy seguras a solas, pero otros lados del ser solo emergen cuando interactuamos con los demas. La Kabbalah senala que otras personas pueden revelar nuestras debilidades y fortalezas de maneras que la soledad no puede mostrar. La middah aqui es el equilibrio: encontrar tiempo para los demas y tambien para nosotros mismos, sin usar una cosa como escape de la otra. Cuando aprendemos a disfrutar del tiempo con otros sin escapar de nosotros mismos, y del tiempo con nosotros mismos sin escapar de los demas, comenzamos a entender uno de los secretos de esta sefira."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

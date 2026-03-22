@@ -1,12 +1,12 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
-import com.netah.hakkam.numyah.mind.data.datasource.local.AnswerOptionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionPageTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireTable
-import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraSectionTable
+import com.netah.hakkam.numyah.mind.data.local.database.AnswerOptionTable
+import com.netah.hakkam.numyah.mind.data.local.database.QuestionPageTable
+import com.netah.hakkam.numyah.mind.data.local.database.QuestionTable
+import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireContentDao
+import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireTable
+import com.netah.hakkam.numyah.mind.data.local.database.SephiraSectionTable
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent

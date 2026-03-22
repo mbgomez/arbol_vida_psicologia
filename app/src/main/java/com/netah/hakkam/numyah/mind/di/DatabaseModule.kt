@@ -1,10 +1,10 @@
 package com.netah.hakkam.numyah.mind.di
 
 import android.content.Context
-import com.netah.hakkam.numyah.mind.data.datasource.DatabaseFactory
-import com.netah.hakkam.numyah.mind.data.datasource.NumyahMindDatabase
-import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
-import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
+import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionDao
+import com.netah.hakkam.numyah.mind.data.local.database.NumyahMindDatabase
+import com.netah.hakkam.numyah.mind.data.local.database.NumyahMindDatabaseFactory
+import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireContentDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,7 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(context: Context) = DatabaseFactory.getDBInstance(context = context)
+    fun provideDatabase(context: Context) = NumyahMindDatabaseFactory.getDBInstance(context = context)
 
     @Singleton
     @Provides

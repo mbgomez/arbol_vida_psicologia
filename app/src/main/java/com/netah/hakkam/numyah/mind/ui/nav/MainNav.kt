@@ -38,7 +38,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -47,10 +46,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavType
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
@@ -58,7 +59,9 @@ import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
-import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
+import com.netah.hakkam.numyah.mind.ui.screen.LearnRoute
+import com.netah.hakkam.numyah.mind.ui.screen.LearnSectionRoute
 import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsAboutScreen
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsPrivacyScreen
@@ -66,18 +69,17 @@ import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
+import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseUiState
+import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseViewModel
+import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionUiState
+import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
     startDestination: String
 ) {
-    var settingsShellState by remember { mutableStateOf(SettingsShellState.Main) }
-    val transitionScope = rememberCoroutineScope()
-
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -133,45 +135,80 @@ fun MainNavGraph(
         }
         composable(AppDestination.Learn.route) {
             AppShell(navController = navController) { paddingValues ->
-                LearnPlaceholderScreen(paddingValues = paddingValues)
+                LearnRoute(
+                    paddingValues = paddingValues,
+                    onOpenCourse = { courseId ->
+                        navController.navigate(AppDestination.LearnCourse.createRoute(courseId))
+                    }
+                )
+            }
+        }
+        composable(
+            route = AppDestination.LearnCourse.route,
+            arguments = listOf(
+                navArgument(AppDestination.LearnCourse.courseIdArg) { type = NavType.StringType }
+            )
+        ) {
+            val learnCourseViewModel: LearnCourseViewModel = hiltViewModel()
+            val learnCourseUiState by learnCourseViewModel.uiState.collectAsState()
+            AppShell(
+                navController = navController,
+                titleOverride = learnCourseScreenTitle(learnCourseUiState),
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
+            ) { paddingValues ->
+                LearnCourseRoute(
+                    paddingValues = paddingValues,
+                    onOpenSection = { courseId, sectionId ->
+                        navController.navigate(
+                            AppDestination.LearnSection.createRoute(courseId, sectionId)
+                        )
+                    },
+                    viewModel = learnCourseViewModel
+                )
+            }
+        }
+        composable(
+            route = AppDestination.LearnSection.route,
+            arguments = listOf(
+                navArgument(AppDestination.LearnSection.courseIdArg) { type = NavType.StringType },
+                navArgument(AppDestination.LearnSection.sectionIdArg) { type = NavType.StringType }
+            )
+        ) {
+            val learnSectionViewModel: LearnSectionViewModel = hiltViewModel()
+            val learnSectionUiState by learnSectionViewModel.uiState.collectAsState()
+            AppShell(
+                navController = navController,
+                titleOverride = learnSectionScreenTitle(learnSectionUiState),
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
+            ) { paddingValues ->
+                LearnSectionRoute(
+                    paddingValues = paddingValues,
+                    onOpenSection = { courseId, sectionId ->
+                        navController.navigate(
+                            AppDestination.LearnSection.createRoute(courseId, sectionId)
+                        )
+                    },
+                    viewModel = learnSectionViewModel
+                )
             }
         }
         composable(AppDestination.Settings.route) {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val settingsUiState by settingsViewModel.uiState.collectAsState()
-            AppShell(
-                navController = navController,
-                titleOverride = settingsShellState.titleOverride(),
-                showBottomBar = settingsShellState == SettingsShellState.Main,
-                useDetailHeader = settingsShellState != SettingsShellState.Main,
-                onBack = if (settingsShellState != SettingsShellState.Main) {
-                    { settingsShellState = SettingsShellState.Main }
-                } else {
-                    null
-                }
-            ) { paddingValues ->
+            AppShell(navController = navController) { paddingValues ->
                 SettingsScreen(
                     paddingValues = paddingValues,
                     uiState = settingsUiState,
                     onLanguageModeSelected = settingsViewModel::onLanguageModeSelected,
                     onThemeModeSelected = settingsViewModel::onThemeModeSelected,
                     onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
-                    onOpenPrivacy = {
-                        settingsShellState = SettingsShellState.Privacy
-                        transitionScope.launch {
-                            yield()
-                            navController.navigate(AppDestination.SettingsPrivacy.route)
-                        }
-                    },
-                    onOpenAbout = {
-                        settingsShellState = SettingsShellState.About
-                        transitionScope.launch {
-                            yield()
-                            navController.navigate(AppDestination.SettingsAbout.route)
-                        }
-                    },
+                    onOpenPrivacy = { navController.navigate(AppDestination.SettingsPrivacy.route) },
+                    onOpenAbout = { navController.navigate(AppDestination.SettingsAbout.route) },
                     onReplayOnboarding = {
-                        settingsShellState = SettingsShellState.Main
                         settingsViewModel.replayOnboarding {
                             navController.navigate(AppDestination.Onboarding.route) {
                                 popUpTo(AppDestination.Home.route) {
@@ -187,53 +224,26 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.SettingsPrivacy.route) {
-            SettingsDetailRouteShell(
+            AppShell(
                 navController = navController,
-                shellState = settingsShellState,
-                onShellStateChanged = { settingsShellState = it }
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
             ) { paddingValues ->
                 SettingsPrivacyScreen(paddingValues = paddingValues)
             }
         }
         composable(AppDestination.SettingsAbout.route) {
-            SettingsDetailRouteShell(
+            AppShell(
                 navController = navController,
-                shellState = settingsShellState,
-                onShellStateChanged = { settingsShellState = it }
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
             ) { paddingValues ->
                 SettingsAboutScreen(paddingValues = paddingValues)
             }
         }
     }
-}
-
-@Composable
-private fun SettingsDetailRouteShell(
-    navController: NavHostController,
-    shellState: SettingsShellState,
-    onShellStateChanged: (SettingsShellState) -> Unit,
-    content: @Composable (PaddingValues) -> Unit
-) {
-    val coroutineScope = rememberCoroutineScope()
-
-    AppShell(
-        navController = navController,
-        titleOverride = shellState.titleOverride(),
-        showBottomBar = false,
-        useDetailHeader = shellState != SettingsShellState.Main,
-        onBack = {
-            onShellStateChanged(SettingsShellState.Main)
-            coroutineScope.launch {
-                yield()
-                navController.navigate(AppDestination.Settings.route) {
-                    popUpTo(AppDestination.Settings.route) { inclusive = false }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        },
-        content = content
-    )
 }
 
 @Composable
@@ -458,19 +468,6 @@ private fun AppShellDetailHeader(
     )
 }
 
-private enum class SettingsShellState {
-    Main,
-    Privacy,
-    About
-}
-
-@Composable
-private fun SettingsShellState.titleOverride(): String? = when (this) {
-    SettingsShellState.Main -> null
-    SettingsShellState.Privacy -> stringResource(R.string.screen_settings_privacy)
-    SettingsShellState.About -> stringResource(R.string.screen_settings_about)
-}
-
 @Composable
 private fun destinationTitle(currentRoute: String?): String {
     return when (currentRoute) {
@@ -479,5 +476,21 @@ private fun destinationTitle(currentRoute: String?): String {
         else -> stringResource(
             destinationForRoute(currentRoute)?.titleRes ?: AppDestination.Home.titleRes
         )
+    }
+}
+
+@Composable
+private fun learnCourseScreenTitle(uiState: LearnCourseUiState): String {
+    return when (uiState) {
+        is LearnCourseUiState.Loaded -> uiState.model.title
+        else -> stringResource(R.string.screen_learn)
+    }
+}
+
+@Composable
+private fun learnSectionScreenTitle(uiState: LearnSectionUiState): String {
+    return when (uiState) {
+        is LearnSectionUiState.Loaded -> uiState.model.sectionTitle
+        else -> stringResource(R.string.screen_learn)
     }
 }

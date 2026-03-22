@@ -193,6 +193,7 @@ Locked delivery note:
 - the remaining sephirot will be added little by little, not in one bulk implementation pass
 - question writing and sephira-definition work are still active authoring tasks and should be treated as lock-first content work before each implementation batch
 - implementation should scale sephirot in controlled slices that match the currently finalized content
+- deeper content/version hardening should be deferred until the app is ready to add additional sephirot beyond the current finalized set
 
 The current content shape remains:
 
@@ -228,6 +229,11 @@ Locked persistence standards:
 - add explicit migrations
 - add migration tests before treating the persistence layer as hardened
 - do not keep `fallbackToDestructiveMigration()` as the long-term user-data policy
+
+Locked delivery timing:
+
+- full Room hardening is intentionally deferred until the first production version is ready for Google Play submission
+- until that release-preparation phase begins, refactor work may improve package structure and readability around persistence but should not expand into the full migration/schema hardening project
 
 ### 12. Dependency And Manifest Standard
 
@@ -330,6 +336,17 @@ A refactor pass is considered complete only when:
 - the old competing pattern is removed or deprecated
 - requirement files are updated in the same pass
 - tests still reflect the current architecture
+
+## Refactor Lessons Learned
+
+- Starter-template residue creates real architecture drag. If a flow is not part of the product, it should be removed or clearly quarantined early.
+- Shared UI extraction pays off most when done after the product visual direction is stable enough to see true repetition, not before.
+- Semantic tokens reduce churn only when they replace app-wide reuse. Onboarding-specific tokens should stay onboarding-specific.
+- Large screens improve fastest when the screen becomes an orchestrator and the repeated visual sections move into owned components.
+- Navigation state should follow real routes whenever possible. Mirrored local shell state becomes fragile and causes unnecessary coupling.
+- When a refactor changes a project standard, updating the docs in the same pass prevents the next thread from rebuilding old patterns.
+- Manual smoke testing remains the fastest way to catch UI regressions during refactor work, especially for shell behavior, nested navigation, and visual elevation issues.
+- Persistence and content hardening should be timed intentionally. Not every long-term standard needs to be implemented immediately if the delivery milestone is different.
 
 ## Immediate Next Step
 

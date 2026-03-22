@@ -5,12 +5,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 interface AppPreferencesRepository {
     fun hasCompletedOnboarding(): Flow<Boolean>
@@ -21,6 +22,8 @@ interface AppPreferencesRepository {
     fun setLanguageMode(languageMode: AppLanguageMode): Flow<AppLanguageMode>
     fun getThemeMode(): Flow<AppThemeMode>
     fun setThemeMode(themeMode: AppThemeMode): Flow<AppThemeMode>
+    fun getCompletedLearningSections(): Flow<Set<String>>
+    fun markLearningSectionCompleted(courseId: String, sectionId: String): Flow<Set<String>>
 }
 
 class LocalAppPreferencesRepository @Inject constructor(
@@ -66,6 +69,22 @@ class LocalAppPreferencesRepository @Inject constructor(
             runCatching { AppThemeMode.valueOf(it) }.getOrDefault(AppThemeMode.SYSTEM)
         }
 
+    override fun getCompletedLearningSections(): Flow<Set<String>> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_COMPLETED_LEARNING_SECTIONS] ?: emptySet()
+        }.distinctUntilChanged()
+
+    override fun markLearningSectionCompleted(courseId: String, sectionId: String): Flow<Set<String>> =
+        kotlinx.coroutines.flow.flow {
+            val sectionKey = learningSectionKey(courseId, sectionId)
+            var updatedSet: Set<String> = emptySet()
+            dataStore.edit { preferences ->
+                updatedSet = (preferences[KEY_COMPLETED_LEARNING_SECTIONS] ?: emptySet()) + sectionKey
+                preferences[KEY_COMPLETED_LEARNING_SECTIONS] = updatedSet
+            }
+            emit(updatedSet)
+        }
+
     private fun writePreference(
         key: Preferences.Key<Boolean>,
         value: Boolean
@@ -91,5 +110,10 @@ class LocalAppPreferencesRepository @Inject constructor(
         val KEY_SHOW_ASSESSMENT_HONESTY_NOTICE = booleanPreferencesKey("show_assessment_honesty_notice")
         val KEY_LANGUAGE_MODE = stringPreferencesKey("language_mode")
         val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
+        val KEY_COMPLETED_LEARNING_SECTIONS = stringSetPreferencesKey("completed_learning_sections")
+    }
+
+    private fun learningSectionKey(courseId: String, sectionId: String): String {
+        return "$courseId::$sectionId"
     }
 }

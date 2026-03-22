@@ -1,12 +1,19 @@
 package com.netah.hakkam.numyah.mind.di
+
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
 import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
+import com.netah.hakkam.numyah.mind.data.repository.LearningContentRepository
 import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetCompletedLearningSectionsUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCatalogUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCourseUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.MarkLearningSectionCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
@@ -57,6 +64,46 @@ class UseCaseModule {
         assessmentContentRepository: AssessmentContentRepository
     ) = GetCurrentQuestionnaireUseCase(
         assessmentContentRepository = assessmentContentRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideGetCompletedLearningSectionsUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = GetCompletedLearningSectionsUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideMarkLearningSectionCompletedUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = MarkLearningSectionCompletedUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideGetLearningCatalogUseCase(
+        learningContentRepository: LearningContentRepository
+    ) = GetLearningCatalogUseCase(
+        learningContentRepository = learningContentRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideGetLearningCourseUseCase(
+        learningContentRepository: LearningContentRepository
+    ) = GetLearningCourseUseCase(
+        learningContentRepository = learningContentRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideGetLearningSectionUseCase(
+        learningContentRepository: LearningContentRepository
+    ) = GetLearningSectionUseCase(
+        learningContentRepository = learningContentRepository
     )
 
     @Singleton

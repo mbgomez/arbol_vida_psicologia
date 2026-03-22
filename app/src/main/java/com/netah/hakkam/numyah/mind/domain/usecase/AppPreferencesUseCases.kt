@@ -69,3 +69,27 @@ class SetThemeModeUseCase @Inject constructor(
         return appPreferencesRepository.setThemeMode(params)
     }
 }
+
+class GetCompletedLearningSectionsUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractorNoParams<Set<String>>() {
+    override fun buildUseCase(): Flow<Set<String>> {
+        return appPreferencesRepository.getCompletedLearningSections()
+    }
+}
+
+data class MarkLearningSectionCompletedParams(
+    val courseId: String,
+    val sectionId: String
+)
+
+class MarkLearningSectionCompletedUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractor<MarkLearningSectionCompletedParams, Set<String>>() {
+    override fun buildUseCase(params: MarkLearningSectionCompletedParams): Flow<Set<String>> {
+        return appPreferencesRepository.markLearningSectionCompleted(
+            courseId = params.courseId,
+            sectionId = params.sectionId
+        )
+    }
+}

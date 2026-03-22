@@ -97,6 +97,29 @@ Assessment content standard:
   - `weight`
 - The Malkuth slice establishes this content shape as the default for future sephirot.
 
+Learn content standard:
+
+- Learn/About content should also stay local-first and bilingual in v1.
+- Learn/About should preserve the authored Kabbalistic teaching voice much more closely than assessment content.
+- The default learning seed shape is:
+  - `version`
+  - `courses`
+  - per-course `sections`
+- Each course should keep:
+  - a stable `id`
+  - localized title, subtitle, and description
+  - estimated reading time
+  - total planned section count
+  - currently available sections
+- Each section should keep:
+  - a stable `id`
+  - localized title and summary
+  - reading time
+  - order
+  - localized body paragraphs
+- Learn text may receive light cleanup for readability and mobile structure, but it should not be rewritten into the softer psychological product voice used by onboarding and assessment flows.
+- The first seeded course should follow `docs/Tree of life - overview - psychology.docx` closely, using one introduction section plus one section per sephira, while allowing unfinished sections to be added gradually later without changing the reading flow.
+
 Assessment flow standard:
 
 - The standard per-sephira flow is:
@@ -240,6 +263,20 @@ This roadmap defines the current project-standard direction for:
 - localization cleanup
 - persistence hardening
 - navigation and shell refactor order
+
+Current timing notes:
+
+- full Room hardening is intentionally deferred until first-release preparation for Google Play
+- deeper content/version hardening is intentionally deferred until additional sephirot are ready to be added in later batches
+
+Refactor lessons learned:
+
+- remove or quarantine non-product starter-template residue early
+- let real routes drive shell behavior instead of mirrored local navigation state
+- extract shared UI from repeated product patterns, then reuse it consistently
+- keep onboarding-specific tokens scoped to onboarding unless they truly become app-wide
+- update docs in the same pass whenever a refactor decision becomes a standard
+- rely on manual smoke testing to catch navigation and visual regressions during refactor-heavy passes
 
 Refactor rule:
 

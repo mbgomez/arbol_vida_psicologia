@@ -27,6 +27,8 @@ class AppPreferencesUseCaseTests {
     private lateinit var setLanguageModeUseCase: SetLanguageModeUseCase
     private lateinit var getThemeModeUseCase: GetThemeModeUseCase
     private lateinit var setThemeModeUseCase: SetThemeModeUseCase
+    private lateinit var getCompletedLearningSectionsUseCase: GetCompletedLearningSectionsUseCase
+    private lateinit var markLearningSectionCompletedUseCase: MarkLearningSectionCompletedUseCase
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -44,6 +46,8 @@ class AppPreferencesUseCaseTests {
         setLanguageModeUseCase = SetLanguageModeUseCase(appPreferencesRepository)
         getThemeModeUseCase = GetThemeModeUseCase(appPreferencesRepository)
         setThemeModeUseCase = SetThemeModeUseCase(appPreferencesRepository)
+        getCompletedLearningSectionsUseCase = GetCompletedLearningSectionsUseCase(appPreferencesRepository)
+        markLearningSectionCompletedUseCase = MarkLearningSectionCompletedUseCase(appPreferencesRepository)
     }
 
     @Test
@@ -124,5 +128,30 @@ class AppPreferencesUseCaseTests {
 
         verify(exactly = 1) { appPreferencesRepository.setThemeMode(AppThemeMode.LIGHT) }
         assertEquals(listOf(AppThemeMode.LIGHT), result)
+    }
+
+    @Test
+    fun getCompletedLearningSectionsUseCase_emitsRepositoryValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.getCompletedLearningSections() } returns flowOf(setOf("tree::intro"))
+
+        val result = getCompletedLearningSectionsUseCase.run().toList()
+
+        verify(exactly = 1) { appPreferencesRepository.getCompletedLearningSections() }
+        assertEquals(listOf(setOf("tree::intro")), result)
+    }
+
+    @Test
+    fun markLearningSectionCompletedUseCase_emitsSavedValue() = coroutinesRule.runBlockingTest {
+        val params = MarkLearningSectionCompletedParams("tree", "intro")
+        every {
+            appPreferencesRepository.markLearningSectionCompleted("tree", "intro")
+        } returns flowOf(setOf("tree::intro"))
+
+        val result = markLearningSectionCompletedUseCase.run(params).toList()
+
+        verify(exactly = 1) {
+            appPreferencesRepository.markLearningSectionCompleted("tree", "intro")
+        }
+        assertEquals(listOf(setOf("tree::intro")), result)
     }
 }
