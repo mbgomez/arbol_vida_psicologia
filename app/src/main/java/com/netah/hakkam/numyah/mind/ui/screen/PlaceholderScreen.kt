@@ -13,7 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppCard
 
 @Composable
@@ -24,13 +25,17 @@ fun PlaceholderScreen(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null
 ) {
+    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
+    val verticalPadding = dimensionResource(R.dimen.screen_padding_vertical)
+    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
     ) {
         Text(
             text = title,
