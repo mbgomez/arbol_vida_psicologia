@@ -61,6 +61,41 @@
         "en": "This section explores how you relate to material life through money, possessions, health, and the body. It looks for balance, deficiency, and excess without reducing you to a fixed label.",
         "es": "Esta seccion explora como te relacionas con la vida material a traves del dinero, las posesiones, la salud y el cuerpo. Busca balance, carencia y exceso sin reducirte a una etiqueta fija."
       },
+      "healthyExpression": {
+        "en": "When Malkuth is expressed in a healthy way, practical life becomes a stable base instead of a burden. You can care for the body, money, and daily structure without treating them as the whole meaning of life.",
+        "es": "Cuando Malkuth se expresa de forma saludable, la vida practica se convierte en una base estable en lugar de una carga. Puedes cuidar el cuerpo, el dinero y la estructura cotidiana sin tratarlos como el sentido completo de la vida."
+      },
+      "deficiencyPattern": {
+        "en": "When Malkuth leans toward deficiency, basic realities may be neglected or postponed. Material needs, physical care, or everyday order can feel less important than everything else, even when they are asking for attention.",
+        "es": "Cuando Malkuth se inclina hacia la carencia, las realidades basicas pueden quedar descuidadas o postergadas. Las necesidades materiales, el cuidado fisico o el orden cotidiano pueden sentirse menos importantes que todo lo demas, incluso cuando estan pidiendo atencion."
+      },
+      "excessPattern": {
+        "en": "When Malkuth leans toward excess, control, possessions, image, or physical routines can start carrying too much emotional force. Material life may become a place where anxiety or self-worth gets overinvested.",
+        "es": "Cuando Malkuth se inclina hacia el exceso, el control, las posesiones, la imagen o las rutinas fisicas pueden empezar a cargar demasiada fuerza emocional. La vida material puede convertirse en un lugar donde se sobreinvierte la ansiedad o el valor personal."
+      },
+      "suggestedPractices": [
+        {
+          "id": "malkuth_practice_1",
+          "text": {
+            "en": "Choose one small weekly act of physical care that feels supportive rather than punishing.",
+            "es": "Elige un pequeno acto semanal de cuidado fisico que se sienta de apoyo y no de castigo."
+          }
+        },
+        {
+          "id": "malkuth_practice_2",
+          "text": {
+            "en": "Bring gentle attention to one practical area such as sleep, food, money, or your immediate environment.",
+            "es": "Lleva una atencion amable a un area practica como el sueno, la comida, el dinero o tu entorno inmediato."
+          }
+        },
+        {
+          "id": "malkuth_practice_3",
+          "text": {
+            "en": "Notice where steadiness would help more than intensity this week.",
+            "es": "Observa donde te ayudaria mas la constancia que la intensidad esta semana."
+          }
+        }
+      ],
       "pages": [
         {
           "id": "malkuth_resources",
@@ -184,6 +219,41 @@
         "en": "This section explores closeness, confidence, and the way you move between connection and privacy. It looks for balance, deficiency, and excess without turning your answers into a fixed label.",
         "es": "Esta seccion explora la cercania, la confianza y la forma en que te mueves entre la conexion y la privacidad. Busca balance, carencia y exceso sin convertir tus respuestas en una etiqueta fija."
       },
+      "healthyExpression": {
+        "en": "When Yesod is expressed in a healthy way, connection feels rooted and flexible. You can enjoy closeness, solitude, visibility, and privacy without losing your center in any of them.",
+        "es": "Cuando Yesod se expresa de forma saludable, la conexion se siente enraizada y flexible. Puedes disfrutar la cercania, la soledad, la visibilidad y la privacidad sin perder tu centro en ninguna de ellas."
+      },
+      "deficiencyPattern": {
+        "en": "When Yesod leans toward deficiency, trust, visibility, or emotional contact may feel harder to sustain. Pulling back can feel safer, even when it leaves important needs for companionship or confidence unmet.",
+        "es": "Cuando Yesod se inclina hacia la carencia, la confianza, la visibilidad o el contacto emocional pueden resultar mas dificiles de sostener. Retirarte puede sentirse mas seguro, incluso cuando deja sin atender necesidades importantes de compania o confianza."
+      },
+      "excessPattern": {
+        "en": "When Yesod leans toward excess, self-image or closeness can begin to demand constant reinforcement. Attention from others may start carrying more emotional weight than is helpful.",
+        "es": "Cuando Yesod se inclina hacia el exceso, la autoimagen o la cercania pueden empezar a exigir refuerzo constante. La atencion de otras personas puede empezar a cargar mas peso emocional del que ayuda."
+      },
+      "suggestedPractices": [
+        {
+          "id": "yesod_practice_1",
+          "text": {
+            "en": "Notice one relationship where a little more honesty or steadiness would help you feel more grounded.",
+            "es": "Observa una relacion en la que un poco mas de honestidad o constancia te ayudaria a sentirte mas enraizado."
+          }
+        },
+        {
+          "id": "yesod_practice_2",
+          "text": {
+            "en": "Balance one period of connection with one intentional period of quiet or privacy.",
+            "es": "Equilibra un momento de conexion con un momento intencional de quietud o privacidad."
+          }
+        },
+        {
+          "id": "yesod_practice_3",
+          "text": {
+            "en": "Ask yourself where your confidence depends too much on being noticed, or too little on showing up.",
+            "es": "Preguntate donde tu confianza depende demasiado de ser visto, o demasiado poco de mostrarte."
+          }
+        }
+      ],
       "pages": [
         {
           "id": "yesod_social_life",
@@ -307,6 +377,41 @@
         "en": "This section explores verbal expression, listening, honesty, and the way you communicate yourself to the world around you. It looks for grounded expression rather than rigid labels.",
         "es": "Esta seccion explora la expresion verbal, la escucha, la honestidad y la forma en que te comunicas con el mundo que te rodea. Busca una expresion enraizada en lugar de etiquetas rigidas."
       },
+      "healthyExpression": {
+        "en": "When Hod is expressed in a healthy way, words can carry both truth and relationship. Communication feels clearer, more reciprocal, and more able to give shape to inner life without overwhelming others.",
+        "es": "Cuando Hod se expresa de forma saludable, las palabras pueden sostener tanto la verdad como la relacion. La comunicacion se siente mas clara, reciproca y capaz de dar forma a la vida interior sin abrumar a otras personas."
+      },
+      "deficiencyPattern": {
+        "en": "When Hod leans toward deficiency, expression may stay overly contained or overly blunt. Either way, it can become harder to share truth in a form that others can really receive.",
+        "es": "Cuando Hod se inclina hacia la carencia, la expresion puede quedar demasiado contenida o demasiado brusca. De cualquier forma, puede hacerse mas dificil compartir la verdad en una forma que otras personas puedan recibir de verdad."
+      },
+      "excessPattern": {
+        "en": "When Hod leans toward excess, communication may become overactive, self-centered, or less anchored in truth. Words can start doing too much work for emotion, image, or control.",
+        "es": "Cuando Hod se inclina hacia el exceso, la comunicacion puede volverse demasiado activa, centrada en uno mismo o menos anclada en la verdad. Las palabras pueden empezar a hacer demasiado trabajo para la emocion, la imagen o el control."
+      },
+      "suggestedPractices": [
+        {
+          "id": "hod_practice_1",
+          "text": {
+            "en": "In one conversation this week, aim to speak clearly and also leave visible space for the other person.",
+            "es": "En una conversacion esta semana, intenta hablar con claridad y tambien dejar un espacio visible para la otra persona."
+          }
+        },
+        {
+          "id": "hod_practice_2",
+          "text": {
+            "en": "Notice whether you hide, soften, or sharpen the truth when you feel emotionally charged.",
+            "es": "Observa si ocultas, suavizas o endureces la verdad cuando te sientes cargado emocionalmente."
+          }
+        },
+        {
+          "id": "hod_practice_3",
+          "text": {
+            "en": "Write down one feeling before explaining it out loud, so your words can follow something real.",
+            "es": "Escribe una emocion antes de explicarla en voz alta, para que tus palabras puedan seguir algo real."
+          }
+        }
+      ],
       "pages": [
         {
           "id": "hod_emotional_communication",
@@ -430,6 +535,41 @@
         "en": "This section explores pleasure, impulse, and emotional expression in action. It looks for a humane balance between enjoyment, self-control, and emotional freedom.",
         "es": "Esta seccion explora el placer, el impulso y la expresion emocional en la accion. Busca un balance humano entre el disfrute, el autocontrol y la libertad emocional."
       },
+      "healthyExpression": {
+        "en": "When Netzach is expressed in a healthy way, desire and feeling can move freely without taking over the whole system. Pleasure has a place, and emotion can be visible without losing proportion.",
+        "es": "Cuando Netzach se expresa de forma saludable, el deseo y el sentimiento pueden moverse con libertad sin apoderarse de todo el sistema. El placer tiene un lugar, y la emocion puede ser visible sin perder proporcion."
+      },
+      "deficiencyPattern": {
+        "en": "When Netzach leans toward deficiency, life may become overcontrolled, overly restrained, or emotionally flattened. Pleasure and visible feeling can start to feel risky or unwelcome.",
+        "es": "Cuando Netzach se inclina hacia la carencia, la vida puede volverse demasiado controlada, demasiado contenida o emocionalmente aplanada. El placer y la emocion visible pueden empezar a sentirse riesgosos o poco bienvenidos."
+      },
+      "excessPattern": {
+        "en": "When Netzach leans toward excess, pleasure, impulse, or emotional display can run ahead of reflection. Feeling may spill into action quickly, before there is enough grounding or perspective.",
+        "es": "Cuando Netzach se inclina hacia el exceso, el placer, el impulso o la expresion emocional pueden adelantarse a la reflexion. El sentimiento puede derramarse en la accion con rapidez, antes de que haya suficiente enraizamiento o perspectiva."
+      },
+      "suggestedPractices": [
+        {
+          "id": "netzach_practice_1",
+          "text": {
+            "en": "Notice one pleasure you can enjoy with more presence and less compulsion.",
+            "es": "Observa un placer que puedas disfrutar con mas presencia y menos compulsividad."
+          }
+        },
+        {
+          "id": "netzach_practice_2",
+          "text": {
+            "en": "Pause briefly before reacting when emotion rises in the body, just long enough to feel your footing.",
+            "es": "Haz una breve pausa antes de reaccionar cuando la emocion suba en el cuerpo, solo el tiempo suficiente para sentir tu apoyo."
+          }
+        },
+        {
+          "id": "netzach_practice_3",
+          "text": {
+            "en": "Ask where more permission or more containment would create a more humane balance right now.",
+            "es": "Preguntate donde mas permiso o mas contencion crearian un balance mas humano en este momento."
+          }
+        }
+      ],
       "pages": [
         {
           "id": "netzach_pleasure",

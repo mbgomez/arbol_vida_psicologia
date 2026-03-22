@@ -300,8 +300,16 @@ Each sephira questionnaire definition should include:
 - versioned bilingual content
 - `shortMeaning`
 - `introText`
+- `detailContent`
 - `pages`
 - `questions`
+
+`detailContent` should include:
+
+- `healthyExpression`
+- `deficiencyPattern`
+- `excessPattern`
+- `suggestedPractices`
 
 Each page should include:
 

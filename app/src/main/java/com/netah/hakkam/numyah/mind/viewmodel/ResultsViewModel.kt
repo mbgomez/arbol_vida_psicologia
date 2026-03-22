@@ -8,6 +8,7 @@ import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
@@ -40,6 +41,7 @@ data class ResultsOverviewUiModel(
 )
 
 data class ResultsSephiraUiModel(
+    val sephiraId: SephiraId,
     val sephiraName: String,
     val dominantPole: Pole,
     val confidence: ConfidenceLevel,
@@ -100,6 +102,7 @@ class ResultsViewModel @Inject constructor(
                 val deficiencyPercent = scorePercent(score.deficiencyScore)
                 val excessPercent = scorePercent(score.excessScore)
                 ResultsSephiraUiModel(
+                    sephiraId = section.sephiraId,
                     sephiraName = section.displayName,
                     dominantPole = score.dominantPole,
                     confidence = score.confidence,

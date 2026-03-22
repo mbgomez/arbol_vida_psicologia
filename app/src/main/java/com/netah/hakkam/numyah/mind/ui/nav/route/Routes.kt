@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 
 sealed class AppDestination(
     val route: String,
@@ -29,6 +30,20 @@ sealed class AppDestination(
         }
     }
     data object History : AppDestination("history", R.string.screen_history)
+    data object ResultsDetail :
+        AppDestination("results/detail/{sephiraId}?sessionId={sessionId}", R.string.screen_results_detail) {
+        const val sephiraIdArg = "sephiraId"
+        const val sessionIdArg = "sessionId"
+        const val routePattern = "results/detail/{$sephiraIdArg}?$sessionIdArg={$sessionIdArg}"
+
+        fun createRoute(sephiraId: SephiraId, sessionId: Long? = null): String {
+            return if (sessionId == null) {
+                "results/detail/${sephiraId.name}"
+            } else {
+                "results/detail/${sephiraId.name}?$sessionIdArg=$sessionId"
+            }
+        }
+    }
     data object Learn : AppDestination("learn", R.string.screen_learn)
     data object LearnCourse : AppDestination("learn/course/{courseId}", R.string.screen_learn) {
         const val courseIdArg = "courseId"
@@ -68,6 +83,8 @@ fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Results.route,
     AppDestination.Results.routePattern -> AppDestination.Results
     AppDestination.History.route -> AppDestination.History
+    AppDestination.ResultsDetail.route,
+    AppDestination.ResultsDetail.routePattern -> AppDestination.ResultsDetail
     AppDestination.Learn.route -> AppDestination.Learn
     AppDestination.LearnCourse.route -> AppDestination.LearnCourse
     AppDestination.LearnSection.route -> AppDestination.LearnSection

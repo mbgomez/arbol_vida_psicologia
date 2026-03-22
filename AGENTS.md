@@ -127,6 +127,17 @@ Data and content rules:
 - The app should work offline for the core v1 experience.
 - Questionnaire content should be versioned.
 - Prefer local JSON or structured seed content for questions and sephira definitions in v1.
+- The default seeded sephira shape should include:
+  - `shortMeaning`
+  - `introText`
+  - `detailContent`
+  - `pages`
+  - `questions`
+- `detailContent` should include:
+  - `healthyExpression`
+  - `deficiencyPattern`
+  - `excessPattern`
+  - `suggestedPractices`
 - Prefer local JSON or structured seed content for Learn courses and section reading content in v1, using a shape that can later map cleanly to an endpoint.
 - Persist assessment sessions, answers, and sephira results locally with Room.
 - Plan content and UI strings for English and Spanish from the start.

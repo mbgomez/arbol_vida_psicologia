@@ -6,6 +6,7 @@ import com.netah.hakkam.numyah.mind.data.local.database.QuestionPageTable
 import com.netah.hakkam.numyah.mind.data.local.database.QuestionTable
 import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireContentDao
 import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireTable
+import com.netah.hakkam.numyah.mind.data.local.database.SephiraPracticeTable
 import com.netah.hakkam.numyah.mind.data.local.database.SephiraSectionTable
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
@@ -13,6 +14,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import java.util.Locale
 import javax.inject.Inject
@@ -43,6 +45,7 @@ class LocalAssessmentContentRepository @Inject constructor(
         cachedQuestionnaire?.let { existing ->
             questionnaireContentDao.deleteQuestions(existing.version)
             questionnaireContentDao.deletePages(existing.version)
+            questionnaireContentDao.deletePractices(existing.version)
             questionnaireContentDao.deleteSections(existing.version)
             questionnaireContentDao.deleteAnswerOptions(existing.version)
             questionnaireContentDao.deleteQuestionnaire(existing.version)
@@ -78,8 +81,28 @@ class LocalAssessmentContentRepository @Inject constructor(
                     shortMeaningEs = section.shortMeaning.es,
                     introTextEn = section.introText.en,
                     introTextEs = section.introText.es,
+                    healthyExpressionEn = section.healthyExpression?.en ?: section.shortMeaning.en,
+                    healthyExpressionEs = section.healthyExpression?.es ?: section.shortMeaning.es,
+                    deficiencyPatternEn = section.deficiencyPattern?.en ?: section.introText.en,
+                    deficiencyPatternEs = section.deficiencyPattern?.es ?: section.introText.es,
+                    excessPatternEn = section.excessPattern?.en ?: section.introText.en,
+                    excessPatternEs = section.excessPattern?.es ?: section.introText.es,
                     displayOrder = index
                 )
+            }
+        )
+        questionnaireContentDao.insertPractices(
+            seedQuestionnaire.sections.flatMap { section ->
+                section.suggestedPractices.mapIndexed { index, practice ->
+                    SephiraPracticeTable(
+                        questionnaireVersion = seedQuestionnaire.version,
+                        sephiraId = section.sephiraId,
+                        practiceId = practice.id,
+                        textEn = practice.text.en,
+                        textEs = practice.text.es,
+                        displayOrder = index
+                    )
+                }
             }
         )
         questionnaireContentDao.insertPages(
@@ -124,6 +147,7 @@ class LocalAssessmentContentRepository @Inject constructor(
             ?: error("Expected questionnaire content to be cached before loading")
         val options = questionnaireContentDao.getAnswerOptions(questionnaire.version)
         val sections = questionnaireContentDao.getSections(questionnaire.version)
+        val practices = questionnaireContentDao.getPractices(questionnaire.version)
         val pages = questionnaireContentDao.getPages(questionnaire.version)
         val questions = questionnaireContentDao.getQuestions(questionnaire.version)
 
@@ -143,11 +167,20 @@ class LocalAssessmentContentRepository @Inject constructor(
             sections = sections.map { section ->
                 val sectionPages = pages.filter { it.sephiraId == section.sephiraId }
                 val sectionQuestions = questions.filter { it.sephiraId == section.sephiraId }
+                val sectionPractices = practices.filter { it.sephiraId == section.sephiraId }
                 SephiraSectionContent(
                     sephiraId = section.sephiraId,
                     displayName = section.resolveDisplayName(localeLanguage),
                     shortMeaning = section.resolveShortMeaning(localeLanguage),
                     introText = section.resolveIntroText(localeLanguage),
+                    detailContent = SephiraDetailContent(
+                        healthyExpression = section.resolveHealthyExpression(localeLanguage),
+                        deficiencyPattern = section.resolveDeficiencyPattern(localeLanguage),
+                        excessPattern = section.resolveExcessPattern(localeLanguage),
+                        suggestedPractices = sectionPractices.map { practice ->
+                            practice.resolveText(localeLanguage)
+                        }
+                    ),
                     pages = sectionPages.map { page ->
                         val pageQuestionIds = sectionQuestions
                             .filter { it.pageId == page.pageId }
@@ -198,6 +231,34 @@ class LocalAssessmentContentRepository @Inject constructor(
 
     private fun SephiraSectionTable.resolveIntroText(localeLanguage: String): String {
         return if (localeLanguage.equals("es", ignoreCase = true)) introTextEs else introTextEn
+    }
+
+    private fun SephiraSectionTable.resolveHealthyExpression(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            healthyExpressionEs
+        } else {
+            healthyExpressionEn
+        }
+    }
+
+    private fun SephiraSectionTable.resolveDeficiencyPattern(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            deficiencyPatternEs
+        } else {
+            deficiencyPatternEn
+        }
+    }
+
+    private fun SephiraSectionTable.resolveExcessPattern(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            excessPatternEs
+        } else {
+            excessPatternEn
+        }
+    }
+
+    private fun SephiraPracticeTable.resolveText(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) textEs else textEn
     }
 
     private fun QuestionPageTable.resolveTitle(localeLanguage: String): String {

@@ -16,10 +16,11 @@ private const val DATABASE_NAME = "numyah_mind.db"
         QuestionnaireTable::class,
         AnswerOptionTable::class,
         SephiraSectionTable::class,
+        SephiraPracticeTable::class,
         QuestionPageTable::class,
         QuestionTable::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)

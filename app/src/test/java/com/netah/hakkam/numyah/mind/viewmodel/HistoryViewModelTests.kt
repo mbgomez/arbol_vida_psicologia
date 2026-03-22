@@ -10,6 +10,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
@@ -102,6 +103,7 @@ class HistoryViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("malkuth_page", "Title", "Body", listOf("m1"))),
                     questions = emptyList()
                 ),
@@ -110,6 +112,7 @@ class HistoryViewModelTests {
                     displayName = "Yesod",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("yesod_page", "Title", "Body", listOf("y1"))),
                     questions = emptyList()
                 )
@@ -152,5 +155,12 @@ class HistoryViewModelTests {
         dominantPole = Pole.BALANCE,
         confidence = ConfidenceLevel.HIGH,
         isLowConfidence = false
+    )
+
+    private fun testDetailContent() = SephiraDetailContent(
+        healthyExpression = "Healthy",
+        deficiencyPattern = "Deficiency",
+        excessPattern = "Excess",
+        suggestedPractices = listOf("Practice")
     )
 }

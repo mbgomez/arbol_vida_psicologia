@@ -48,8 +48,16 @@ data class SephiraSectionContent(
     val displayName: String,
     val shortMeaning: String,
     val introText: String,
+    val detailContent: SephiraDetailContent,
     val pages: List<QuestionPageContent>,
     val questions: List<QuestionContent>
+)
+
+data class SephiraDetailContent(
+    val healthyExpression: String,
+    val deficiencyPattern: String,
+    val excessPattern: String,
+    val suggestedPractices: List<String>
 )
 
 data class QuestionPageContent(

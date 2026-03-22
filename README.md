@@ -90,8 +90,14 @@ Assessment content standard:
 - The standard section shape is:
   - `shortMeaning`
   - `introText`
+  - `detailContent`
   - `pages`
   - `questions`
+- `detailContent` should keep:
+  - `healthyExpression`
+  - `deficiencyPattern`
+  - `excessPattern`
+  - `suggestedPractices`
 - Each question should keep its scoring metadata in content, including at minimum:
   - `targetPole`
   - `weight`

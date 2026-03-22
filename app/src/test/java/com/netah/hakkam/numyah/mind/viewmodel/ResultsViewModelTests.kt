@@ -11,6 +11,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
@@ -124,6 +125,7 @@ class ResultsViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("malkuth_page", "Title", "Body", listOf("m1"))),
                     questions = emptyList()
                 ),
@@ -132,6 +134,7 @@ class ResultsViewModelTests {
                     displayName = "Yesod",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("yesod_page", "Title", "Body", listOf("y1"))),
                     questions = emptyList()
                 ),
@@ -140,6 +143,7 @@ class ResultsViewModelTests {
                     displayName = "Hod",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("hod_page", "Title", "Body", listOf("h1"))),
                     questions = emptyList()
                 )
@@ -193,4 +197,11 @@ class ResultsViewModelTests {
             )
         )
     }
+
+    private fun testDetailContent() = SephiraDetailContent(
+        healthyExpression = "Healthy",
+        deficiencyPattern = "Deficiency",
+        excessPattern = "Excess",
+        suggestedPractices = listOf("Practice")
+    )
 }

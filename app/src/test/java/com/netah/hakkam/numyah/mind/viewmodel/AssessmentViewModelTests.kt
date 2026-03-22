@@ -13,6 +13,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
 import com.netah.hakkam.numyah.mind.domain.model.SavedResponse
 import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
+import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
@@ -475,6 +476,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(
                         QuestionPageContent("page_1", "Money", "Resources", listOf("q1", "q2", "q3")),
                         QuestionPageContent("page_2", "Body", "Habits", listOf("q4", "q5", "q6"))
@@ -506,6 +508,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("page_1", "Money", "Resources", listOf("q_last"))),
                     questions = listOf(
                         QuestionContent("q_last", SephiraId.MALKUTH, "page_1", "Q Last", QuestionFormat.LIKERT_5, Pole.BALANCE)
@@ -529,6 +532,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("page_1", "Money", "Resources", listOf("q_last"))),
                     questions = listOf(
                         QuestionContent("q_last", SephiraId.MALKUTH, "page_1", "Q Last", QuestionFormat.LIKERT_5, Pole.BALANCE)
@@ -539,6 +543,7 @@ class AssessmentViewModelTests {
                     displayName = "Yesod",
                     shortMeaning = "Foundation",
                     introText = "Yesod intro",
+                    detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("yesod_page_1", "Bonding", "Connection", listOf("yesod_q1"))),
                     questions = listOf(
                         QuestionContent("yesod_q1", SephiraId.YESOD, "yesod_page_1", "Yesod Q1", QuestionFormat.LIKERT_5, Pole.BALANCE)
@@ -571,4 +576,11 @@ class AssessmentViewModelTests {
             scores = scores
         )
     }
+
+    private fun testDetailContent() = SephiraDetailContent(
+        healthyExpression = "Healthy",
+        deficiencyPattern = "Deficiency",
+        excessPattern = "Excess",
+        suggestedPractices = listOf("Practice")
+    )
 }

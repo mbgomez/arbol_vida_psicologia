@@ -58,7 +58,7 @@ import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryRoute
-import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
+import com.netah.hakkam.numyah.mind.ui.screen.HomeRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnSectionRoute
@@ -66,6 +66,7 @@ import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsAboutScreen
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsPrivacyScreen
 import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
+import com.netah.hakkam.numyah.mind.ui.screen.SephiraDetailRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
@@ -73,6 +74,8 @@ import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionViewModel
+import com.netah.hakkam.numyah.mind.viewmodel.SephiraDetailUiState
+import com.netah.hakkam.numyah.mind.viewmodel.SephiraDetailViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
 
 @Composable
@@ -96,7 +99,7 @@ fun MainNavGraph(
         }
         composable(AppDestination.Home.route) {
             AppShell(navController = navController) { paddingValues ->
-                HomeScreen(
+                HomeRoute(
                     paddingValues = paddingValues,
                     onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
                     onOpenResults = { navController.navigate(AppDestination.Results.createRoute()) },
@@ -148,7 +151,42 @@ fun MainNavGraph(
                         stringResource(R.string.results_back_to_history_action)
                     } else {
                         stringResource(R.string.placeholder_primary_action)
+                    },
+                    onOpenSephiraDetail = { sephira ->
+                        navController.navigate(
+                            AppDestination.ResultsDetail.createRoute(
+                                sephiraId = sephira.sephiraId,
+                                sessionId = selectedSessionId
+                            )
+                        )
                     }
+                )
+            }
+        }
+        composable(
+            route = AppDestination.ResultsDetail.routePattern,
+            arguments = listOf(
+                navArgument(AppDestination.ResultsDetail.sephiraIdArg) {
+                    type = NavType.StringType
+                },
+                navArgument(AppDestination.ResultsDetail.sessionIdArg) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) {
+            val sephiraDetailViewModel: SephiraDetailViewModel = hiltViewModel()
+            val sephiraDetailUiState by sephiraDetailViewModel.uiState.collectAsState()
+            AppShell(
+                navController = navController,
+                titleOverride = sephiraDetailScreenTitle(sephiraDetailUiState),
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
+            ) { paddingValues ->
+                SephiraDetailRoute(
+                    paddingValues = paddingValues,
+                    viewModel = sephiraDetailViewModel
                 )
             }
         }
@@ -538,6 +576,14 @@ private fun learnSectionScreenTitle(uiState: LearnSectionUiState): String {
     return when (uiState) {
         is LearnSectionUiState.Loaded -> uiState.model.sectionTitle
         else -> stringResource(R.string.screen_learn)
+    }
+}
+
+@Composable
+private fun sephiraDetailScreenTitle(uiState: SephiraDetailUiState): String {
+    return when (uiState) {
+        is SephiraDetailUiState.Loaded -> uiState.model.sephiraName
+        else -> stringResource(R.string.screen_results_detail)
     }
 }
 

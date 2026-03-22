@@ -132,6 +132,36 @@ data class SephiraSectionTable(
     val shortMeaningEs: String,
     val introTextEn: String,
     val introTextEs: String,
+    val healthyExpressionEn: String,
+    val healthyExpressionEs: String,
+    val deficiencyPatternEn: String,
+    val deficiencyPatternEs: String,
+    val excessPatternEn: String,
+    val excessPatternEs: String,
+    val displayOrder: Int
+)
+
+@Entity(
+    primaryKeys = ["questionnaireVersion", "sephiraId", "practiceId"],
+    foreignKeys = [
+        ForeignKey(
+            entity = QuestionnaireTable::class,
+            parentColumns = ["version"],
+            childColumns = ["questionnaireVersion"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index("questionnaireVersion"),
+        Index(value = ["questionnaireVersion", "sephiraId"])
+    ]
+)
+data class SephiraPracticeTable(
+    val questionnaireVersion: String,
+    val sephiraId: SephiraId,
+    val practiceId: String,
+    val textEn: String,
+    val textEs: String,
     val displayOrder: Int
 )
 

@@ -43,6 +43,7 @@ fun ResultsRoute(
     paddingValues: PaddingValues,
     onPrimaryAction: () -> Unit,
     primaryActionLabel: String,
+    onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit,
     viewModel: ResultsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -50,7 +51,8 @@ fun ResultsRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onPrimaryAction = onPrimaryAction,
-        primaryActionLabel = primaryActionLabel
+        primaryActionLabel = primaryActionLabel,
+        onOpenSephiraDetail = onOpenSephiraDetail
     )
 }
 
@@ -59,7 +61,8 @@ fun ResultsScreen(
     paddingValues: PaddingValues,
     uiState: ResultsUiState,
     onPrimaryAction: () -> Unit,
-    primaryActionLabel: String
+    primaryActionLabel: String,
+    onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -92,7 +95,8 @@ fun ResultsScreen(
             is ResultsUiState.Loaded -> ResultsLoadedState(
                 model = uiState.model,
                 primaryActionLabel = primaryActionLabel,
-                onPrimaryAction = onPrimaryAction
+                onPrimaryAction = onPrimaryAction,
+                onOpenSephiraDetail = onOpenSephiraDetail
             )
         }
     }
@@ -102,7 +106,8 @@ fun ResultsScreen(
 private fun ResultsLoadedState(
     model: ResultsOverviewUiModel,
     primaryActionLabel: String,
-    onPrimaryAction: () -> Unit
+    onPrimaryAction: () -> Unit,
+    onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
     AppScreenColumn(paddingValues = PaddingValues()) {
         ResultsSummaryCard(model = model)
@@ -150,7 +155,8 @@ private fun ResultsLoadedState(
             ResultsSephiraCard(
                 rank = index + 1,
                 total = model.sephirot.size,
-                model = sephira
+                model = sephira,
+                onOpenSephiraDetail = { onOpenSephiraDetail(sephira) }
             )
         }
 
@@ -229,7 +235,8 @@ private fun ResultsSpotlightCard(
 private fun ResultsSephiraCard(
     rank: Int,
     total: Int,
-    model: ResultsSephiraUiModel
+    model: ResultsSephiraUiModel,
+    onOpenSephiraDetail: () -> Unit
 ) {
     val style = resultCardStyle(model)
     val cardRadius = dimensionResource(R.dimen.radius_md)
@@ -245,6 +252,7 @@ private fun ResultsSephiraCard(
                 color = style.borderColor,
                 shape = RoundedCornerShape(cardRadius)
             ),
+        onClick = onOpenSephiraDetail,
         containerColor = style.containerColor,
         elevation = 0.dp
     ) {
@@ -299,6 +307,13 @@ private fun ResultsSephiraCard(
                 value = model.excessPercent,
                 color = MaterialTheme.colorScheme.tertiary,
                 valueText = stringResource(R.string.results_percent_value, model.excessPercent)
+            )
+
+            Text(
+                text = stringResource(R.string.results_open_detail_action),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

@@ -91,6 +91,9 @@ interface QuestionnaireContentDao {
     suspend fun insertSections(sections: List<SephiraSectionTable>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPractices(practices: List<SephiraPracticeTable>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPages(pages: List<QuestionPageTable>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -104,6 +107,9 @@ interface QuestionnaireContentDao {
 
     @Query("SELECT * FROM sephirasectiontable WHERE questionnaireVersion = :version ORDER BY displayOrder ASC")
     suspend fun getSections(version: String): List<SephiraSectionTable>
+
+    @Query("SELECT * FROM sephirapracticetable WHERE questionnaireVersion = :version ORDER BY displayOrder ASC")
+    suspend fun getPractices(version: String): List<SephiraPracticeTable>
 
     @Query("SELECT * FROM questionpagetable WHERE questionnaireVersion = :version ORDER BY displayOrder ASC")
     suspend fun getPages(version: String): List<QuestionPageTable>
@@ -122,6 +128,9 @@ interface QuestionnaireContentDao {
 
     @Query("DELETE FROM sephirasectiontable WHERE questionnaireVersion = :version")
     suspend fun deleteSections(version: String)
+
+    @Query("DELETE FROM sephirapracticetable WHERE questionnaireVersion = :version")
+    suspend fun deletePractices(version: String)
 
     @Query("DELETE FROM questionnairetable WHERE version = :version")
     suspend fun deleteQuestionnaire(version: String)

@@ -68,6 +68,7 @@ class LocalAssessmentContentRepositoryTests {
         assertEquals(SephiraId.MALKUTH, questionnaire.sections.first().sephiraId)
         assertEquals(2, questionnaire.sections.first().pages.size)
         assertEquals(6, questionnaire.sections.first().questions.size)
+        assertEquals(3, questionnaire.sections.first().detailContent.suggestedPractices.size)
         assertTrue(
             questionnaire.sections.first().shortMeaning.contains("relationship with the material world")
         )
@@ -82,6 +83,10 @@ class LocalAssessmentContentRepositoryTests {
         assertEquals(
             "Dinero, riqueza y posesiones",
             questionnaire.sections.first().pages.first().title
+        )
+        assertEquals(
+            "Elige un pequeno acto semanal de cuidado fisico que se sienta de apoyo y no de castigo.",
+            questionnaire.sections.first().detailContent.suggestedPractices.first()
         )
         assertTrue(
             questionnaire.sections.first().questions.first().prompt.contains("Dedico gran parte")
@@ -149,6 +154,32 @@ class LocalAssessmentContentRepositoryTests {
                     "en": "This section explores how you relate to material life through money, possessions, health, and the body. It looks for balance, deficiency, and excess without reducing you to a fixed label.",
                     "es": "Esta seccion explora como te relacionas con la vida material a traves del dinero, las posesiones, la salud y el cuerpo. Busca balance, carencia y exceso sin reducirte a una etiqueta fija."
                   },
+                  "healthyExpression": {
+                    "en": "Healthy Malkuth",
+                    "es": "Malkuth saludable"
+                  },
+                  "deficiencyPattern": {
+                    "en": "Deficient Malkuth",
+                    "es": "Malkuth en carencia"
+                  },
+                  "excessPattern": {
+                    "en": "Excessive Malkuth",
+                    "es": "Malkuth en exceso"
+                  },
+                  "suggestedPractices": [
+                    {
+                      "id": "malkuth_practice_1",
+                      "text": { "en": "Choose one small weekly act of physical care that feels supportive rather than punishing.", "es": "Elige un pequeno acto semanal de cuidado fisico que se sienta de apoyo y no de castigo." }
+                    },
+                    {
+                      "id": "malkuth_practice_2",
+                      "text": { "en": "Bring gentle attention to one practical area such as sleep, food, money, or your immediate environment.", "es": "Lleva una atencion amable a un area practica como el sueno, la comida, el dinero o tu entorno inmediato." }
+                    },
+                    {
+                      "id": "malkuth_practice_3",
+                      "text": { "en": "Notice where steadiness would help more than intensity this week.", "es": "Observa donde te ayudaria mas la constancia que la intensidad esta semana." }
+                    }
+                  ],
                   "pages": [
                     {
                       "id": "malkuth_resources",

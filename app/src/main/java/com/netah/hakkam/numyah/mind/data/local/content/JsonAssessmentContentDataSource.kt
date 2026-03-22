@@ -41,11 +41,20 @@ internal data class SeedQuestionPage(
     val questionIds: List<String>
 )
 
+internal data class SeedPractice(
+    val id: String,
+    val text: LocalizedText
+)
+
 internal data class SeedSephiraSection(
     val sephiraId: SephiraId,
     val displayName: LocalizedText,
     val shortMeaning: LocalizedText,
     val introText: LocalizedText,
+    val healthyExpression: LocalizedText? = null,
+    val deficiencyPattern: LocalizedText? = null,
+    val excessPattern: LocalizedText? = null,
+    val suggestedPractices: List<SeedPractice> = emptyList(),
     val pages: List<SeedQuestionPage>,
     val questions: List<SeedQuestion>
 )

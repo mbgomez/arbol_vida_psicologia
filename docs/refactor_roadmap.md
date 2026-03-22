@@ -204,8 +204,16 @@ The current content shape remains:
 - `sections`
 - `shortMeaning`
 - `introText`
+- `detailContent`
 - `pages`
 - `questions`
+
+`detailContent` should now travel with each seeded sephira section and include:
+
+- `healthyExpression`
+- `deficiencyPattern`
+- `excessPattern`
+- `suggestedPractices`
 
 ### 10. Scoring Standard
 
