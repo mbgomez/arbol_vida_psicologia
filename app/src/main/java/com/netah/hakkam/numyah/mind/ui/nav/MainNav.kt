@@ -138,7 +138,9 @@ fun MainNavGraph(
                 LearnRoute(
                     paddingValues = paddingValues,
                     onOpenCourse = { courseId ->
-                        navController.navigate(AppDestination.LearnCourse.createRoute(courseId))
+                        navController.navigate(AppDestination.LearnCourse.createRoute(courseId)) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -161,8 +163,11 @@ fun MainNavGraph(
                 LearnCourseRoute(
                     paddingValues = paddingValues,
                     onOpenSection = { courseId, sectionId ->
-                        navController.navigate(
-                            AppDestination.LearnSection.createRoute(courseId, sectionId)
+                        openLearnSection(
+                            navController = navController,
+                            courseId = courseId,
+                            sectionId = sectionId,
+                            replaceCurrentSection = false
                         )
                     },
                     viewModel = learnCourseViewModel
@@ -188,9 +193,20 @@ fun MainNavGraph(
                 LearnSectionRoute(
                     paddingValues = paddingValues,
                     onOpenSection = { courseId, sectionId ->
-                        navController.navigate(
-                            AppDestination.LearnSection.createRoute(courseId, sectionId)
+                        openLearnSection(
+                            navController = navController,
+                            courseId = courseId,
+                            sectionId = sectionId,
+                            replaceCurrentSection = true
                         )
+                    },
+                    onOpenCourse = { courseId ->
+                        navController.navigate(AppDestination.LearnCourse.createRoute(courseId)) {
+                            popUpTo(AppDestination.LearnCourse.createRoute(courseId)) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     viewModel = learnSectionViewModel
                 )
@@ -492,5 +508,25 @@ private fun learnSectionScreenTitle(uiState: LearnSectionUiState): String {
     return when (uiState) {
         is LearnSectionUiState.Loaded -> uiState.model.sectionTitle
         else -> stringResource(R.string.screen_learn)
+    }
+}
+
+private fun openLearnSection(
+    navController: NavHostController,
+    courseId: String,
+    sectionId: String,
+    replaceCurrentSection: Boolean
+) {
+    val currentSectionId = navController.currentBackStackEntry
+        ?.arguments
+        ?.getString(AppDestination.LearnSection.sectionIdArg)
+
+    navController.navigate(AppDestination.LearnSection.createRoute(courseId, sectionId)) {
+        if (replaceCurrentSection && currentSectionId != null) {
+            popUpTo(AppDestination.LearnSection.createRoute(courseId, currentSectionId)) {
+                inclusive = true
+            }
+        }
+        launchSingleTop = true
     }
 }

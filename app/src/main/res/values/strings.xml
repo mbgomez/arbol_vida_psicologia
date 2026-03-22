@@ -141,8 +141,8 @@
     <string name="placeholder_learn_title">Learn and About</string>
     <string name="placeholder_learn_body">This area will continue growing into the deeper educational companion to the assessment, with richer context drawn from the source material.</string>
     <string name="learn_title">Learn through courses</string>
-    <string name="learn_subtitle">Explore longer-form reading built from the same Tree of Life source material, adapted into calmer language for study and reflection.</string>
-    <string name="learn_footer">The first course is seeded from the source document and structured so future sections can arrive gradually without changing the reading flow.</string>
+    <string name="learn_subtitle">Explore longer-form reading built from the same Tree of Life source material, keeping much closer to its authored Kabbalistic teaching voice.</string>
+    <string name="learn_footer">More courses will be added over time. The current catalog starts with the Tree of Life overview and is designed to grow gradually.</string>
     <string name="learn_loading_title">Preparing your courses</string>
     <string name="learn_loading_body">Loading the current course catalog from local content.</string>
     <string name="learn_error_title">Courses are not available right now</string>
@@ -159,6 +159,7 @@
     <string name="learn_sections_progress">%1$d/%2$d</string>
     <string name="learn_course_sections_badge">Sections now</string>
     <string name="learn_course_time_badge">Estimated time</string>
+    <string name="learn_course_eyebrow">Course</string>
     <string name="learn_course_footer">More sections will be added to this course over time. The current reading flow is designed to stay stable as new sephirot arrive.</string>
     <string name="learn_minutes_short">%1$d min</string>
     <string name="learn_section_title_with_number">%1$d. %2$s</string>
@@ -167,10 +168,15 @@
     <string name="learn_next_section_action">Continue to %1$s</string>
     <string name="learn_next_section_locked">%1$s is still locked</string>
     <string name="learn_mark_section_completed">Mark section as finished</string>
+    <string name="learn_back_to_course_action">Finish and return to course</string>
+    <string name="learn_course_overview_action">Back to course overview</string>
     <string name="learn_section_status_available">Available to read</string>
     <string name="learn_section_status_locked">Locked until the previous section is finished</string>
     <string name="learn_section_status_completed">Finished</string>
     <string name="learn_section_status_in_progress">Current section</string>
+    <string name="learn_reader_status_ready">Ready to read</string>
+    <string name="learn_reader_footer_unfinished">Finish this section when you are ready. The next chapter opens only after the current one is marked complete.</string>
+    <string name="learn_reader_footer_completed">This chapter is complete. You can continue forward, or return to an earlier section to reread it at your own pace.</string>
     <string name="settings_title">Settings</string>
     <string name="settings_eyebrow">Reflection space</string>
     <string name="settings_body">Adjust how Numyah Mind feels on your device. This space covers language, appearance, assessment preferences, privacy guidance, and onboarding support.</string>

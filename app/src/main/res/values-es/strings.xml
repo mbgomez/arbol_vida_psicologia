@@ -141,8 +141,8 @@
     <string name="placeholder_learn_title">Aprender y Acerca de</string>
     <string name="placeholder_learn_body">Esta area seguira creciendo como el acompanamiento educativo mas profundo de la evaluacion, con contexto ampliado adaptado del material fuente.</string>
     <string name="learn_title">Aprender mediante cursos</string>
-    <string name="learn_subtitle">Explora lecturas mas amplias construidas desde el mismo material fuente del Arbol de la Vida, adaptadas a un lenguaje mas sereno para estudiar y reflexionar.</string>
-    <string name="learn_footer">El primer curso parte del documento fuente y esta estructurado para que futuras secciones puedan llegar poco a poco sin cambiar el flujo de lectura.</string>
+    <string name="learn_subtitle">Explora lecturas mas amplias construidas desde el mismo material fuente del Arbol de la Vida, manteniendose mucho mas cerca de su voz de ensenanza cabalistica.</string>
+    <string name="learn_footer">Se iran agregando mas cursos con el tiempo. El catalogo actual comienza con el panorama del Arbol de la Vida y esta pensado para crecer poco a poco.</string>
     <string name="learn_loading_title">Preparando tus cursos</string>
     <string name="learn_loading_body">Cargando el catalogo actual de cursos desde el contenido local.</string>
     <string name="learn_error_title">Los cursos no estan disponibles ahora</string>
@@ -159,6 +159,7 @@
     <string name="learn_sections_progress">%1$d/%2$d</string>
     <string name="learn_course_sections_badge">Secciones ahora</string>
     <string name="learn_course_time_badge">Tiempo estimado</string>
+    <string name="learn_course_eyebrow">Curso</string>
     <string name="learn_course_footer">Se iran agregando mas secciones a este curso con el tiempo. El flujo de lectura actual esta pensado para mantenerse estable cuando lleguen nuevas sefirot.</string>
     <string name="learn_minutes_short">%1$d min</string>
     <string name="learn_section_title_with_number">%1$d. %2$s</string>
@@ -167,10 +168,15 @@
     <string name="learn_next_section_action">Continuar a %1$s</string>
     <string name="learn_next_section_locked">%1$s sigue bloqueada</string>
     <string name="learn_mark_section_completed">Marcar seccion como terminada</string>
+    <string name="learn_back_to_course_action">Terminar y volver al curso</string>
+    <string name="learn_course_overview_action">Volver a la vista del curso</string>
     <string name="learn_section_status_available">Disponible para leer</string>
     <string name="learn_section_status_locked">Bloqueada hasta terminar la seccion anterior</string>
     <string name="learn_section_status_completed">Terminada</string>
     <string name="learn_section_status_in_progress">Seccion actual</string>
+    <string name="learn_reader_status_ready">Lista para leer</string>
+    <string name="learn_reader_footer_unfinished">Termina esta seccion cuando te sientas listo. El siguiente capitulo se abre solo despues de marcar como terminada la seccion actual.</string>
+    <string name="learn_reader_footer_completed">Este capitulo ya esta completo. Puedes seguir adelante o volver a una seccion anterior para releerla a tu propio ritmo.</string>
     <string name="settings_title">Ajustes</string>
     <string name="settings_eyebrow">Espacio de reflexion</string>
     <string name="settings_body">Ajusta como se siente Numyah Mind en tu dispositivo. Este espacio cubre idioma, apariencia, preferencias de la evaluacion, guia de privacidad y apoyo para el onboarding.</string>

@@ -21,18 +21,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
-import com.netah.hakkam.numyah.mind.ui.components.AppActionCard
 import com.netah.hakkam.numyah.mind.ui.components.AppFooterCard
 import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.ui.components.StatusChip
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCatalogUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseCardUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseViewModel
@@ -42,6 +43,11 @@ import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.LearnUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnViewModel
+
+internal const val LEARN_CATALOG_SCROLL_TAG = "learn_catalog_scroll"
+internal const val LEARN_COURSE_SCROLL_TAG = "learn_course_scroll"
+internal const val LEARN_SECTION_SCROLL_TAG = "learn_section_scroll"
+internal const val LEARN_MARK_SECTION_COMPLETED_BUTTON_TAG = "learn_mark_section_completed_button"
 
 @Composable
 fun LearnRoute(
@@ -77,6 +83,7 @@ fun LearnCourseRoute(
 fun LearnSectionRoute(
     paddingValues: PaddingValues,
     onOpenSection: (String, String) -> Unit,
+    onOpenCourse: (String) -> Unit,
     viewModel: LearnSectionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,6 +92,7 @@ fun LearnSectionRoute(
         uiState = uiState,
         onRetry = viewModel::retry,
         onOpenSection = onOpenSection,
+        onOpenCourse = onOpenCourse,
         onMarkSectionCompleted = viewModel::markSectionCompleted
     )
 }
@@ -156,6 +164,7 @@ fun LearnSectionScreen(
     uiState: LearnSectionUiState,
     onRetry: () -> Unit,
     onOpenSection: (String, String) -> Unit,
+    onOpenCourse: (String) -> Unit,
     onMarkSectionCompleted: () -> Unit
 ) {
     when (uiState) {
@@ -185,6 +194,7 @@ fun LearnSectionScreen(
             paddingValues = paddingValues,
             model = uiState.model,
             onOpenSection = onOpenSection,
+            onOpenCourse = onOpenCourse,
             onMarkSectionCompleted = onMarkSectionCompleted
         )
     }
@@ -196,7 +206,10 @@ private fun LearnCatalogContent(
     model: LearnCatalogUiModel,
     onOpenCourse: (String) -> Unit
 ) {
-    AppScreenColumn(paddingValues = paddingValues) {
+    AppScreenColumn(
+        paddingValues = paddingValues,
+        modifier = Modifier.testTag(LEARN_CATALOG_SCROLL_TAG)
+    ) {
         Text(
             text = stringResource(R.string.learn_title),
             style = MaterialTheme.typography.headlineLarge,
@@ -209,12 +222,7 @@ private fun LearnCatalogContent(
         )
         StatusChip(label = model.title)
         model.courses.forEach { course ->
-            AppActionCard(
-                title = course.title,
-                body = course.description,
-                actionLabel = stringResource(R.string.learn_open_course_action),
-                onClick = { onOpenCourse(course.id) }
-            )
+            LearnCourseCatalogCard(course = course, onOpenCourse = onOpenCourse)
         }
         AppFooterCard(text = stringResource(R.string.learn_footer))
     }
@@ -226,13 +234,22 @@ private fun LearnCourseContent(
     model: LearnCourseUiModel,
     onOpenSection: (String, String) -> Unit
 ) {
-    AppScreenColumn(paddingValues = paddingValues) {
+    AppScreenColumn(
+        paddingValues = paddingValues,
+        modifier = Modifier.testTag(LEARN_COURSE_SCROLL_TAG)
+    ) {
         AppSurfaceCard(
             containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.42f),
             elevation = 0.dp
         ) {
             Text(
+                text = stringResource(R.string.learn_course_eyebrow),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
                 text = model.title,
+                modifier = Modifier.padding(top = 8.dp),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold
             )
@@ -304,6 +321,7 @@ private fun LearnSectionCard(
     onOpenSection: (String, String) -> Unit
 ) {
     AppSurfaceCard(
+        modifier = Modifier.testTag("learn_section_card_${section.id}"),
         onClick = if (section.isLocked) null else ({ onOpenSection(courseId, section.id) }),
         elevation = 0.dp,
         containerColor = when {
@@ -327,16 +345,34 @@ private fun LearnSectionCard(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(
-            text = when {
-                section.isCompleted -> stringResource(R.string.learn_section_status_completed)
-                section.isLocked -> stringResource(R.string.learn_section_status_locked)
-                else -> stringResource(R.string.learn_section_status_available)
-            },
-            modifier = Modifier.padding(top = 12.dp),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.secondary
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            AppMetricBadge(
+                label = stringResource(R.string.learn_course_time_badge),
+                value = stringResource(R.string.learn_minutes_short, section.readingTimeMinutes),
+                modifier = Modifier.weight(1f)
+            )
+            StatusChip(
+                label = when {
+                    section.isCompleted -> stringResource(R.string.learn_section_status_completed)
+                    section.isLocked -> stringResource(R.string.learn_section_status_locked)
+                    else -> stringResource(R.string.learn_section_status_available)
+                }
+            )
+        }
+        if (!section.isLocked) {
+            Text(
+                text = stringResource(R.string.learn_open_section_action),
+                modifier = Modifier.padding(top = 12.dp),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }
 
@@ -345,14 +381,19 @@ private fun LearnSectionContent(
     paddingValues: PaddingValues,
     model: LearnSectionUiModel,
     onOpenSection: (String, String) -> Unit,
+    onOpenCourse: (String) -> Unit,
     onMarkSectionCompleted: () -> Unit
 ) {
-    AppScreenColumn(paddingValues = paddingValues) {
+    AppScreenColumn(
+        paddingValues = paddingValues,
+        modifier = Modifier.testTag(LEARN_SECTION_SCROLL_TAG)
+    ) {
         LearnReadingChapterHeader(model = model)
         LearnReadingPage(model = model)
         LearnReadingActions(
             model = model,
             onOpenSection = onOpenSection,
+            onOpenCourse = onOpenCourse,
             onMarkSectionCompleted = onMarkSectionCompleted
         )
     }
@@ -372,6 +413,11 @@ private fun LearnReadingChapterHeader(model: LearnSectionUiModel) {
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            Text(
+                text = model.courseTitle,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
             Text(
                 text = stringResource(
                     R.string.learn_section_position,
@@ -415,7 +461,7 @@ private fun LearnReadingChapterHeader(model: LearnSectionUiModel) {
                     value = if (model.isCompleted) {
                         stringResource(R.string.learn_section_status_completed)
                     } else {
-                        stringResource(R.string.learn_section_status_available)
+                        stringResource(R.string.learn_reader_status_ready)
                     }
                 )
             }
@@ -494,6 +540,7 @@ private fun LearnLeadParagraph(paragraph: String) {
 private fun LearnReadingActions(
     model: LearnSectionUiModel,
     onOpenSection: (String, String) -> Unit,
+    onOpenCourse: (String) -> Unit,
     onMarkSectionCompleted: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -514,7 +561,9 @@ private fun LearnReadingActions(
         if (!model.isCompleted) {
             Button(
                 onClick = onMarkSectionCompleted,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(LEARN_MARK_SECTION_COMPLETED_BUTTON_TAG)
             ) {
                 Text(text = stringResource(R.string.learn_mark_section_completed))
             }
@@ -548,5 +597,85 @@ private fun LearnReadingActions(
                 )
             }
         }
+
+        if (model.isCompleted && model.nextSectionId == null) {
+            Button(
+                onClick = { onOpenCourse(model.courseId) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.learn_back_to_course_action))
+            }
+        }
+
+        if (!model.isCompleted) {
+            OutlinedButton(
+                onClick = { onOpenCourse(model.courseId) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.learn_course_overview_action))
+            }
+        }
+
+        AppFooterCard(
+            text = if (model.isCompleted) {
+                stringResource(R.string.learn_reader_footer_completed)
+            } else {
+                stringResource(R.string.learn_reader_footer_unfinished)
+            }
+        )
+    }
+}
+
+@Composable
+private fun LearnCourseCatalogCard(
+    course: LearnCourseCardUiModel,
+    onOpenCourse: (String) -> Unit
+) {
+    AppSurfaceCard(
+        modifier = Modifier.testTag("learn_course_card_${course.id}"),
+        onClick = { onOpenCourse(course.id) },
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
+        Text(
+            text = course.title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = course.subtitle,
+            modifier = Modifier.padding(top = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = course.description,
+            modifier = Modifier.padding(top = 12.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            AppMetricBadge(
+                label = stringResource(R.string.learn_course_sections_badge),
+                value = stringResource(
+                    R.string.learn_sections_progress,
+                    course.availableSectionCount,
+                    course.totalSectionCount
+                )
+            )
+            AppMetricBadge(
+                label = stringResource(R.string.learn_course_time_badge),
+                value = stringResource(R.string.learn_minutes_short, course.estimatedMinutes)
+            )
+        }
+        Text(
+            text = stringResource(R.string.learn_open_course_action),
+            modifier = Modifier.padding(top = 12.dp),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }

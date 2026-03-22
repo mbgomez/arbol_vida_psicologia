@@ -14,6 +14,11 @@ The Learn feature is now a real product slice with:
   - section reader
 - gated section progression using local app preferences
 - a more editorial, book-like section reader
+- stronger course and chapter hierarchy polish across list, detail, and reader surfaces
+- route behavior that returns section navigation to the course flow instead of stacking every visited chapter
+- explicit return-to-course actions in the reader, including the end of the available chapter sequence
+- stable Compose test hooks for Learn user-critical interactions
+- Compose UI coverage for the core Learn screens and progression controls
 - Kabbalistic voice locked for Learn content
 
 ## Main Decisions Made
@@ -23,6 +28,8 @@ The Learn feature is now a real product slice with:
 - Learn is the place for the authored Kabbalistic teaching voice.
 - Assessment and onboarding remain in the softer, more product-shaped psychological voice.
 - Learn content can receive light cleanup for readability and mobile structure, but should not be rewritten into the same tone as assessment content.
+- Course descriptions and section summaries should describe the reading material itself, not implementation state or future build plans.
+- Seeded section bodies should stay as close as practical to the source document, with only minor cleanup for spelling, structure, and bilingual readability.
 
 ### Course Structure
 
@@ -51,6 +58,8 @@ The Learn feature is now a real product slice with:
   - continuous reading page
   - previous and next chapter controls
   - footer actions separated from the reading body
+- Chapter-to-chapter navigation should replace the current reader entry instead of creating a long back stack of visited sections.
+- The reader should always provide a clear route back to the course overview, and the end of the available sequence should provide an explicit return-to-course action.
 
 ## Files That Matter Most
 
@@ -92,21 +101,22 @@ The Learn feature is now a real product slice with:
 - [LearnViewModelTests.kt](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\app\src\test\java\com\netah\hakkam\numyah\mind\viewmodel\LearnViewModelTests.kt)
 - [LocalAppPreferencesRepositoryTests.kt](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\app\src\test\java\com\netah\hakkam\numyah\mind\data\repository\LocalAppPreferencesRepositoryTests.kt)
 - [AppPreferencesUseCaseTests.kt](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\app\src\test\java\com\netah\hakkam\numyah\mind\domain\usecase\AppPreferencesUseCaseTests.kt)
+- [LearnScreenTest.kt](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\app\src\androidTest\java\com\netah\hakkam\numyah\mind\ui\LearnScreenTest.kt)
 
 ## What Is Left
 
 ### Missing Tests
 
-The Learn slice still needs Compose UI coverage.
+The main missing Learn Compose coverage has now been added for:
 
-Recommended first UI tests:
+- course list seeded entry rendering
+- course screen available and locked section states
+- section reader title and body rendering
+- unfinished section completion action
+- completed section next-chapter action
+- locked section surface
 
-- course list renders the seeded course entry
-- course screen shows available and locked sections correctly
-- section screen renders chapter title and body content
-- unfinished section shows the completion action
-- completed section shows the next-chapter action when unlocked
-- locked section route shows the locked-state surface
+Any further UI tests should stay focused on newly locked behavior rather than broad polished-layout snapshots.
 
 ### Manual Review
 
@@ -114,9 +124,10 @@ The reader still needs manual review on device for:
 
 - chapter header feel
 - long paragraph rhythm
-- previous and next controls
+- previous and next controls after the route-stack fix
 - locked and unlocked flow
 - dark and light theme readability
+- catalog and course-card density on smaller devices
 
 ### Future Enhancement Layer
 
@@ -130,11 +141,10 @@ Not part of the current pass, but already identified:
 Recommended order:
 
 1. Run the Learn-related tests first.
-2. Add the missing Learn Compose UI tests.
-3. Manually review the Learn reader on device.
-4. Fix any UI issues discovered during review.
-5. Add any missing assertions for newly reviewed behavior.
-6. If the Learn standard changes again, update docs in the same pass.
+2. Manually review the Learn reader and course flow on device.
+3. Fix any remaining UI issues discovered during review.
+4. Add any missing assertions for newly reviewed behavior.
+5. If the Learn standard changes again, update docs in the same pass.
 
 ## Good Prompt To Continue
 

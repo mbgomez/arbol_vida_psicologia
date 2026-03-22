@@ -7,10 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.test.platform.app.InstrumentationRegistry
@@ -133,16 +133,9 @@ class SettingsScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.waitUntil(timeoutMillis = 5_000) {
-            composeTestRule
-                .onAllNodesWithTag("settings_language_spanish")
-                .fetchSemanticsNodes().isNotEmpty()
-        }
+        composeTestRule.onNodeWithTag("settings_language_spanish").performScrollTo()
         composeTestRule.onNodeWithTag("settings_language_spanish_radio").performClick()
-        composeTestRule.waitUntil(timeoutMillis = 5_000) {
-            selectedLanguageMode == AppLanguageMode.SPANISH
-        }
+        composeTestRule.waitForIdle()
 
         assertEquals(AppLanguageMode.SPANISH, selectedLanguageMode)
     }
