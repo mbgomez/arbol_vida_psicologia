@@ -11,11 +11,13 @@ import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCourseParams
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCourseUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningSectionParams
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningSectionUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.MarkLearningSectionCompletedParams
 import com.netah.hakkam.numyah.mind.domain.usecase.MarkLearningSectionCompletedUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -114,10 +116,45 @@ class LearnViewModelTests {
         val state = viewModel.uiState.value as LearnSectionUiState.Loaded
 
         assertEquals("Introduction", state.model.sectionTitle)
+        assertEquals(null, state.model.previousSectionId)
         assertEquals("malkuth", state.model.nextSectionId)
         assertEquals("Malkuth", state.model.nextSectionTitle)
         assertEquals(3, state.model.totalAvailableSections)
         assertEquals(true, state.model.isCompleted)
+    }
+
+    @Test
+    fun learnSectionViewModel_forLaterSection_exposesPreviousChapterNavigation() = coroutinesRule.runBlockingTest {
+        val course = testCatalog().courses.first()
+        val section = course.sections[1]
+        every {
+            getLearningCourseUseCase.run(GetLearningCourseParams("tree-course", Locale.ENGLISH))
+        } returns flowOf(course)
+        every { getCompletedLearningSectionsUseCase.run() } returns flowOf(setOf("tree-course::intro"))
+        every {
+            getLearningSectionUseCase.run(
+                GetLearningSectionParams("tree-course", "malkuth", Locale.ENGLISH)
+            )
+        } returns flowOf(section)
+
+        val viewModel = LearnSectionViewModel(
+            savedStateHandle = SavedStateHandle(
+                mapOf(
+                    AppDestination.LearnSection.courseIdArg to "tree-course",
+                    AppDestination.LearnSection.sectionIdArg to "malkuth"
+                )
+            ),
+            getLearningCourseUseCase = getLearningCourseUseCase,
+            getLearningSectionUseCase = getLearningSectionUseCase,
+            getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
+            markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+        val state = viewModel.uiState.value as LearnSectionUiState.Loaded
+
+        assertEquals("intro", state.model.previousSectionId)
+        assertEquals("Introduction", state.model.previousSectionTitle)
+        assertEquals("yesod", state.model.nextSectionId)
     }
 
     @Test
@@ -141,6 +178,82 @@ class LearnViewModelTests {
         assertEquals(false, state.model.sections[0].isLocked)
         assertEquals(true, state.model.sections[1].isLocked)
         assertEquals(true, state.model.sections[2].isLocked)
+    }
+
+    @Test
+    fun learnSectionViewModel_withLockedSection_emitsLockedState() = coroutinesRule.runBlockingTest {
+        val course = testCatalog().courses.first()
+        val section = course.sections[1]
+        every {
+            getLearningCourseUseCase.run(GetLearningCourseParams("tree-course", Locale.ENGLISH))
+        } returns flowOf(course)
+        every { getCompletedLearningSectionsUseCase.run() } returns flowOf(emptySet())
+        every {
+            getLearningSectionUseCase.run(
+                GetLearningSectionParams("tree-course", "malkuth", Locale.ENGLISH)
+            )
+        } returns flowOf(section)
+
+        val viewModel = LearnSectionViewModel(
+            savedStateHandle = SavedStateHandle(
+                mapOf(
+                    AppDestination.LearnSection.courseIdArg to "tree-course",
+                    AppDestination.LearnSection.sectionIdArg to "malkuth"
+                )
+            ),
+            getLearningCourseUseCase = getLearningCourseUseCase,
+            getLearningSectionUseCase = getLearningSectionUseCase,
+            getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
+            markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+
+        assertTrue(viewModel.uiState.value is LearnSectionUiState.Locked)
+    }
+
+    @Test
+    fun markSectionCompleted_callsUseCaseForCurrentSection() = coroutinesRule.runBlockingTest {
+        val course = testCatalog().courses.first()
+        val section = course.sections[1]
+        every {
+            getLearningCourseUseCase.run(GetLearningCourseParams("tree-course", Locale.ENGLISH))
+        } returns flowOf(course)
+        every { getCompletedLearningSectionsUseCase.run() } returnsMany listOf(
+            flowOf(setOf("tree-course::intro")),
+            flowOf(setOf("tree-course::intro", "tree-course::malkuth"))
+        )
+        every {
+            getLearningSectionUseCase.run(
+                GetLearningSectionParams("tree-course", "malkuth", Locale.ENGLISH)
+            )
+        } returns flowOf(section)
+        every {
+            markLearningSectionCompletedUseCase.run(
+                MarkLearningSectionCompletedParams("tree-course", "malkuth")
+            )
+        } returns flowOf(setOf("tree-course::intro", "tree-course::malkuth"))
+
+        val viewModel = LearnSectionViewModel(
+            savedStateHandle = SavedStateHandle(
+                mapOf(
+                    AppDestination.LearnSection.courseIdArg to "tree-course",
+                    AppDestination.LearnSection.sectionIdArg to "malkuth"
+                )
+            ),
+            getLearningCourseUseCase = getLearningCourseUseCase,
+            getLearningSectionUseCase = getLearningSectionUseCase,
+            getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
+            markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+
+        viewModel.markSectionCompleted()
+
+        verify {
+            markLearningSectionCompletedUseCase.run(
+                MarkLearningSectionCompletedParams("tree-course", "malkuth")
+            )
+        }
     }
 
     private fun testCatalog(): LearningCatalog {

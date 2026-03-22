@@ -184,6 +184,7 @@ Working-together protocol:
   - locked decisions
   - implementation
   - review and refinement
+- For the current Learn slice, treat phase 3 as the pass for missing tests plus Learn-specific learnings and refinement standards after the reader experience is in place.
 - Be explicit about whether a choice is a temporary experiment or a new project standard.
 - When a standard changes, update both the implementation and the requirement files in the same pass.
 - Prefer reducing assumption churn over rushing a larger implementation on unstable foundations.

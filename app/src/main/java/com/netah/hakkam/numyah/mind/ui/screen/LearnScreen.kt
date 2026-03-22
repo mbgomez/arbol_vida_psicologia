@@ -1,18 +1,26 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -340,9 +348,29 @@ private fun LearnSectionContent(
     onMarkSectionCompleted: () -> Unit
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
-        AppSurfaceCard(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.32f),
-            elevation = 0.dp
+        LearnReadingChapterHeader(model = model)
+        LearnReadingPage(model = model)
+        LearnReadingActions(
+            model = model,
+            onOpenSection = onOpenSection,
+            onMarkSectionCompleted = onMarkSectionCompleted
+        )
+    }
+}
+
+@Composable
+private fun LearnReadingChapterHeader(model: LearnSectionUiModel) {
+    val containerShape = RoundedCornerShape(32.dp)
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = containerShape,
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f),
+        shadowElevation = 0.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 text = stringResource(
@@ -355,40 +383,130 @@ private fun LearnSectionContent(
             )
             Text(
                 text = model.sectionTitle,
-                modifier = Modifier.padding(top = 8.dp),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.28f)
+                    .height(2.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.secondary,
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
+                            )
+                        )
+                    )
             )
             Text(
                 text = model.summary,
-                modifier = Modifier.padding(top = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Text(
-                text = stringResource(R.string.learn_minutes_short, model.readingTimeMinutes),
-                modifier = Modifier.padding(top = 16.dp),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = if (model.isCompleted) {
-                    stringResource(R.string.learn_section_status_completed)
-                } else {
-                    stringResource(R.string.learn_section_status_in_progress)
-                },
-                modifier = Modifier.padding(top = 8.dp),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AppMetricBadge(
+                    label = stringResource(R.string.learn_course_time_badge),
+                    value = stringResource(R.string.learn_minutes_short, model.readingTimeMinutes)
+                )
+                AppMetricBadge(
+                    label = stringResource(R.string.learn_section_status_in_progress),
+                    value = if (model.isCompleted) {
+                        stringResource(R.string.learn_section_status_completed)
+                    } else {
+                        stringResource(R.string.learn_section_status_available)
+                    }
+                )
+            }
         }
+    }
+}
 
-        model.paragraphs.forEach { paragraph ->
-            AppSurfaceCard(elevation = 0.dp) {
+@Composable
+private fun LearnReadingPage(model: LearnSectionUiModel) {
+    val pageShape = RoundedCornerShape(28.dp)
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
+                shape = pageShape
+            ),
+        shape = pageShape,
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 0.dp
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.14f)
+                        )
+                    )
+                )
+                .padding(horizontal = 24.dp, vertical = 28.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(22.dp)) {
+                model.paragraphs.forEachIndexed { index, paragraph ->
+                    if (index == 0) {
+                        LearnLeadParagraph(paragraph = paragraph)
+                    } else {
+                        Text(
+                            text = paragraph,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LearnLeadParagraph(paragraph: String) {
+    val trimmed = paragraph.trim()
+    val lead = trimmed.take(1)
+    val rest = trimmed.drop(1)
+
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = lead,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = rest,
+            modifier = Modifier.padding(top = 8.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun LearnReadingActions(
+    model: LearnSectionUiModel,
+    onOpenSection: (String, String) -> Unit,
+    onMarkSectionCompleted: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (model.previousSectionId != null && model.previousSectionTitle != null) {
+            OutlinedButton(
+                onClick = { onOpenSection(model.courseId, model.previousSectionId) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
-                    text = paragraph,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = stringResource(
+                        R.string.learn_previous_section_action,
+                        model.previousSectionTitle
+                    )
                 )
             }
         }

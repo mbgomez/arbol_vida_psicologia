@@ -94,6 +94,8 @@ data class LearnSectionUiModel(
     val readingTimeMinutes: Int,
     val paragraphs: List<String>,
     val isCompleted: Boolean,
+    val previousSectionId: String?,
+    val previousSectionTitle: String?,
     val nextSectionId: String?,
     val nextSectionTitle: String?,
     val isNextSectionLocked: Boolean
@@ -296,6 +298,9 @@ private fun LearningCourse.toSectionUiModel(
     section: LearningSection,
     completedSectionKeys: Set<String>
 ): LearnSectionUiModel {
+    val previousSection = sections
+        .sortedBy { it.order }
+        .firstOrNull { it.order == section.order - 1 }
     val nextSection = sections
         .sortedBy { it.order }
         .firstOrNull { it.order == section.order + 1 }
@@ -310,6 +315,8 @@ private fun LearningCourse.toSectionUiModel(
         readingTimeMinutes = section.readingTimeMinutes,
         paragraphs = section.content,
         isCompleted = completedSectionKeys.contains(sectionCompletionKey(id, section.id)),
+        previousSectionId = previousSection?.id,
+        previousSectionTitle = previousSection?.title,
         nextSectionId = nextSection?.id,
         nextSectionTitle = nextSection?.title,
         isNextSectionLocked = nextSection?.let {

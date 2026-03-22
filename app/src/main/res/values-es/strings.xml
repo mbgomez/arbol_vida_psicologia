@@ -163,6 +163,7 @@
     <string name="learn_minutes_short">%1$d min</string>
     <string name="learn_section_title_with_number">%1$d. %2$s</string>
     <string name="learn_section_position">Seccion %1$d de %2$d disponibles actualmente</string>
+    <string name="learn_previous_section_action">Volver a %1$s</string>
     <string name="learn_next_section_action">Continuar a %1$s</string>
     <string name="learn_next_section_locked">%1$s sigue bloqueada</string>
     <string name="learn_mark_section_completed">Marcar seccion como terminada</string>

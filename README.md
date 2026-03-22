@@ -101,6 +101,10 @@ Learn content standard:
 
 - Learn/About content should also stay local-first and bilingual in v1.
 - Learn/About should preserve the authored Kabbalistic teaching voice much more closely than assessment content.
+- Learn implementation phases for the current course slice are:
+  - Phase 1: lock Kabbalistic voice and authored content direction
+  - Phase 2: shape the section reader into a book-like reading experience
+  - Phase 3: close missing tests and capture Learn-specific learnings and polish from the finished reader
 - The default learning seed shape is:
   - `version`
   - `courses`

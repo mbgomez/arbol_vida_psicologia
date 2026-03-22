@@ -376,6 +376,18 @@ Learn content architecture should follow the same local-first principle:
 - the first seeded course should follow the source document closely, using one introduction section plus one section per sephira
 - unfinished sephira sections should be allowed to arrive gradually without redesigning the Learn flow
 
+Locked Learn delivery phases for the current course slice:
+
+- Phase 1:
+  - lock Learn voice to stay close to the authored Kabbalistic teaching style
+  - seed the first available sections from the source document
+- Phase 2:
+  - evolve the section reader toward a book-like reading page
+  - support chapter progression and calmer reading rhythm
+- Phase 3:
+  - add remaining missing tests for Learn behavior and persistence
+  - capture Learn-specific implementation learnings and refinement standards in docs
+
 ## 5. Scoring Model
 
 The goal is not to force a mystical interpretation, but to produce a stable and understandable psychological profile.
