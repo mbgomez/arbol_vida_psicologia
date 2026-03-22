@@ -2,12 +2,12 @@ package com.netah.hakkam.numyah.mind.di
 
 import android.content.Context
 import com.netah.hakkam.numyah.mind.NumyahMindApplication
+import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.Locale
 import javax.inject.Singleton
 
 @Module
@@ -28,7 +28,9 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideLocal(application: NumyahMindApplication): Locale {
-        return application.applicationContext.resources.configuration.locales[0]
+    fun provideCurrentLocaleProvider(
+        @ApplicationContext context: Context
+    ): CurrentLocaleProvider {
+        return CurrentLocaleProvider(context)
     }
 }

@@ -142,7 +142,13 @@
     <string name="settings_body">Ajusta como se siente Numyah Mind en tu dispositivo. Este espacio cubre idioma, apariencia, preferencias de la evaluacion, guia de privacidad y apoyo para el onboarding.</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_language_body">Numyah Mind debe ofrecer idioma por defecto del sistema, ingles y espanol como opciones globales de la app.</string>
-    <string name="settings_language_supporting">Los controles de idioma quedan reservados para la siguiente fase para que la experiencia global de la app se mantenga coherente cuando lleguen.</string>
+    <string name="settings_language_supporting">Los cambios de idioma deben aplicarse en toda la app para que la lectura, la evaluacion y los resultados se mantengan alineados.</string>
+    <string name="settings_language_system_title">Usar idioma del dispositivo</string>
+    <string name="settings_language_system_body">Sigue automaticamente el idioma de tu dispositivo.</string>
+    <string name="settings_language_english_title">Ingles</string>
+    <string name="settings_language_english_body">Usa ingles en toda la experiencia de la app.</string>
+    <string name="settings_language_spanish_title">Espanol</string>
+    <string name="settings_language_spanish_body">Usa espanol en toda la experiencia de la app.</string>
     <string name="settings_appearance_title">Apariencia</string>
     <string name="settings_appearance_body">El tema debe ofrecer modo por defecto del sistema, claro y oscuro para que la experiencia de reflexion se mantenga comoda en distintos entornos.</string>
     <string name="settings_assessment_title">Experiencia de evaluacion</string>

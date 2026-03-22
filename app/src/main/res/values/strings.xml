@@ -143,7 +143,13 @@
     <string name="settings_body">Adjust how Numyah Mind feels on your device. This space covers language, appearance, assessment preferences, privacy guidance, and onboarding support.</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_body">Numyah Mind should support system default, English, and Spanish as app-wide language options.</string>
-    <string name="settings_language_supporting">Language controls are locked for the next phase so the app-wide experience stays cohesive when they arrive.</string>
+    <string name="settings_language_supporting">Language changes should apply across the full app so reading, assessment, and results stay aligned.</string>
+    <string name="settings_language_system_title">Use device language</string>
+    <string name="settings_language_system_body">Follow your device language automatically.</string>
+    <string name="settings_language_english_title">English</string>
+    <string name="settings_language_english_body">Use English across the app experience.</string>
+    <string name="settings_language_spanish_title">Spanish</string>
+    <string name="settings_language_spanish_body">Use Spanish across the app experience.</string>
     <string name="settings_appearance_title">Appearance</string>
     <string name="settings_appearance_body">Theme should support system default, light, and dark modes so the reflection experience stays comfortable in different environments.</string>
     <string name="settings_assessment_title">Assessment experience</string>

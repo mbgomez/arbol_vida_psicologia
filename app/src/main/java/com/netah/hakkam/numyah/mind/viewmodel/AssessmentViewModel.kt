@@ -2,6 +2,7 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -25,7 +26,6 @@ import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCas
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressParams
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -123,7 +123,7 @@ class AssessmentViewModel @Inject constructor(
     private val advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase,
     private val completeAssessmentUseCase: CompleteAssessmentUseCase,
     private val assessmentScoringEngine: AssessmentScoringEngine,
-    private val locale: Locale
+    private val currentLocaleProvider: CurrentLocaleProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AssessmentUiState>(AssessmentUiState.Loading)
@@ -144,7 +144,7 @@ class AssessmentViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = AssessmentUiState.Loading
             try {
-                val questionnaire = getCurrentQuestionnaireUseCase.run(locale).first()
+                val questionnaire = getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()).first()
                 val firstSection = questionnaire.sections.firstOrNull()
                 if (firstSection == null) {
                     _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)

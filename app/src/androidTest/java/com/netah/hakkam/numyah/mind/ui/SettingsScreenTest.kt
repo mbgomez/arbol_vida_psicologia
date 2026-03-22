@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.test.platform.app.InstrumentationRegistry
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
@@ -36,6 +37,7 @@ class SettingsScreenTest {
                 SettingsScreen(
                     paddingValues = PaddingValues(),
                     uiState = SettingsUiState.Loading,
+                    onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onReplayOnboarding = {}
@@ -47,35 +49,16 @@ class SettingsScreenTest {
     }
 
     @Test
-    fun settingsScreen_readyState_showsCoreSectionsAndAllowsThemeSelection() {
+    fun settingsScreen_readyState_showsCoreSections() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var selectedThemeMode = AppThemeMode.SYSTEM
 
         composeTestRule.setContent {
-            var uiState by remember {
-                mutableStateOf(
-                    SettingsUiState.Ready(
-                        SettingsUiModel(
-                            themeMode = AppThemeMode.SYSTEM,
-                            shouldShowAssessmentHonestyNotice = true
-                        )
-                    )
-                )
-            }
-
             AppTheme {
                 SettingsScreen(
                     paddingValues = PaddingValues(),
-                    uiState = uiState,
-                    onThemeModeSelected = {
-                        selectedThemeMode = it
-                        uiState = SettingsUiState.Ready(
-                            SettingsUiModel(
-                                themeMode = it,
-                                shouldShowAssessmentHonestyNotice = true
-                            )
-                        )
-                    },
+                    uiState = readyState(),
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onReplayOnboarding = {}
                 )
@@ -84,16 +67,67 @@ class SettingsScreenTest {
 
         composeTestRule.onNodeWithText(context.getString(R.string.settings_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_appearance_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_language_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).assertIsDisplayed()
         composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
         composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).assertIsDisplayed()
+    }
 
-        composeTestRule.onNodeWithText(
-            context.getString(R.string.settings_theme_dark_title)
-        ).performClick()
+    @Test
+    fun settingsScreen_themeSelection_invokesCallback() {
+        var selectedThemeMode = AppThemeMode.SYSTEM
+
+        composeTestRule.setContent {
+            var uiState by remember { mutableStateOf(readyState()) }
+
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = uiState,
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {
+                        selectedThemeMode = it
+                        uiState = readyState(themeMode = it)
+                    },
+                    onAssessmentHonestyNoticeChanged = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_theme_dark").performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(AppThemeMode.DARK, selectedThemeMode)
+    }
+
+    @Test
+    fun settingsScreen_languageSelection_invokesCallback() {
+        var selectedLanguageMode = AppLanguageMode.SYSTEM
+
+        composeTestRule.setContent {
+            var uiState by remember { mutableStateOf(readyState()) }
+
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = uiState,
+                    onLanguageModeSelected = {
+                        selectedLanguageMode = it
+                        uiState = readyState(languageMode = it)
+                    },
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_language_spanish").performClick()
+        composeTestRule.waitForIdle()
+
+        assertEquals(AppLanguageMode.SPANISH, selectedLanguageMode)
     }
 
     @Test
@@ -101,37 +135,24 @@ class SettingsScreenTest {
         var honestyNoticeEnabled = true
 
         composeTestRule.setContent {
-            var uiState by remember {
-                mutableStateOf(
-                    SettingsUiState.Ready(
-                        SettingsUiModel(
-                            themeMode = AppThemeMode.SYSTEM,
-                            shouldShowAssessmentHonestyNotice = true
-                        )
-                    )
-                )
-            }
+            var uiState by remember { mutableStateOf(readyState()) }
 
             AppTheme {
                 SettingsScreen(
                     paddingValues = PaddingValues(),
                     uiState = uiState,
+                    onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {
                         honestyNoticeEnabled = it
-                        uiState = SettingsUiState.Ready(
-                            SettingsUiModel(
-                                themeMode = AppThemeMode.SYSTEM,
-                                shouldShowAssessmentHonestyNotice = it
-                            )
-                        )
+                        uiState = readyState(honestyNoticeVisible = it)
                     },
                     onReplayOnboarding = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_honesty_switch").performClick()
+        composeTestRule.onNodeWithTag("settings_honesty_row").performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(!honestyNoticeEnabled)
@@ -146,12 +167,8 @@ class SettingsScreenTest {
             AppTheme {
                 SettingsScreen(
                     paddingValues = PaddingValues(),
-                    uiState = SettingsUiState.Ready(
-                        SettingsUiModel(
-                            themeMode = AppThemeMode.SYSTEM,
-                            shouldShowAssessmentHonestyNotice = true
-                        )
-                    ),
+                    uiState = readyState(),
+                    onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onReplayOnboarding = { replayedOnboarding = true }
@@ -160,13 +177,25 @@ class SettingsScreenTest {
         }
 
         composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.onNodeWithText(
-            context.getString(R.string.settings_replay_onboarding_action)
-        ).performClick()
+        composeTestRule.onNodeWithTag("settings_replay_onboarding_button").performClick()
         composeTestRule.onNodeWithText(
             context.getString(R.string.settings_replay_onboarding_confirm)
         ).performClick()
 
         assertTrue(replayedOnboarding)
+    }
+
+    private fun readyState(
+        languageMode: AppLanguageMode = AppLanguageMode.SYSTEM,
+        themeMode: AppThemeMode = AppThemeMode.SYSTEM,
+        honestyNoticeVisible: Boolean = true
+    ): SettingsUiState {
+        return SettingsUiState.Ready(
+            SettingsUiModel(
+                languageMode = languageMode,
+                themeMode = themeMode,
+                shouldShowAssessmentHonestyNotice = honestyNoticeVisible
+            )
+        )
     }
 }

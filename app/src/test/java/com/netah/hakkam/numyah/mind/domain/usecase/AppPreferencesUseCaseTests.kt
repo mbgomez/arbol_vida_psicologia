@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.domain.usecase
 
 import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
+import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
@@ -22,6 +23,8 @@ class AppPreferencesUseCaseTests {
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var getLanguageModeUseCase: GetLanguageModeUseCase
+    private lateinit var setLanguageModeUseCase: SetLanguageModeUseCase
     private lateinit var getThemeModeUseCase: GetThemeModeUseCase
     private lateinit var setThemeModeUseCase: SetThemeModeUseCase
 
@@ -37,6 +40,8 @@ class AppPreferencesUseCaseTests {
             GetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
         setAssessmentHonestyNoticeVisibilityUseCase =
             SetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
+        getLanguageModeUseCase = GetLanguageModeUseCase(appPreferencesRepository)
+        setLanguageModeUseCase = SetLanguageModeUseCase(appPreferencesRepository)
         getThemeModeUseCase = GetThemeModeUseCase(appPreferencesRepository)
         setThemeModeUseCase = SetThemeModeUseCase(appPreferencesRepository)
     }
@@ -79,6 +84,26 @@ class AppPreferencesUseCaseTests {
 
         verify(exactly = 1) { appPreferencesRepository.setAssessmentHonestyNoticeVisible(false) }
         assertEquals(listOf(false), result)
+    }
+
+    @Test
+    fun getLanguageModeUseCase_emitsRepositoryValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.getLanguageMode() } returns flowOf(AppLanguageMode.SPANISH)
+
+        val result = getLanguageModeUseCase.run().toList()
+
+        verify(exactly = 1) { appPreferencesRepository.getLanguageMode() }
+        assertEquals(listOf(AppLanguageMode.SPANISH), result)
+    }
+
+    @Test
+    fun setLanguageModeUseCase_emitsSavedValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.setLanguageMode(AppLanguageMode.ENGLISH) } returns flowOf(AppLanguageMode.ENGLISH)
+
+        val result = setLanguageModeUseCase.run(AppLanguageMode.ENGLISH).toList()
+
+        verify(exactly = 1) { appPreferencesRepository.setLanguageMode(AppLanguageMode.ENGLISH) }
+        assertEquals(listOf(AppLanguageMode.ENGLISH), result)
     }
 
     @Test

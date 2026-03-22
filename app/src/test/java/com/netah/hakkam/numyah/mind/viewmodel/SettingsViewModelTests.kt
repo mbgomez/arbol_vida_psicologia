@@ -1,9 +1,13 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import com.netah.hakkam.numyah.mind.app.AppLanguageManager
+import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
@@ -20,6 +24,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTests {
 
+    private lateinit var appLanguageManager: AppLanguageManager
+    private lateinit var getLanguageModeUseCase: GetLanguageModeUseCase
+    private lateinit var setLanguageModeUseCase: SetLanguageModeUseCase
     private lateinit var getThemeModeUseCase: GetThemeModeUseCase
     private lateinit var setThemeModeUseCase: SetThemeModeUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
@@ -31,22 +38,30 @@ class SettingsViewModelTests {
 
     @Before
     fun setup() {
+        appLanguageManager = mockk(relaxed = true)
+        getLanguageModeUseCase = mockk(relaxed = true)
+        setLanguageModeUseCase = mockk(relaxed = true)
         getThemeModeUseCase = mockk(relaxed = true)
         setThemeModeUseCase = mockk(relaxed = true)
         getAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
         setAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
         setOnboardingCompletedUseCase = mockk(relaxed = true)
 
+        every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SYSTEM)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.SYSTEM)
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
     }
 
     @Test
     fun init_exposesThemeAndHonestyPreferenceState() = coroutinesRule.runBlockingTest {
+        every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SPANISH)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.DARK)
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
 
         val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
             getThemeModeUseCase = getThemeModeUseCase,
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
@@ -56,8 +71,30 @@ class SettingsViewModelTests {
 
         val uiState = viewModel.uiState.value as SettingsUiState.Ready
 
+        assertEquals(AppLanguageMode.SPANISH, uiState.model.languageMode)
         assertEquals(AppThemeMode.DARK, uiState.model.themeMode)
         assertEquals(false, uiState.model.shouldShowAssessmentHonestyNotice)
+    }
+
+    @Test
+    fun onLanguageModeSelected_savesPreferenceAndAppliesLocale() = coroutinesRule.runBlockingTest {
+        every { setLanguageModeUseCase.run(AppLanguageMode.ENGLISH) } returns flowOf(AppLanguageMode.ENGLISH)
+
+        val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
+            getThemeModeUseCase = getThemeModeUseCase,
+            setThemeModeUseCase = setThemeModeUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+        )
+
+        viewModel.onLanguageModeSelected(AppLanguageMode.ENGLISH)
+
+        verify(exactly = 1) { setLanguageModeUseCase.run(AppLanguageMode.ENGLISH) }
+        verify(exactly = 1) { appLanguageManager.applyLanguageMode(AppLanguageMode.ENGLISH) }
     }
 
     @Test
@@ -65,6 +102,9 @@ class SettingsViewModelTests {
         every { setThemeModeUseCase.run(AppThemeMode.LIGHT) } returns flowOf(AppThemeMode.LIGHT)
 
         val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
             getThemeModeUseCase = getThemeModeUseCase,
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
@@ -82,6 +122,9 @@ class SettingsViewModelTests {
         every { setAssessmentHonestyNoticeVisibilityUseCase.run(false) } returns flowOf(false)
 
         val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
             getThemeModeUseCase = getThemeModeUseCase,
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
@@ -100,6 +143,9 @@ class SettingsViewModelTests {
         var callbackCount = 0
 
         val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
             getThemeModeUseCase = getThemeModeUseCase,
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,

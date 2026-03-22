@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
@@ -56,6 +57,7 @@ class AssessmentViewModelTests {
     private lateinit var advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase
     private lateinit var completeAssessmentUseCase: CompleteAssessmentUseCase
     private lateinit var assessmentScoringEngine: AssessmentScoringEngine
+    private lateinit var currentLocaleProvider: CurrentLocaleProvider
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -72,6 +74,8 @@ class AssessmentViewModelTests {
         advanceAssessmentSectionUseCase = mockk(relaxed = true)
         completeAssessmentUseCase = mockk(relaxed = true)
         assessmentScoringEngine = mockk(relaxed = true)
+        currentLocaleProvider = mockk(relaxed = true)
+        every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
 
     @Test
@@ -438,6 +442,7 @@ class AssessmentViewModelTests {
     }
 
     private fun createViewModel(locale: Locale = Locale.ENGLISH): AssessmentViewModel {
+        every { currentLocaleProvider.current() } returns locale
         return AssessmentViewModel(
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
@@ -449,7 +454,7 @@ class AssessmentViewModelTests {
             advanceAssessmentSectionUseCase = advanceAssessmentSectionUseCase,
             completeAssessmentUseCase = completeAssessmentUseCase,
             assessmentScoringEngine = assessmentScoringEngine,
-            locale = locale
+            currentLocaleProvider = currentLocaleProvider
         )
     }
 

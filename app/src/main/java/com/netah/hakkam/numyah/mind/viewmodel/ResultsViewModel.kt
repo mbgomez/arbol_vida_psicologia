@@ -2,6 +2,7 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -9,7 +10,6 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,7 +53,7 @@ data class ResultsSephiraUiModel(
 class ResultsViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
     private val observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase,
-    private val locale: Locale
+    private val currentLocaleProvider: CurrentLocaleProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ResultsUiState>(ResultsUiState.Loading)
@@ -63,7 +63,7 @@ class ResultsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 combine(
-                    getCurrentQuestionnaireUseCase.run(locale),
+                    getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
                     observeLatestCompletedAssessmentUseCase.run()
                 ) { questionnaire, snapshot ->
                     questionnaire to snapshot

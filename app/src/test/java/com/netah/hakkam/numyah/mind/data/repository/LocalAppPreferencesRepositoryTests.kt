@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
 import android.content.SharedPreferences
+import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
@@ -72,6 +73,26 @@ class LocalAppPreferencesRepositoryTests {
 
         verify(exactly = 1) { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) }
         assertEquals(false, result)
+    }
+
+    @Test
+    fun setLanguageMode_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
+        val result = repository.setLanguageMode(AppLanguageMode.SPANISH).first()
+
+        verify(exactly = 1) { sharedPreferences.edit() }
+        verify(exactly = 1) { editor.putString("language_mode", "SPANISH") }
+        verify(exactly = 1) { editor.apply() }
+        assertEquals(AppLanguageMode.SPANISH, result)
+    }
+
+    @Test
+    fun getLanguageMode_readsStoredValue() = coroutinesRule.runBlockingTest {
+        every { sharedPreferences.getString("language_mode", AppLanguageMode.SYSTEM.name) } returns "ENGLISH"
+
+        val result = repository.getLanguageMode().first()
+
+        verify(exactly = 1) { sharedPreferences.getString("language_mode", AppLanguageMode.SYSTEM.name) }
+        assertEquals(AppLanguageMode.ENGLISH, result)
     }
 
     @Test

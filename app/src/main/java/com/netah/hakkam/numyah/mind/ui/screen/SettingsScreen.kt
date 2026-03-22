@@ -2,7 +2,6 @@ package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -33,8 +34,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.netah.hakkam.numyah.mind.R
@@ -370,6 +371,11 @@ private fun ThemeModeOption(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(testTag)
+            .selectable(
+                selected = selected,
+                onClick = onClick,
+                role = Role.RadioButton
+            )
             .border(
                 width = 1.dp,
                 color = borderColor,
@@ -379,14 +385,13 @@ private fun ThemeModeOption(
                 color = containerColor,
                 shape = RoundedCornerShape(24.dp)
             )
-            .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
             selected = selected,
-            onClick = onClick
+            onClick = null
         )
         Column(
             modifier = Modifier.weight(1f),
@@ -424,6 +429,12 @@ private fun SettingsSwitchRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("settings_honesty_row")
+            .toggleable(
+                value = checked,
+                onValueChange = onCheckedChange,
+                role = Role.Switch
+            )
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.18f),
                 shape = RoundedCornerShape(24.dp)
@@ -450,7 +461,7 @@ private fun SettingsSwitchRow(
         Switch(
             modifier = Modifier.testTag("settings_honesty_switch"),
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = null
         )
     }
 }
