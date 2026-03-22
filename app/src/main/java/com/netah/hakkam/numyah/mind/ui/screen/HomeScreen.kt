@@ -1,15 +1,9 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -20,6 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppCard
+import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.StatusChip
 
 @Composable
@@ -31,19 +26,9 @@ fun HomeScreen(
     onOpenLearn: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
-    val verticalPadding = dimensionResource(R.dimen.screen_padding_vertical)
-    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
     val smallSpacing = dimensionResource(R.dimen.spacing_sm)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
-    ) {
+    AppScreenColumn(paddingValues = paddingValues) {
         Text(
             text = stringResource(R.string.home_title),
             style = MaterialTheme.typography.headlineLarge,

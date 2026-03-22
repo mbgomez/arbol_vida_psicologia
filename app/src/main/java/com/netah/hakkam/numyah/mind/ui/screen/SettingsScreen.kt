@@ -2,29 +2,22 @@ package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -45,6 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
+import com.netah.hakkam.numyah.mind.ui.components.AppActionCard
+import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
+import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
+import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsUiState
 
@@ -102,20 +99,11 @@ private fun SettingsContent(
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
-    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
-    val verticalPadding = dimensionResource(R.dimen.screen_padding_vertical)
-    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
-
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("settings_scroll")
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
+    AppScreenColumn(
+        paddingValues = paddingValues,
+        modifier = Modifier.testTag("settings_scroll")
     ) {
         SettingsHero()
         AppearanceSection(
@@ -181,101 +169,24 @@ private fun SettingsNavigationCard(
     testTag: String,
     onClick: () -> Unit
 ) {
-    val cardRadius = dimensionResource(R.dimen.radius_md)
-    val cardElevation = dimensionResource(R.dimen.elevation_sm)
-    val contentPadding = dimensionResource(R.dimen.spacing_xl)
-    val rowSpacing = dimensionResource(R.dimen.screen_section_spacing)
-    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
-    val actionSpacing = dimensionResource(R.dimen.spacing_xs_plus)
-
-    Card(
+    AppActionCard(
+        title = title,
+        body = body,
+        actionLabel = actionLabel,
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(testTag)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(cardRadius),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = contentPadding, vertical = contentPadding),
-            horizontalArrangement = Arrangement.spacedBy(rowSpacing),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(contentSpacing)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(actionSpacing),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = actionLabel,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-        }
-    }
+            .testTag(testTag),
+        onClick = onClick
+    )
 }
 
 @Composable
 private fun SettingsHero() {
-    val cardRadius = dimensionResource(R.dimen.radius_lg)
-    val horizontalPadding = dimensionResource(R.dimen.spacing_2xl)
-    val verticalPadding = dimensionResource(R.dimen.spacing_xl)
-    val sectionSpacing = dimensionResource(R.dimen.size_dot_sm)
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(cardRadius),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(sectionSpacing)
-        ) {
-            Text(
-                text = stringResource(R.string.settings_eyebrow),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Text(
-                text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = stringResource(R.string.settings_body),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
+    AppHeroCard(
+        eyebrow = stringResource(R.string.settings_eyebrow),
+        title = stringResource(R.string.settings_title),
+        body = stringResource(R.string.settings_body)
+    )
 }
 
 @Composable
@@ -388,42 +299,14 @@ private fun OnboardingSection(
 private fun SettingsSectionCard(
     title: String,
     body: String,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    val cardRadius = dimensionResource(R.dimen.radius_md)
-    val cardElevation = dimensionResource(R.dimen.elevation_sm)
-    val contentPadding = dimensionResource(R.dimen.spacing_xl)
-    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
-    val textSpacing = dimensionResource(R.dimen.spacing_sm)
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(cardRadius),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
-    ) {
-        Column(
-            modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(sectionSpacing)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(textSpacing)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            content()
-        }
-    }
+    AppSectionCard(
+        title = title,
+        body = body,
+        showMarker = false,
+        content = content
+    )
 }
 
 @Composable
