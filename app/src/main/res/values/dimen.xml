@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="padding_small">16dp</dimen>
-    <dimen name="padding_medium">32dp</dimen>
-    <dimen name="height_small">4dp</dimen>
-    <dimen name="elevation_small">10dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_xs_plus">6dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_2xl">24dp</dimen>
+    <dimen name="spacing_3xl">32dp</dimen>
+
+    <dimen name="radius_sm">24dp</dimen>
+    <dimen name="radius_md">28dp</dimen>
+    <dimen name="radius_lg">32dp</dimen>
+    <dimen name="radius_pill">999dp</dimen>
+
+    <dimen name="size_dot_sm">10dp</dimen>
+    <dimen name="size_dot_md">12dp</dimen>
+    <dimen name="size_progress_active_width">34dp</dimen>
+
+    <dimen name="stroke_thin">1dp</dimen>
+
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_md">4dp</dimen>
+
+    <dimen name="screen_padding_horizontal">20dp</dimen>
+    <dimen name="screen_padding_vertical">12dp</dimen>
+    <dimen name="screen_section_spacing">16dp</dimen>
+
     <dimen name="onboarding_horizontal_padding">20dp</dimen>
     <dimen name="onboarding_header_spacing">24dp</dimen>
     <dimen name="onboarding_hero_height">220dp</dimen>

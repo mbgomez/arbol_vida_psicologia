@@ -38,10 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
@@ -102,6 +102,10 @@ private fun SettingsContent(
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
+    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
+    val verticalPadding = dimensionResource(R.dimen.screen_padding_vertical)
+    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
+
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -110,8 +114,8 @@ private fun SettingsContent(
             .testTag("settings_scroll")
             .padding(paddingValues)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
     ) {
         SettingsHero()
         AppearanceSection(
@@ -177,26 +181,33 @@ private fun SettingsNavigationCard(
     testTag: String,
     onClick: () -> Unit
 ) {
+    val cardRadius = dimensionResource(R.dimen.radius_md)
+    val cardElevation = dimensionResource(R.dimen.elevation_sm)
+    val contentPadding = dimensionResource(R.dimen.spacing_xl)
+    val rowSpacing = dimensionResource(R.dimen.screen_section_spacing)
+    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
+    val actionSpacing = dimensionResource(R.dimen.spacing_xs_plus)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(testTag)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(cardRadius),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(horizontal = contentPadding, vertical = contentPadding),
+            horizontalArrangement = Arrangement.spacedBy(rowSpacing),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(contentSpacing)
             ) {
                 Text(
                     text = title,
@@ -209,7 +220,7 @@ private fun SettingsNavigationCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(actionSpacing),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -231,17 +242,22 @@ private fun SettingsNavigationCard(
 
 @Composable
 private fun SettingsHero() {
+    val cardRadius = dimensionResource(R.dimen.radius_lg)
+    val horizontalPadding = dimensionResource(R.dimen.spacing_2xl)
+    val verticalPadding = dimensionResource(R.dimen.spacing_xl)
+    val sectionSpacing = dimensionResource(R.dimen.size_dot_sm)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(32.dp),
+        shape = RoundedCornerShape(cardRadius),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 22.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = verticalPadding),
+            verticalArrangement = Arrangement.spacedBy(sectionSpacing)
         ) {
             Text(
                 text = stringResource(R.string.settings_eyebrow),
@@ -374,20 +390,26 @@ private fun SettingsSectionCard(
     body: String,
     content: @Composable () -> Unit
 ) {
+    val cardRadius = dimensionResource(R.dimen.radius_md)
+    val cardElevation = dimensionResource(R.dimen.elevation_sm)
+    val contentPadding = dimensionResource(R.dimen.spacing_xl)
+    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
+    val textSpacing = dimensionResource(R.dimen.spacing_sm)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(cardRadius),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(contentPadding),
+            verticalArrangement = Arrangement.spacedBy(sectionSpacing)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(textSpacing)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
@@ -412,6 +434,14 @@ private fun ThemeModeOption(
     testTag: String,
     onClick: () -> Unit
 ) {
+    val optionRadius = dimensionResource(R.dimen.radius_sm)
+    val borderWidth = dimensionResource(R.dimen.stroke_thin)
+    val horizontalPadding = dimensionResource(R.dimen.onboarding_spacing_button)
+    val verticalPadding = dimensionResource(R.dimen.onboarding_spacing_button)
+    val contentSpacing = dimensionResource(R.dimen.onboarding_spacing_button)
+    val textSpacing = dimensionResource(R.dimen.spacing_xs)
+    val indicatorSize = dimensionResource(R.dimen.size_dot_sm)
+
     val borderColor = if (selected) {
         MaterialTheme.colorScheme.secondary
     } else {
@@ -433,16 +463,16 @@ private fun ThemeModeOption(
                 role = Role.RadioButton
             )
             .border(
-                width = 1.dp,
+                width = borderWidth,
                 color = borderColor,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(optionRadius)
             )
             .background(
                 color = containerColor,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(optionRadius)
             )
-            .padding(horizontal = 14.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        horizontalArrangement = Arrangement.spacedBy(contentSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
@@ -452,7 +482,7 @@ private fun ThemeModeOption(
         )
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(textSpacing)
         ) {
             Text(
                 text = title,
@@ -467,7 +497,7 @@ private fun ThemeModeOption(
         }
         Box(
             modifier = Modifier
-                .size(10.dp)
+                .size(indicatorSize)
                 .background(
                     color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
                     shape = CircleShape
@@ -483,6 +513,12 @@ private fun SettingsSwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val rowRadius = dimensionResource(R.dimen.radius_sm)
+    val horizontalPadding = dimensionResource(R.dimen.screen_section_spacing)
+    val verticalPadding = dimensionResource(R.dimen.onboarding_spacing_button)
+    val contentSpacing = dimensionResource(R.dimen.onboarding_spacing_button)
+    val textSpacing = dimensionResource(R.dimen.spacing_xs)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -494,15 +530,15 @@ private fun SettingsSwitchRow(
             )
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.18f),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(rowRadius)
             )
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        horizontalArrangement = Arrangement.spacedBy(contentSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(textSpacing)
         ) {
             Text(
                 text = title,
@@ -530,20 +566,26 @@ private fun SettingsActionRow(
     actionLabel: String,
     onAction: () -> Unit
 ) {
+    val rowRadius = dimensionResource(R.dimen.radius_sm)
+    val horizontalPadding = dimensionResource(R.dimen.screen_section_spacing)
+    val verticalPadding = dimensionResource(R.dimen.screen_section_spacing)
+    val contentSpacing = dimensionResource(R.dimen.onboarding_spacing_button)
+    val textSpacing = dimensionResource(R.dimen.spacing_xs)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.18f),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(rowRadius)
             )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        horizontalArrangement = Arrangement.spacedBy(contentSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(textSpacing)
         ) {
             Text(
                 text = title,

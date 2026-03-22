@@ -42,9 +42,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -368,21 +368,36 @@ private fun assessmentScreenTitle(uiState: AssessmentUiState): String? {
 private fun AppShellHeader(
     title: String
 ) {
+    val outerHorizontalPadding = dimensionResource(R.dimen.spacing_md)
+    val outerVerticalPadding = dimensionResource(R.dimen.spacing_sm)
+    val containerRadius = dimensionResource(R.dimen.radius_md)
+    val contentHorizontalPadding = dimensionResource(R.dimen.spacing_xl)
+    val contentTopPadding = dimensionResource(R.dimen.onboarding_spacing_large)
+    val contentBottomPadding = dimensionResource(R.dimen.onboarding_spacing_large)
+    val columnSpacing = dimensionResource(R.dimen.spacing_md)
+    val rowSpacing = dimensionResource(R.dimen.size_dot_sm)
+    val indicatorSize = dimensionResource(R.dimen.size_dot_md)
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = outerHorizontalPadding, vertical = outerVerticalPadding),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
         contentColor = MaterialTheme.colorScheme.onBackground,
-        shadowElevation = 0.dp,
-        shape = RoundedCornerShape(28.dp)
+        shadowElevation = dimensionResource(R.dimen.elevation_none),
+        shape = RoundedCornerShape(containerRadius)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 22.dp, end = 22.dp, top = 18.dp, bottom = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(
+                    start = contentHorizontalPadding,
+                    end = contentHorizontalPadding,
+                    top = contentTopPadding,
+                    bottom = contentBottomPadding
+                ),
+            verticalArrangement = Arrangement.spacedBy(columnSpacing)
         ) {
             Text(
                 text = stringResource(R.string.app_name),
@@ -391,11 +406,11 @@ private fun AppShellHeader(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(rowSpacing)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(indicatorSize)
                         .background(
                             color = MaterialTheme.colorScheme.secondary,
                             shape = CircleShape

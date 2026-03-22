@@ -17,7 +17,7 @@ fun CardView(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val smallPadding = dimensionResource(R.dimen.padding_small)
+    val contentPadding = dimensionResource(R.dimen.spacing_lg)
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -28,7 +28,7 @@ fun CardView(
     {
         Surface(
             modifier = Modifier
-                .padding(all = smallPadding),
+                .padding(all = contentPadding),
             content = content
         )
     }

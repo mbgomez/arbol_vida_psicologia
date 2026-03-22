@@ -13,9 +13,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -48,11 +48,15 @@ fun ArbolVidaApp(
 
 @Composable
 private fun AppLoadingScreen() {
+    val horizontalPadding = dimensionResource(R.dimen.spacing_2xl)
+    val topSpacing = dimensionResource(R.dimen.spacing_2xl)
+    val sectionSpacing = dimensionResource(R.dimen.spacing_md)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = horizontalPadding),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -61,14 +65,14 @@ private fun AppLoadingScreen() {
             text = stringResource(R.string.app_loading_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(top = 24.dp),
+            modifier = Modifier.padding(top = topSpacing),
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(R.string.app_loading_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 12.dp),
+            modifier = Modifier.padding(top = sectionSpacing),
             textAlign = TextAlign.Center
         )
     }

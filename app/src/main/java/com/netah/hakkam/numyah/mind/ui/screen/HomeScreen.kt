@@ -16,8 +16,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppCard
 import com.netah.hakkam.numyah.mind.ui.components.StatusChip
@@ -31,13 +31,18 @@ fun HomeScreen(
     onOpenLearn: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
+    val verticalPadding = dimensionResource(R.dimen.screen_padding_vertical)
+    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
+    val smallSpacing = dimensionResource(R.dimen.spacing_sm)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
     ) {
         Text(
             text = stringResource(R.string.home_title),
@@ -82,6 +87,6 @@ fun HomeScreen(
             body = stringResource(R.string.home_card_settings_body),
             onClick = onOpenSettings
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(smallSpacing))
     }
 }
