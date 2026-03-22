@@ -26,13 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
-import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
-import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.ui.components.AppHighlightCard
 import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppProgressMeter
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
+import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceLabel
+import com.netah.hakkam.numyah.mind.ui.components.assessmentDominantLabel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsOverviewUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsSephiraUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsUiState
@@ -251,7 +251,10 @@ private fun ResultsSephiraCard(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = dominantLabel(model),
+                        text = assessmentDominantLabel(
+                            dominantPole = model.dominantPole,
+                            isLowConfidence = model.isLowConfidence
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -263,7 +266,7 @@ private fun ResultsSephiraCard(
             }
 
             Text(
-                text = confidenceLabel(model.confidence),
+                text = assessmentConfidenceLabel(model.confidence),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -287,27 +290,6 @@ private fun ResultsSephiraCard(
                 valueText = stringResource(R.string.results_percent_value, model.excessPercent)
             )
         }
-    }
-}
-
-@Composable
-private fun dominantLabel(model: ResultsSephiraUiModel): String {
-    return when {
-        model.isLowConfidence && model.dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_leans_balance)
-        model.isLowConfidence && model.dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_leans_deficiency)
-        model.isLowConfidence && model.dominantPole == Pole.EXCESS -> stringResource(R.string.assessment_result_leans_excess)
-        model.dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_balance)
-        model.dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_deficiency)
-        else -> stringResource(R.string.assessment_result_excess)
-    }
-}
-
-@Composable
-private fun confidenceLabel(confidence: ConfidenceLevel): String {
-    return when (confidence) {
-        ConfidenceLevel.HIGH -> stringResource(R.string.assessment_confidence_high)
-        ConfidenceLevel.MEDIUM -> stringResource(R.string.assessment_confidence_medium)
-        ConfidenceLevel.LOW -> stringResource(R.string.assessment_confidence_low)
     }
 }
 
