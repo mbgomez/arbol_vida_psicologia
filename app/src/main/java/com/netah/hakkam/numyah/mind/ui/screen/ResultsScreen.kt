@@ -9,15 +9,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,10 +23,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
+import com.netah.hakkam.numyah.mind.ui.components.AppHighlightCard
+import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
+import com.netah.hakkam.numyah.mind.ui.components.AppProgressMeter
+import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
+import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsOverviewUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsSephiraUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsUiState
@@ -99,16 +99,7 @@ private fun ResultsLoadedState(
     model: ResultsOverviewUiModel,
     onBackHome: () -> Unit
 ) {
-    val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
-    val spacing = dimensionResource(R.dimen.onboarding_spacing_medium)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = horizontalPadding, vertical = spacing),
-        verticalArrangement = Arrangement.spacedBy(spacing)
-    ) {
+    AppScreenColumn(paddingValues = PaddingValues()) {
         ResultsSummaryCard(model = model)
 
         if (model.sephirot.isNotEmpty()) {
@@ -169,14 +160,14 @@ private fun ResultsLoadedState(
 
 @Composable
 private fun ResultsSummaryCard(model: ResultsOverviewUiModel) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
-        )
+    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
+
+    AppSurfaceCard(
+        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
+        elevation = 0.dp
     ) {
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.onboarding_spacing_large)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
+            verticalArrangement = Arrangement.spacedBy(contentSpacing)
         ) {
             Text(
                 text = model.title,
@@ -213,34 +204,14 @@ private fun ResultsSpotlightCard(
     accentColor: Color,
     containerColor: Color
 ) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+    AppHighlightCard(
+        title = title,
+        body = body,
+        accentColor = accentColor,
+        containerColor = containerColor,
+        elevation = 0.dp,
         modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.onboarding_spacing_large)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))) {
-                Box(
-                    modifier = Modifier
-                        .width(dimensionResource(R.dimen.onboarding_progress_dot))
-                        .height(dimensionResource(R.dimen.onboarding_progress_dot))
-                        .background(accentColor, RoundedCornerShape(percent = 50))
-                )
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-            Text(
-                text = body,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
+    )
 }
 
 @Composable
@@ -250,26 +221,30 @@ private fun ResultsSephiraCard(
     model: ResultsSephiraUiModel
 ) {
     val style = resultCardStyle(model)
+    val cardRadius = dimensionResource(R.dimen.radius_md)
+    val borderWidth = dimensionResource(R.dimen.stroke_thin)
+    val contentSpacing = dimensionResource(R.dimen.screen_section_spacing)
+    val headerSpacing = dimensionResource(R.dimen.spacing_sm)
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = style.containerColor),
+    AppSurfaceCard(
         modifier = Modifier
             .fillMaxWidth()
             .border(
-                width = dimensionResource(R.dimen.onboarding_supporting_chip_border_width),
+                width = borderWidth,
                 color = style.borderColor,
-                shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_action_card_corner_radius))
-            )
+                shape = RoundedCornerShape(cardRadius)
+            ),
+        containerColor = style.containerColor,
+        elevation = 0.dp
     ) {
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.onboarding_spacing_large)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_medium))
+            verticalArrangement = Arrangement.spacedBy(contentSpacing)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))) {
+                Column(verticalArrangement = Arrangement.spacedBy(headerSpacing)) {
                     Text(
                         text = model.sephiraName,
                         style = MaterialTheme.typography.headlineSmall,
@@ -281,7 +256,7 @@ private fun ResultsSephiraCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                ResultsMetricBadge(
+                AppMetricBadge(
                     label = stringResource(R.string.results_rank_badge, rank, total),
                     value = stringResource(R.string.results_imbalance_badge, model.imbalancePercent)
                 )
@@ -293,95 +268,23 @@ private fun ResultsSephiraCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            ResultsMeterRow(
+            AppProgressMeter(
                 label = stringResource(R.string.assessment_score_balance),
                 value = model.balancePercent,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                valueText = stringResource(R.string.results_percent_value, model.balancePercent)
             )
-            ResultsMeterRow(
+            AppProgressMeter(
                 label = stringResource(R.string.assessment_score_deficiency),
                 value = model.deficiencyPercent,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                valueText = stringResource(R.string.results_percent_value, model.deficiencyPercent)
             )
-            ResultsMeterRow(
+            AppProgressMeter(
                 label = stringResource(R.string.assessment_score_excess),
                 value = model.excessPercent,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        }
-    }
-}
-
-@Composable
-private fun ResultsMetricBadge(
-    label: String,
-    value: String
-) {
-    Column(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_pill_radius))
-            )
-            .padding(
-                horizontal = dimensionResource(R.dimen.onboarding_spacing_medium),
-                vertical = dimensionResource(R.dimen.onboarding_spacing_small)
-            ),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
-        )
-    }
-}
-
-@Composable
-private fun ResultsMeterRow(
-    label: String,
-    value: Int,
-    color: Color
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.onboarding_spacing_small))) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = stringResource(R.string.results_percent_value, value),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimensionResource(R.dimen.onboarding_progress_dot))
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_pill_radius))
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth((value / 100f).coerceIn(0f, 1f))
-                    .height(dimensionResource(R.dimen.onboarding_progress_dot))
-                    .background(
-                        color = color,
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.onboarding_pill_radius))
-                    )
+                color = MaterialTheme.colorScheme.tertiary,
+                valueText = stringResource(R.string.results_percent_value, model.excessPercent)
             )
         }
     }

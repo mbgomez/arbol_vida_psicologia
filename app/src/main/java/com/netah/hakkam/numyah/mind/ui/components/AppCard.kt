@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -28,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import com.netah.hakkam.numyah.mind.R
 
 @Composable
@@ -57,12 +60,12 @@ fun AppScreenColumn(
 fun AppSurfaceCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    containerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.surface,
-    contentColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    elevation: Dp = dimensionResource(R.dimen.elevation_sm),
     content: @Composable ColumnScope.() -> Unit
 ) {
     val cardRadius = dimensionResource(R.dimen.radius_md)
-    val cardElevation = dimensionResource(R.dimen.elevation_sm)
     val contentPadding = dimensionResource(R.dimen.spacing_xl)
 
     val cardModifier = if (onClick != null) {
@@ -78,7 +81,7 @@ fun AppSurfaceCard(
             containerColor = containerColor,
             contentColor = contentColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
@@ -161,6 +164,132 @@ fun AppHeroCard(
                 text = body,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun AppHighlightCard(
+    title: String,
+    body: String,
+    accentColor: Color,
+    containerColor: Color,
+    elevation: Dp = dimensionResource(R.dimen.elevation_none),
+    modifier: Modifier = Modifier
+) {
+    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
+    val markerSize = dimensionResource(R.dimen.size_dot_sm)
+
+    AppSurfaceCard(
+        modifier = modifier,
+        containerColor = containerColor,
+        elevation = elevation
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(contentSpacing)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(contentSpacing)) {
+                Box(
+                    modifier = Modifier
+                        .size(markerSize)
+                        .background(accentColor, RoundedCornerShape(percent = 50))
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun AppMetricBadge(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    val badgeRadius = dimensionResource(R.dimen.radius_pill)
+    val horizontalPadding = dimensionResource(R.dimen.spacing_md)
+    val verticalPadding = dimensionResource(R.dimen.spacing_sm)
+    val contentSpacing = dimensionResource(R.dimen.spacing_xs)
+
+    Column(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                shape = RoundedCornerShape(badgeRadius)
+            )
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+        verticalArrangement = Arrangement.spacedBy(contentSpacing)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+fun AppProgressMeter(
+    label: String,
+    value: Int,
+    color: Color,
+    valueText: String = "${value.coerceIn(0, 100)}%",
+    modifier: Modifier = Modifier
+) {
+    val contentSpacing = dimensionResource(R.dimen.spacing_xs)
+    val trackHeight = dimensionResource(R.dimen.size_dot_sm)
+    val trackRadius = dimensionResource(R.dimen.radius_pill)
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(contentSpacing)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = valueText,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(trackHeight)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(trackRadius)
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth((value / 100f).coerceIn(0f, 1f))
+                    .height(trackHeight)
+                    .background(
+                        color = color,
+                        shape = RoundedCornerShape(trackRadius)
+                    )
             )
         }
     }
