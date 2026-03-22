@@ -13,20 +13,6 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 
 @Entity(
     indices = [
-        Index("userId")
-    ]
-)
-data class PostTable (
-    val userId : Long?,
-    @PrimaryKey
-    @ColumnInfo(name = "photoId")
-    val id: Long?,
-    val title: String?,
-    val body: String?
-)
-
-@Entity(
-    indices = [
         Index(value = ["status", "isActive"])
     ]
 )

@@ -3,7 +3,7 @@ package com.netah.hakkam.numyah.mind.domain.scoring
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.netah.hakkam.numyah.mind.data.datasource.FoundationDatabase
+import com.netah.hakkam.numyah.mind.data.datasource.NumyahMindDatabase
 import com.netah.hakkam.numyah.mind.data.repository.LocalAssessmentContentRepository
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -33,7 +33,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33])
 class AssessmentScoringEngineTests {
 
-    private lateinit var db: FoundationDatabase
+    private lateinit var db: NumyahMindDatabase
     private lateinit var questionnaireRepository: LocalAssessmentContentRepository
     private lateinit var scoringEngine: AssessmentScoringEngine
 
@@ -43,7 +43,7 @@ class AssessmentScoringEngineTests {
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, FoundationDatabase::class.java)
+        db = Room.inMemoryDatabaseBuilder(context, NumyahMindDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         val moshi = Moshi.Builder()

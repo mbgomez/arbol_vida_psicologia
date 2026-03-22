@@ -1,17 +1,12 @@
 package com.netah.hakkam.numyah.mind.di
-
-
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
-import com.netah.hakkam.numyah.mind.data.repository.IPostRepository
 import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
 import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
-import com.netah.hakkam.numyah.mind.domain.usecase.GetCachedPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
-import com.netah.hakkam.numyah.mind.domain.usecase.GetPostsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
@@ -29,16 +24,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class UseCaseModule {
-
-    @Singleton
-    @Provides
-    fun provideGetPostsUseCase(postRepository: IPostRepository) =
-        GetPostsUseCase(postRepository = postRepository)
-
-    @Singleton
-    @Provides
-    fun provideGetCachedPostsUseCase(postRepository: IPostRepository) =
-        GetCachedPostsUseCase(postRepository = postRepository)
 
     @Singleton
     @Provides

@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.parcelize)
 }
 
 android {
@@ -77,16 +76,10 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
     implementation(libs.timber)
-    implementation(libs.retrofit)
-    implementation(libs.moshi)
     implementation(libs.moshi.core)
     implementation(libs.moshi.kotlin)
-    implementation(libs.logging.interceptor)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.credentials)
-    implementation(libs.google.credentials)
-    implementation(libs.google.auth)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     ksp(libs.hilt.compiler)

@@ -3,7 +3,7 @@ package com.netah.hakkam.numyah.mind.data.repository
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.netah.hakkam.numyah.mind.data.datasource.FoundationDatabase
+import com.netah.hakkam.numyah.mind.data.datasource.NumyahMindDatabase
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33])
 class LocalAssessmentContentRepositoryTests {
 
-    private lateinit var db: FoundationDatabase
+    private lateinit var db: NumyahMindDatabase
     private lateinit var repository: LocalAssessmentContentRepository
 
     @get:Rule
@@ -37,7 +37,7 @@ class LocalAssessmentContentRepositoryTests {
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, FoundationDatabase::class.java)
+        db = Room.inMemoryDatabaseBuilder(context, NumyahMindDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         val moshi = Moshi.Builder()
