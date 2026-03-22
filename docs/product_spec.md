@@ -318,6 +318,12 @@ When implementing the Settings slice:
 - Treat theme and language selections as durable app preferences rather than transient screen state.
 - Keep destructive data actions out of the initial settings slice unless their behavior and confirmation model are explicitly locked first.
 - Add repository, use case, and ViewModel tests for new settings behavior when those layers are introduced.
+- Use `DataStore` as the default persistence layer for app-wide settings such as theme, language, onboarding flags, and other local preferences. Do not expand `SharedPreferences` further for new settings work.
+- Treat runtime language override as an app-shell behavior, not a screen-local one. Locale application should be wired through the application and activity host so the full UI updates consistently.
+- Nested settings detail destinations should use a dedicated detail-header pattern rather than reusing the exact top-level shell treatment.
+- Header state for nested settings pages should transition in sync with route changes so the user does not briefly see the wrong top bar during forward or backward navigation.
+- Settings entry surfaces should present one clear destination affordance per card. Avoid duplicate CTA labels within the same destination row.
+- For scrollable settings screens, prefer explicit test-friendly semantics on the real actionable controls and add smaller focused UI tests when full-screen Compose tests become brittle after layout polish.
 
 Locked scaling learning:
 

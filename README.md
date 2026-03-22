@@ -174,6 +174,20 @@ Locked settings foundation:
 - About content in Settings should reinforce the reflection-focused, non-diagnostic framing and can include app version information.
 - Theme and language preferences should be treated as app-wide settings and should apply across the full shell, not only inside the Settings screen.
 
+Learnings from the Settings slice:
+
+- App-wide preferences have now crossed the threshold where `DataStore` is the default standard for settings persistence. `SharedPreferences` should not be expanded further for new app settings.
+- Runtime language override should be treated as an app-shell concern. In this app, locale changes rely on the AppCompat activity host plus app-wide preference observation rather than screen-local refresh logic.
+- Nested Settings destinations such as Privacy and About should use a detail-screen header pattern that is distinct from the top-level app shell. The shell header state should transition in sync with route changes to avoid visible header lag during navigation.
+- Settings entry cards should communicate one clear destination action. Avoid repeating the same CTA label in multiple places inside the same card.
+- Scrollable Compose screens with polished layouts can invalidate brittle UI tests quickly. For settings-style screens, prefer explicit stable semantics and focused component tests over relying only on large screen-level interaction tests.
+- When a settings feature uses repository -> use case -> ViewModel layering, the preferred verification stack remains:
+  - repository persistence and flow tests
+  - use case delegation tests
+  - ViewModel state tests
+  - focused Compose tests for stable user-critical controls
+- Manual verification remains part of the release standard for language, theme, and nested Settings navigation even when automated tests exist, because those areas depend on app-shell behavior as well as local screen behavior.
+
 ## Delivery Standard
 
 Future work in this repository should be approached with the judgment of:

@@ -6,6 +6,7 @@
     <string name="nav_history">History</string>
     <string name="nav_learn">Learn</string>
     <string name="nav_settings">Settings</string>
+    <string name="navigation_back">Back</string>
     <string name="screen_onboarding">Welcome</string>
     <string name="screen_assessment">Assessment</string>
     <string name="screen_assessment_with_sephira">Assessment: %1$s</string>
@@ -13,6 +14,8 @@
     <string name="screen_history">History</string>
     <string name="screen_learn">Learn</string>
     <string name="screen_settings">Settings</string>
+    <string name="screen_settings_privacy">Privacy and data</string>
+    <string name="screen_settings_about">About Numyah Mind</string>
     <string name="app_loading_title">Preparing your reflection space</string>
     <string name="app_loading_body">Loading your local experience and choosing the right starting point.</string>
     <string name="home_title">Tree of Life reflection</string>
@@ -175,5 +178,30 @@
     <string name="settings_privacy_body">This area should explain that the core reflection experience is local to your device and that replaying onboarding does not erase saved assessments.</string>
     <string name="settings_about_title">About Numyah Mind</string>
     <string name="settings_about_body">This area should reinforce the reflection-focused, non-diagnostic purpose of the app and can later include version and methodology details.</string>
+    <string name="settings_open_detail_action">Open details</string>
+    <string name="settings_privacy_eyebrow">Privacy and data</string>
+    <string name="settings_privacy_screen_title">How your reflection data is handled</string>
+    <string name="settings_privacy_screen_body">Numyah Mind is designed to feel private, calm, and local-first. These notes explain what the current app stores on your device and what replaying onboarding does and does not change.</string>
+    <string name="settings_privacy_local_title">Stored on this device</string>
+    <string name="settings_privacy_local_body">Your onboarding status, settings, in-progress assessment state, saved answers, and saved results are intended to stay on your device for the core v1 experience.</string>
+    <string name="settings_privacy_resume_title">Used to support resume and history</string>
+    <string name="settings_privacy_resume_body">Saved assessment data helps the app return you to an unfinished reflection and show your completed results later. It is there to support continuity, not to create a profile outside your device.</string>
+    <string name="settings_privacy_onboarding_title">Replaying onboarding</string>
+    <string name="settings_privacy_onboarding_body">Replaying onboarding resets only the introduction flow so you can read the framing again. It does not erase saved assessments, answers, or results.</string>
+    <string name="settings_privacy_boundary_title">Product boundary</string>
+    <string name="settings_privacy_boundary_body">Numyah Mind is a self-reflection tool. It is not designed as a diagnostic, psychiatric, or clinical mental health product, and its saved data should be read in that same reflective spirit.</string>
+    <string name="settings_privacy_footer">Local-first design is part of the trust model of this app, so privacy explanations should stay plain, calm, and easy to revisit.</string>
+    <string name="settings_about_eyebrow">About Numyah Mind</string>
+    <string name="settings_about_screen_title">A reflective tool, not a fixed label</string>
+    <string name="settings_about_screen_body">Numyah Mind translates the Tree of Life into grounded psychological reflection. The app is meant to help you notice current tendencies, not to define who you are once and for all.</string>
+    <string name="settings_about_purpose_title">Why this app exists</string>
+    <string name="settings_about_purpose_body">The goal is to offer a calm structure for self-observation through the ten sephirot, using language that is psychologically grounded, spiritually respectful, and non-pathologizing.</string>
+    <string name="settings_about_framework_title">How the framework is used</string>
+    <string name="settings_about_framework_body">The Tree of Life is used here as a map for reflection. Each sephira becomes a practical area of experience that you can explore through short intros, questions, interpretations, and suggested practices.</string>
+    <string name="settings_about_interpretation_title">How to read your results</string>
+    <string name="settings_about_interpretation_body">Results describe present patterns such as balance, deficiency, or excess. They are intended as gentle directional language, especially when the signal is mixed, and should not be treated as a hard identity statement.</string>
+    <string name="settings_about_version_title">Current app version</string>
+    <string name="settings_about_version_body">Version %1$s</string>
+    <string name="settings_about_footer">This app is still meant to feel human, practical, and reflective even when the language draws from a deeper symbolic tradition.</string>
     <string name="status_ready">Ready for the next feature slice</string>
 </resources>

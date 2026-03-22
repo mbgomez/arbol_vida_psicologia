@@ -1,12 +1,12 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import java.io.File
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
@@ -17,8 +17,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class LocalAppPreferencesRepositoryTests {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
+    private lateinit var dataStore: DataStore<Preferences>
     private lateinit var repository: LocalAppPreferencesRepository
 
     @get:Rule
@@ -26,92 +25,73 @@ class LocalAppPreferencesRepositoryTests {
 
     @Before
     fun setup() {
-        sharedPreferences = mockk(relaxed = true)
-        editor = mockk(relaxed = true)
-        every { sharedPreferences.edit() } returns editor
-        every { editor.putBoolean(any(), any()) } returns editor
-        every { editor.putString(any(), any()) } returns editor
-
-        repository = LocalAppPreferencesRepository(sharedPreferences)
+        val file = File.createTempFile("preferences-test", ".preferences_pb").apply {
+            deleteOnExit()
+        }
+        dataStore = PreferenceDataStoreFactory.create(
+            scope = coroutinesRule.testScope,
+            produceFile = { file }
+        )
+        repository = LocalAppPreferencesRepository(dataStore)
     }
 
     @Test
     fun setOnboardingCompleted_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
         val result = repository.setOnboardingCompleted(true).first()
 
-        verify(exactly = 1) { sharedPreferences.edit() }
-        verify(exactly = 1) { editor.putBoolean("onboarding_completed", true) }
-        verify(exactly = 1) { editor.apply() }
         assertEquals(true, result)
+        assertEquals(true, repository.hasCompletedOnboarding().first())
     }
 
     @Test
-    fun hasCompletedOnboarding_readsStoredValue() = coroutinesRule.runBlockingTest {
-        every { sharedPreferences.getBoolean("onboarding_completed", false) } returns true
-
+    fun hasCompletedOnboarding_defaultsToFalse() = coroutinesRule.runBlockingTest {
         val result = repository.hasCompletedOnboarding().first()
 
-        verify(exactly = 1) { sharedPreferences.getBoolean("onboarding_completed", false) }
-        assertEquals(true, result)
+        assertEquals(false, result)
     }
 
     @Test
     fun setAssessmentHonestyNoticeVisible_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
         val result = repository.setAssessmentHonestyNoticeVisible(false).first()
 
-        verify(exactly = 1) { sharedPreferences.edit() }
-        verify(exactly = 1) { editor.putBoolean("show_assessment_honesty_notice", false) }
-        verify(exactly = 1) { editor.apply() }
         assertEquals(false, result)
+        assertEquals(false, repository.shouldShowAssessmentHonestyNotice().first())
     }
 
     @Test
-    fun shouldShowAssessmentHonestyNotice_readsStoredValue() = coroutinesRule.runBlockingTest {
-        every { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) } returns false
-
+    fun shouldShowAssessmentHonestyNotice_defaultsToTrue() = coroutinesRule.runBlockingTest {
         val result = repository.shouldShowAssessmentHonestyNotice().first()
 
-        verify(exactly = 1) { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) }
-        assertEquals(false, result)
+        assertEquals(true, result)
     }
 
     @Test
     fun setLanguageMode_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
         val result = repository.setLanguageMode(AppLanguageMode.SPANISH).first()
 
-        verify(exactly = 1) { sharedPreferences.edit() }
-        verify(exactly = 1) { editor.putString("language_mode", "SPANISH") }
-        verify(exactly = 1) { editor.apply() }
         assertEquals(AppLanguageMode.SPANISH, result)
+        assertEquals(AppLanguageMode.SPANISH, repository.getLanguageMode().first())
     }
 
     @Test
-    fun getLanguageMode_readsStoredValue() = coroutinesRule.runBlockingTest {
-        every { sharedPreferences.getString("language_mode", AppLanguageMode.SYSTEM.name) } returns "ENGLISH"
-
+    fun getLanguageMode_defaultsToSystem() = coroutinesRule.runBlockingTest {
         val result = repository.getLanguageMode().first()
 
-        verify(exactly = 1) { sharedPreferences.getString("language_mode", AppLanguageMode.SYSTEM.name) }
-        assertEquals(AppLanguageMode.ENGLISH, result)
+        assertEquals(AppLanguageMode.SYSTEM, result)
     }
 
     @Test
     fun setThemeMode_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
         val result = repository.setThemeMode(AppThemeMode.DARK).first()
 
-        verify(exactly = 1) { sharedPreferences.edit() }
-        verify(exactly = 1) { editor.putString("theme_mode", "DARK") }
-        verify(exactly = 1) { editor.apply() }
         assertEquals(AppThemeMode.DARK, result)
+        assertEquals(AppThemeMode.DARK, repository.getThemeMode().first())
     }
 
     @Test
-    fun getThemeMode_readsStoredValue() = coroutinesRule.runBlockingTest {
-        every { sharedPreferences.getString("theme_mode", AppThemeMode.SYSTEM.name) } returns "LIGHT"
-
+    fun getThemeMode_defaultsToSystem() = coroutinesRule.runBlockingTest {
         val result = repository.getThemeMode().first()
 
-        verify(exactly = 1) { sharedPreferences.getString("theme_mode", AppThemeMode.SYSTEM.name) }
-        assertEquals(AppThemeMode.LIGHT, result)
+        assertEquals(AppThemeMode.SYSTEM, result)
     }
 }

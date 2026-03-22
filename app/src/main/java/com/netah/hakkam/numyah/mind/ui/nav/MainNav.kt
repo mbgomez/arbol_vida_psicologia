@@ -17,8 +17,13 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -27,11 +32,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -53,17 +60,24 @@ import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
 import com.netah.hakkam.numyah.mind.ui.screen.LearnPlaceholderScreen
 import com.netah.hakkam.numyah.mind.ui.screen.OnboardingRoute
+import com.netah.hakkam.numyah.mind.ui.screen.SettingsAboutScreen
+import com.netah.hakkam.numyah.mind.ui.screen.SettingsPrivacyScreen
 import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
     startDestination: String
 ) {
+    var settingsShellState by remember { mutableStateOf(SettingsShellState.Main) }
+    val transitionScope = rememberCoroutineScope()
+
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -125,14 +139,39 @@ fun MainNavGraph(
         composable(AppDestination.Settings.route) {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val settingsUiState by settingsViewModel.uiState.collectAsState()
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                titleOverride = settingsShellState.titleOverride(),
+                showBottomBar = settingsShellState == SettingsShellState.Main,
+                useDetailHeader = settingsShellState != SettingsShellState.Main,
+                onBack = if (settingsShellState != SettingsShellState.Main) {
+                    { settingsShellState = SettingsShellState.Main }
+                } else {
+                    null
+                }
+            ) { paddingValues ->
                 SettingsScreen(
                     paddingValues = paddingValues,
                     uiState = settingsUiState,
                     onLanguageModeSelected = settingsViewModel::onLanguageModeSelected,
                     onThemeModeSelected = settingsViewModel::onThemeModeSelected,
                     onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
+                    onOpenPrivacy = {
+                        settingsShellState = SettingsShellState.Privacy
+                        transitionScope.launch {
+                            yield()
+                            navController.navigate(AppDestination.SettingsPrivacy.route)
+                        }
+                    },
+                    onOpenAbout = {
+                        settingsShellState = SettingsShellState.About
+                        transitionScope.launch {
+                            yield()
+                            navController.navigate(AppDestination.SettingsAbout.route)
+                        }
+                    },
                     onReplayOnboarding = {
+                        settingsShellState = SettingsShellState.Main
                         settingsViewModel.replayOnboarding {
                             navController.navigate(AppDestination.Onboarding.route) {
                                 popUpTo(AppDestination.Home.route) {
@@ -147,13 +186,63 @@ fun MainNavGraph(
                 )
             }
         }
+        composable(AppDestination.SettingsPrivacy.route) {
+            SettingsDetailRouteShell(
+                navController = navController,
+                shellState = settingsShellState,
+                onShellStateChanged = { settingsShellState = it }
+            ) { paddingValues ->
+                SettingsPrivacyScreen(paddingValues = paddingValues)
+            }
+        }
+        composable(AppDestination.SettingsAbout.route) {
+            SettingsDetailRouteShell(
+                navController = navController,
+                shellState = settingsShellState,
+                onShellStateChanged = { settingsShellState = it }
+            ) { paddingValues ->
+                SettingsAboutScreen(paddingValues = paddingValues)
+            }
+        }
     }
+}
+
+@Composable
+private fun SettingsDetailRouteShell(
+    navController: NavHostController,
+    shellState: SettingsShellState,
+    onShellStateChanged: (SettingsShellState) -> Unit,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    AppShell(
+        navController = navController,
+        titleOverride = shellState.titleOverride(),
+        showBottomBar = false,
+        useDetailHeader = shellState != SettingsShellState.Main,
+        onBack = {
+            onShellStateChanged(SettingsShellState.Main)
+            coroutineScope.launch {
+                yield()
+                navController.navigate(AppDestination.Settings.route) {
+                    popUpTo(AppDestination.Settings.route) { inclusive = false }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        },
+        content = content
+    )
 }
 
 @Composable
 private fun AppShell(
     navController: NavHostController,
     titleOverride: String? = null,
+    showBottomBar: Boolean = true,
+    useDetailHeader: Boolean = false,
+    onBack: (() -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -165,44 +254,55 @@ private fun AppShell(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            AppShellHeader(title = currentTitle)
+            if (useDetailHeader) {
+                AppShellDetailHeader(
+                    title = currentTitle,
+                    onBack = onBack
+                )
+            } else {
+                AppShellHeader(
+                    title = currentTitle
+                )
+            }
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                tonalElevation = NavigationBarDefaults.Elevation
-            ) {
-                topLevelDestinations.forEach { topLevelDestination ->
-                    val selected = currentDestination?.hierarchy?.any {
-                        it.route == topLevelDestination.destination.route
-                    } == true
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            if (currentRoute == AppDestination.Assessment.route &&
-                                topLevelDestination.destination.route == AppDestination.Home.route
-                            ) {
-                                showExitAssessmentDialog = true
-                            } else {
-                                navController.navigate(topLevelDestination.destination.route) {
-                                    popUpTo(AppDestination.Home.route) {
-                                        saveState = true
+            if (showBottomBar) {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    tonalElevation = NavigationBarDefaults.Elevation
+                ) {
+                    topLevelDestinations.forEach { topLevelDestination ->
+                        val selected = currentDestination?.hierarchy?.any {
+                            it.route == topLevelDestination.destination.route
+                        } == true
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                if (currentRoute == AppDestination.Assessment.route &&
+                                    topLevelDestination.destination.route == AppDestination.Home.route
+                                ) {
+                                    showExitAssessmentDialog = true
+                                } else {
+                                    navController.navigate(topLevelDestination.destination.route) {
+                                        popUpTo(AppDestination.Home.route) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = topLevelDestination.icon,
+                                    contentDescription = stringResource(topLevelDestination.destination.titleRes)
+                                )
+                            },
+                            label = {
+                                Text(text = stringResource(topLevelDestination.destination.titleRes))
                             }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = topLevelDestination.icon,
-                                contentDescription = stringResource(topLevelDestination.destination.titleRes)
-                            )
-                        },
-                        label = {
-                            Text(text = stringResource(topLevelDestination.destination.titleRes))
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -265,7 +365,9 @@ private fun assessmentScreenTitle(uiState: AssessmentUiState): String? {
 }
 
 @Composable
-private fun AppShellHeader(title: String) {
+private fun AppShellHeader(
+    title: String
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -279,8 +381,8 @@ private fun AppShellHeader(title: String) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(start = 22.dp, end = 22.dp, top = 18.dp, bottom = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
                 text = stringResource(R.string.app_name),
@@ -307,6 +409,51 @@ private fun AppShellHeader(title: String) {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppShellDetailHeader(
+    title: String,
+    onBack: (() -> Unit)?
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        navigationIcon = {
+            if (onBack != null) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = stringResource(R.string.navigation_back)
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+            titleContentColor = MaterialTheme.colorScheme.onBackground
+        )
+    )
+}
+
+private enum class SettingsShellState {
+    Main,
+    Privacy,
+    About
+}
+
+@Composable
+private fun SettingsShellState.titleOverride(): String? = when (this) {
+    SettingsShellState.Main -> null
+    SettingsShellState.Privacy -> stringResource(R.string.screen_settings_privacy)
+    SettingsShellState.About -> stringResource(R.string.screen_settings_about)
 }
 
 @Composable

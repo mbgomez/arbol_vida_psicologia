@@ -20,6 +20,8 @@ sealed class AppDestination(
     data object History : AppDestination("history", R.string.screen_history)
     data object Learn : AppDestination("learn", R.string.screen_learn)
     data object Settings : AppDestination("settings", R.string.screen_settings)
+    data object SettingsPrivacy : AppDestination("settings/privacy", R.string.screen_settings_privacy)
+    data object SettingsAbout : AppDestination("settings/about", R.string.screen_settings_about)
 }
 
 data class TopLevelDestination(
@@ -42,5 +44,7 @@ fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.History.route -> AppDestination.History
     AppDestination.Learn.route -> AppDestination.Learn
     AppDestination.Settings.route -> AppDestination.Settings
+    AppDestination.SettingsPrivacy.route -> AppDestination.SettingsPrivacy
+    AppDestination.SettingsAbout.route -> AppDestination.SettingsAbout
     else -> null
 }

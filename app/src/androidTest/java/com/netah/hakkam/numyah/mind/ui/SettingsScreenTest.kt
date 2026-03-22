@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -40,6 +41,8 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -60,6 +63,8 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -68,8 +73,8 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.settings_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_appearance_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_language_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).assertIsDisplayed()
         composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).assertIsDisplayed()
     }
@@ -91,6 +96,8 @@ class SettingsScreenTest {
                         uiState = readyState(themeMode = it)
                     },
                     onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -119,13 +126,23 @@ class SettingsScreenTest {
                     },
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_language_spanish").performClick()
-        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule
+                .onAllNodesWithTag("settings_language_spanish")
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("settings_language_spanish_radio").performClick()
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            selectedLanguageMode == AppLanguageMode.SPANISH
+        }
 
         assertEquals(AppLanguageMode.SPANISH, selectedLanguageMode)
     }
@@ -147,11 +164,14 @@ class SettingsScreenTest {
                         honestyNoticeEnabled = it
                         uiState = readyState(honestyNoticeVisible = it)
                     },
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = {}
                 )
             }
         }
 
+        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
         composeTestRule.onNodeWithTag("settings_honesty_row").performClick()
         composeTestRule.waitForIdle()
 
@@ -171,6 +191,8 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
                     onReplayOnboarding = { replayedOnboarding = true }
                 )
             }
@@ -183,6 +205,35 @@ class SettingsScreenTest {
         ).performClick()
 
         assertTrue(replayedOnboarding)
+    }
+
+    @Test
+    fun settingsScreen_openPrivacyAndAbout_invokeCallbacks() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var openedPrivacy = false
+        var openedAbout = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = readyState(),
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onOpenPrivacy = { openedPrivacy = true },
+                    onOpenAbout = { openedAbout = true },
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performClick()
+
+        assertTrue(openedPrivacy)
+        assertTrue(openedAbout)
     }
 
     private fun readyState(

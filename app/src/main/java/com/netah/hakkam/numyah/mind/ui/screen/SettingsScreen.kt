@@ -2,6 +2,7 @@ package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,13 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -51,6 +55,8 @@ fun SettingsScreen(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onOpenPrivacy: () -> Unit,
+    onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
     when (uiState) {
@@ -61,6 +67,8 @@ fun SettingsScreen(
             onLanguageModeSelected = onLanguageModeSelected,
             onThemeModeSelected = onThemeModeSelected,
             onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged,
+            onOpenPrivacy = onOpenPrivacy,
+            onOpenAbout = onOpenAbout,
             onReplayOnboarding = onReplayOnboarding
         )
     }
@@ -90,6 +98,8 @@ private fun SettingsContent(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onOpenPrivacy: () -> Unit,
+    onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
@@ -119,13 +129,19 @@ private fun SettingsContent(
         OnboardingSection(
             onReplayOnboarding = { showReplayOnboardingDialog = true }
         )
-        InformationalSection(
+        SettingsNavigationCard(
             title = stringResource(R.string.settings_privacy_title),
-            body = stringResource(R.string.settings_privacy_body)
+            body = stringResource(R.string.settings_privacy_body),
+            actionLabel = stringResource(R.string.settings_open_detail_action),
+            testTag = "settings_privacy_card",
+            onClick = onOpenPrivacy
         )
-        InformationalSection(
+        SettingsNavigationCard(
             title = stringResource(R.string.settings_about_title),
-            body = stringResource(R.string.settings_about_body)
+            body = stringResource(R.string.settings_about_body),
+            actionLabel = stringResource(R.string.settings_open_detail_action),
+            testTag = "settings_about_card",
+            onClick = onOpenAbout
         )
     }
 
@@ -150,6 +166,66 @@ private fun SettingsContent(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun SettingsNavigationCard(
+    title: String,
+    body: String,
+    actionLabel: String,
+    testTag: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(testTag)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = body,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = actionLabel,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -293,26 +369,6 @@ private fun OnboardingSection(
 }
 
 @Composable
-private fun InformationalSection(
-    title: String,
-    body: String,
-    supportingLabel: String? = null
-) {
-    SettingsSectionCard(
-        title = title,
-        body = body
-    ) {
-        if (supportingLabel != null) {
-            Text(
-                text = supportingLabel,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-    }
-}
-
-@Composable
 private fun SettingsSectionCard(
     title: String,
     body: String,
@@ -390,8 +446,9 @@ private fun ThemeModeOption(
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
+            modifier = Modifier.testTag("${testTag}_radio"),
             selected = selected,
-            onClick = null
+            onClick = onClick
         )
         Column(
             modifier = Modifier.weight(1f),

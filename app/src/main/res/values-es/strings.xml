@@ -5,6 +5,7 @@
     <string name="nav_history">Historial</string>
     <string name="nav_learn">Aprender</string>
     <string name="nav_settings">Ajustes</string>
+    <string name="navigation_back">Atras</string>
     <string name="screen_onboarding">Bienvenida</string>
     <string name="screen_assessment">Evaluacion</string>
     <string name="screen_assessment_with_sephira">Evaluacion: %1$s</string>
@@ -12,6 +13,8 @@
     <string name="screen_history">Historial</string>
     <string name="screen_learn">Aprender</string>
     <string name="screen_settings">Ajustes</string>
+    <string name="screen_settings_privacy">Privacidad y datos</string>
+    <string name="screen_settings_about">Acerca de Numyah Mind</string>
     <string name="app_loading_title">Preparando tu espacio de reflexion</string>
     <string name="app_loading_body">Cargando tu experiencia local y eligiendo el mejor punto de inicio.</string>
     <string name="home_title">Reflexion del Arbol de la Vida</string>
@@ -174,5 +177,30 @@
     <string name="settings_privacy_body">Esta area debe explicar que la experiencia principal de reflexion es local en tu dispositivo y que volver a mostrar el onboarding no borra las evaluaciones guardadas.</string>
     <string name="settings_about_title">Acerca de Numyah Mind</string>
     <string name="settings_about_body">Esta area debe reforzar el proposito reflexivo y no diagnostico de la app, y mas adelante puede incluir la version y detalles de metodologia.</string>
+    <string name="settings_open_detail_action">Abrir detalle</string>
+    <string name="settings_privacy_eyebrow">Privacidad y datos</string>
+    <string name="settings_privacy_screen_title">Como se maneja tu informacion de reflexion</string>
+    <string name="settings_privacy_screen_body">Numyah Mind esta pensada para sentirse privada, serena y local. Estas notas explican que guarda la app actual en tu dispositivo y que cambia y que no cambia al volver a ver el onboarding.</string>
+    <string name="settings_privacy_local_title">Guardado en este dispositivo</string>
+    <string name="settings_privacy_local_body">El estado del onboarding, los ajustes, el progreso de evaluaciones, las respuestas guardadas y los resultados guardados estan pensados para quedarse en tu dispositivo en la experiencia principal v1.</string>
+    <string name="settings_privacy_resume_title">Se usa para retomar e historial</string>
+    <string name="settings_privacy_resume_body">Los datos guardados de evaluacion ayudan a que la app te devuelva a una reflexion sin terminar y te muestre despues tus resultados completados. Estan ahi para sostener continuidad, no para crear un perfil fuera de tu dispositivo.</string>
+    <string name="settings_privacy_onboarding_title">Volver a ver onboarding</string>
+    <string name="settings_privacy_onboarding_body">Volver a ver el onboarding reinicia solo la introduccion para que puedas leer otra vez el encuadre. No borra evaluaciones, respuestas ni resultados guardados.</string>
+    <string name="settings_privacy_boundary_title">Limite del producto</string>
+    <string name="settings_privacy_boundary_body">Numyah Mind es una herramienta de autorreflexion. No esta pensada como un producto diagnostico, psiquiatrico o clinico de salud mental, y sus datos guardados deben leerse dentro de ese mismo espiritu reflexivo.</string>
+    <string name="settings_privacy_footer">El diseno local es parte del modelo de confianza de esta app, por eso las explicaciones de privacidad deben seguir siendo claras, serenas y faciles de revisar.</string>
+    <string name="settings_about_eyebrow">Acerca de Numyah Mind</string>
+    <string name="settings_about_screen_title">Una herramienta reflexiva, no una etiqueta fija</string>
+    <string name="settings_about_screen_body">Numyah Mind traduce el Arbol de la Vida en una reflexion psicologica con los pies en la tierra. La app busca ayudarte a notar tendencias actuales, no a definir quien eres de una vez y para siempre.</string>
+    <string name="settings_about_purpose_title">Por que existe esta app</string>
+    <string name="settings_about_purpose_body">La meta es ofrecer una estructura serena para la autoobservacion a traves de las diez sefirot, usando un lenguaje psicologicamente fundamentado, espiritualmente respetuoso y no patologizante.</string>
+    <string name="settings_about_framework_title">Como se usa el marco</string>
+    <string name="settings_about_framework_body">Aqui el Arbol de la Vida se usa como un mapa de reflexion. Cada sefira se convierte en un area practica de experiencia que puedes explorar mediante introducciones breves, preguntas, interpretaciones y practicas sugeridas.</string>
+    <string name="settings_about_interpretation_title">Como leer tus resultados</string>
+    <string name="settings_about_interpretation_body">Los resultados describen patrones presentes como balance, carencia o exceso. Estan pensados como un lenguaje direccional y amable, especialmente cuando la senal es mixta, y no deben tratarse como una afirmacion rigida sobre tu identidad.</string>
+    <string name="settings_about_version_title">Version actual de la app</string>
+    <string name="settings_about_version_body">Version %1$s</string>
+    <string name="settings_about_footer">Esta app sigue queriendo sentirse humana, practica y reflexiva incluso cuando su lenguaje toma elementos de una tradicion simbolica mas profunda.</string>
     <string name="status_ready">Lista para la siguiente etapa</string>
 </resources>
