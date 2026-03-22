@@ -125,6 +125,7 @@ Current standardization candidates:
 - status badges
 - selection rows
 - empty and loading states
+- saved-history cards
 
 The goal is not abstraction for its own sake.
 

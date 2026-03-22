@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -12,10 +13,12 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
+import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Locale
@@ -32,6 +35,7 @@ class ResultsViewModelTests {
 
     private lateinit var getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase
     private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
+    private lateinit var observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
 
     @get:Rule
@@ -41,6 +45,7 @@ class ResultsViewModelTests {
     fun setup() {
         getCurrentQuestionnaireUseCase = mockk(relaxed = true)
         observeLatestCompletedAssessmentUseCase = mockk(relaxed = true)
+        observeCompletedAssessmentByIdUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
@@ -65,6 +70,7 @@ class ResultsViewModelTests {
 
         assertEquals(3, state.model.completedCount)
         assertEquals(3, state.model.totalCount)
+        assertEquals(false, state.model.isHistoricalSession)
         assertEquals("Hod", state.model.needsAttention?.sephiraName)
         assertEquals("Malkuth", state.model.mostBalanced?.sephiraName)
         assertEquals(listOf("Hod", "Yesod", "Malkuth"), state.model.sephirot.map { it.sephiraName })
@@ -73,11 +79,33 @@ class ResultsViewModelTests {
         assertEquals(60, state.model.mostBalanced?.balancePercent)
     }
 
-    private fun createViewModel(locale: Locale = Locale.ENGLISH): ResultsViewModel {
+    @Test
+    fun init_withSelectedSessionId_observesRequestedSavedAssessment() = coroutinesRule.runBlockingTest {
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { observeCompletedAssessmentByIdUseCase.run(7L) } returns flowOf(testCompletedSnapshot())
+
+        val viewModel = createViewModel(
+            savedStateHandle = SavedStateHandle(
+                mapOf(AppDestination.Results.sessionIdArg to 7L)
+            )
+        )
+
+        val state = viewModel.uiState.value as ResultsUiState.Loaded
+
+        assertEquals(true, state.model.isHistoricalSession)
+        assertEquals("Hod", state.model.needsAttention?.sephiraName)
+    }
+
+    private fun createViewModel(
+        locale: Locale = Locale.ENGLISH,
+        savedStateHandle: SavedStateHandle = SavedStateHandle()
+    ): ResultsViewModel {
         every { currentLocaleProvider.current() } returns locale
         return ResultsViewModel(
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
             observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
+            observeCompletedAssessmentByIdUseCase = observeCompletedAssessmentByIdUseCase,
+            savedStateHandle = savedStateHandle,
             currentLocaleProvider = currentLocaleProvider
         )
     }

@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
@@ -7,8 +8,10 @@ import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
+import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +31,7 @@ sealed interface ResultsUiState {
 
 data class ResultsOverviewUiModel(
     val title: String,
+    val isHistoricalSession: Boolean,
     val completedCount: Int,
     val totalCount: Int,
     val mostBalanced: ResultsSephiraUiModel?,
@@ -53,18 +57,22 @@ data class ResultsSephiraUiModel(
 class ResultsViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
     private val observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase,
+    private val observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase,
+    savedStateHandle: SavedStateHandle,
     private val currentLocaleProvider: CurrentLocaleProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ResultsUiState>(ResultsUiState.Loading)
     val uiState: StateFlow<ResultsUiState> = _uiState.asStateFlow()
+    private val selectedSessionId = savedStateHandle.get<Long>(AppDestination.Results.sessionIdArg)
+        ?.takeIf { it > 0L }
 
     init {
         viewModelScope.launch {
             try {
                 combine(
                     getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
-                    observeLatestCompletedAssessmentUseCase.run()
+                    selectedAssessmentFlow()
                 ) { questionnaire, snapshot ->
                     questionnaire to snapshot
                 }.collect { (questionnaire, snapshot) ->
@@ -77,6 +85,10 @@ class ResultsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun selectedAssessmentFlow() = selectedSessionId?.let { sessionId ->
+        observeCompletedAssessmentByIdUseCase.run(sessionId)
+    } ?: observeLatestCompletedAssessmentUseCase.run()
 
     private fun buildModel(
         questionnaire: QuestionnaireContent,
@@ -117,6 +129,7 @@ class ResultsViewModel @Inject constructor(
 
         return ResultsOverviewUiModel(
             title = questionnaire.title,
+            isHistoricalSession = selectedSessionId != null,
             completedCount = rankedScores.size,
             totalCount = questionnaire.sections.size,
             mostBalanced = mostBalanced,

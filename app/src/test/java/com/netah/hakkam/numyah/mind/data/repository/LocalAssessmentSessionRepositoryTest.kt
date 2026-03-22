@@ -137,6 +137,55 @@ class LocalAssessmentSessionRepositoryTest {
     }
 
     @Test
+    fun observeCompletedSessions_returnsCompletedHistoryInDescendingOrder() = runBlocking {
+        val olderSession = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6
+        ).first()
+        repository.completeSession(
+            sessionId = olderSession.sessionId,
+            score = completedScore(olderSession.sessionId, SephiraId.MALKUTH, Pole.BALANCE)
+        ).first()
+        Thread.sleep(5)
+
+        val newerSession = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.YESOD,
+            totalQuestions = 6
+        ).first()
+        repository.completeSession(
+            sessionId = newerSession.sessionId,
+            score = completedScore(newerSession.sessionId, SephiraId.YESOD, Pole.DEFICIENCY)
+        ).first()
+
+        val history = repository.observeCompletedSessions().first()
+
+        assertEquals(listOf(newerSession.sessionId, olderSession.sessionId), history.map { it.sessionId })
+        assertEquals(SephiraId.YESOD, history.first().scores.first().sephiraId)
+    }
+
+    @Test
+    fun observeCompletedSession_returnsRequestedSavedAssessment() = runBlocking {
+        val session = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6
+        ).first()
+
+        repository.completeSession(
+            sessionId = session.sessionId,
+            score = completedScore(session.sessionId, SephiraId.MALKUTH, Pole.EXCESS)
+        ).first()
+
+        val saved = repository.observeCompletedSession(session.sessionId).first()
+
+        assertNotNull(saved)
+        assertEquals(session.sessionId, saved?.sessionId)
+        assertEquals(Pole.EXCESS, saved?.scores?.first()?.dominantPole)
+    }
+
+    @Test
     fun completeSession_savesScoreAndEndsActiveSession() = runBlocking {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
@@ -173,4 +222,19 @@ class LocalAssessmentSessionRepositoryTest {
         assertEquals(1, completed.responses.size)
         assertTrue(repository.observeActiveSession().first() == null)
     }
+
+    private fun completedScore(
+        sessionId: Long,
+        sephiraId: SephiraId,
+        dominantPole: Pole
+    ) = SephiraScore(
+        sessionId = sessionId,
+        sephiraId = sephiraId,
+        balanceScore = 0.65,
+        deficiencyScore = 0.20,
+        excessScore = 0.15,
+        dominantPole = dominantPole,
+        confidence = ConfidenceLevel.HIGH,
+        isLowConfidence = false
+    )
 }

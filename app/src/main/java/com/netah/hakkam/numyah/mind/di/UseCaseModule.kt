@@ -15,6 +15,8 @@ import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.MarkLearningSectionCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveAssessmentHistoryUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentScoreUseCase
@@ -127,6 +129,22 @@ class UseCaseModule {
     fun provideObserveLatestCompletedAssessmentUseCase(
         assessmentSessionRepository: AssessmentSessionRepository
     ) = ObserveLatestCompletedAssessmentUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideObserveAssessmentHistoryUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = ObserveAssessmentHistoryUseCase(
+        assessmentSessionRepository = assessmentSessionRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideObserveCompletedAssessmentByIdUseCase(
+        assessmentSessionRepository: AssessmentSessionRepository
+    ) = ObserveCompletedAssessmentByIdUseCase(
         assessmentSessionRepository = assessmentSessionRepository
     )
 

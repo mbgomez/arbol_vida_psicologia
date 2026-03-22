@@ -150,6 +150,15 @@ Testing priorities:
 - Compose UI tests should start with the stable, user-critical screens in the current slice.
 - Avoid spending test effort on placeholder screens unless they protect behavior we explicitly want to keep stable.
 
+Locked history standard:
+- The History tab is a production user surface for completed assessments, not a placeholder destination.
+- Each saved history card should communicate:
+  - completion date
+  - saved sephira count for that session
+  - the most tense saved sephira
+  - the most settled saved sephira
+- Opening a history item should route to that saved session's results overview rather than always defaulting to the latest completed result.
+
 UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
 - Show progress through the ten sephirot.

@@ -29,6 +29,10 @@ interface AssessmentSessionRepository {
 
     fun observeLatestCompletedSession(): Flow<AssessmentSessionSnapshot?>
 
+    fun observeCompletedSessions(): Flow<List<AssessmentSessionSnapshot>>
+
+    fun observeCompletedSession(sessionId: Long): Flow<AssessmentSessionSnapshot?>
+
     fun saveAnswer(
         sessionId: Long,
         questionId: String,
@@ -116,6 +120,48 @@ class LocalAssessmentSessionRepository @Inject constructor(
 
     override fun observeLatestCompletedSession(): Flow<AssessmentSessionSnapshot?> {
         return assessmentSessionDao.observeLatestCompletedSession().flatMapLatest { session ->
+            if (session == null) {
+                flowOf(null)
+            } else {
+                combine(
+                    assessmentSessionDao.observeResponses(session.id),
+                    assessmentSessionDao.observeScores(session.id)
+                ) { responses, scores ->
+                    session.toSnapshot(
+                        responses = responses,
+                        scores = scores
+                    )
+                }
+            }
+        }
+    }
+
+    override fun observeCompletedSessions(): Flow<List<AssessmentSessionSnapshot>> {
+        return assessmentSessionDao.observeCompletedSessions().flatMapLatest { sessions ->
+            if (sessions.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(
+                    sessions.map { session ->
+                        combine(
+                            assessmentSessionDao.observeResponses(session.id),
+                            assessmentSessionDao.observeScores(session.id)
+                        ) { responses, scores ->
+                            session.toSnapshot(
+                                responses = responses,
+                                scores = scores
+                            )
+                        }
+                    }
+                ) { snapshots ->
+                    snapshots.toList()
+                }
+            }
+        }
+    }
+
+    override fun observeCompletedSession(sessionId: Long): Flow<AssessmentSessionSnapshot?> {
+        return assessmentSessionDao.observeCompletedSession(sessionId).flatMapLatest { session ->
             if (session == null) {
                 flowOf(null)
             } else {

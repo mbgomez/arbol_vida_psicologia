@@ -134,6 +134,16 @@ Assessment flow standard:
 - Low-confidence outcomes should use softened language such as "leans toward deficiency" rather than hard identity labels.
 - Result copy should describe current tendencies, mixed signals, and gentle next steps rather than fixed categories.
 
+Locked history standard:
+
+- The History tab is a production surface for completed assessments, not a placeholder destination.
+- History cards should show completed-session context at a glance:
+  - completion date
+  - session progress across seeded sephirot
+  - the most tense saved sephira
+  - the most settled saved sephira
+- Opening a history item should route to the saved results overview for that specific completed session rather than always redirecting to the latest result.
+
 Scoring standard:
 
 - Scoring should remain deterministic and per-sephira.

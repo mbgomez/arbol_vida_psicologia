@@ -57,7 +57,7 @@ import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
-import com.netah.hakkam.numyah.mind.ui.screen.HistoryPlaceholderScreen
+import com.netah.hakkam.numyah.mind.ui.screen.HistoryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
 import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnRoute
@@ -99,7 +99,7 @@ fun MainNavGraph(
                 HomeScreen(
                     paddingValues = paddingValues,
                     onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
-                    onOpenResults = { navController.navigate(AppDestination.Results.route) },
+                    onOpenResults = { navController.navigate(AppDestination.Results.createRoute()) },
                     onOpenHistory = { navController.navigate(AppDestination.History.route) },
                     onOpenLearn = { navController.navigate(AppDestination.Learn.route) },
                     onOpenSettings = { navController.navigate(AppDestination.Settings.route) }
@@ -115,22 +115,52 @@ fun MainNavGraph(
             ) { paddingValues ->
                 AssessmentRoute(
                     paddingValues = paddingValues,
-                    onBackHome = { navController.navigate(AppDestination.Results.route) },
+                    onBackHome = { navController.navigate(AppDestination.Results.createRoute()) },
                     viewModel = assessmentViewModel
                 )
             }
         }
-        composable(AppDestination.Results.route) {
+        composable(
+            route = AppDestination.Results.routePattern,
+            arguments = listOf(
+                navArgument(AppDestination.Results.sessionIdArg) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) {
+            val selectedSessionId = it.arguments
+                ?.getLong(AppDestination.Results.sessionIdArg)
+                ?.takeIf { sessionId -> sessionId > 0L }
             AppShell(navController = navController) { paddingValues ->
                 ResultsRoute(
                     paddingValues = paddingValues,
-                    onBackHome = { navController.navigate(AppDestination.Home.route) }
+                    onPrimaryAction = {
+                        if (selectedSessionId != null) {
+                            if (!navController.popBackStack()) {
+                                navController.navigate(AppDestination.History.route)
+                            }
+                        } else {
+                            navController.navigate(AppDestination.Home.route)
+                        }
+                    },
+                    primaryActionLabel = if (selectedSessionId != null) {
+                        stringResource(R.string.results_back_to_history_action)
+                    } else {
+                        stringResource(R.string.placeholder_primary_action)
+                    }
                 )
             }
         }
         composable(AppDestination.History.route) {
             AppShell(navController = navController) { paddingValues ->
-                HistoryPlaceholderScreen(paddingValues = paddingValues)
+                HistoryRoute(
+                    paddingValues = paddingValues,
+                    onOpenAssessment = { sessionId ->
+                        navController.navigate(AppDestination.Results.createRoute(sessionId))
+                    },
+                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) }
+                )
             }
         }
         composable(AppDestination.Learn.route) {

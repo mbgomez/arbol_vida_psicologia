@@ -63,6 +63,22 @@ class ObserveLatestCompletedAssessmentUseCase @Inject constructor(
     }
 }
 
+class ObserveAssessmentHistoryUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractorNoParams<List<AssessmentSessionSnapshot>>() {
+    override fun buildUseCase(): Flow<List<AssessmentSessionSnapshot>> {
+        return assessmentSessionRepository.observeCompletedSessions()
+    }
+}
+
+class ObserveCompletedAssessmentByIdUseCase @Inject constructor(
+    private val assessmentSessionRepository: AssessmentSessionRepository
+) : FlowInteractor<Long, AssessmentSessionSnapshot?>() {
+    override fun buildUseCase(params: Long): Flow<AssessmentSessionSnapshot?> {
+        return assessmentSessionRepository.observeCompletedSession(params)
+    }
+}
+
 class SaveAssessmentAnswerUseCase @Inject constructor(
     private val assessmentSessionRepository: AssessmentSessionRepository
 ) : FlowInteractor<SaveAnswerParams, AssessmentSessionSnapshot>() {

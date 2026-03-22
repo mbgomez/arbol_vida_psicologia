@@ -28,6 +28,12 @@ interface AssessmentSessionDao {
     @Query("SELECT * FROM assessmentsessiontable WHERE status = 'COMPLETED' ORDER BY completedAt DESC LIMIT 1")
     fun observeLatestCompletedSession(): Flow<AssessmentSessionTable?>
 
+    @Query("SELECT * FROM assessmentsessiontable WHERE status = 'COMPLETED' ORDER BY completedAt DESC")
+    fun observeCompletedSessions(): Flow<List<AssessmentSessionTable>>
+
+    @Query("SELECT * FROM assessmentsessiontable WHERE id = :sessionId AND status = 'COMPLETED' LIMIT 1")
+    fun observeCompletedSession(sessionId: Long): Flow<AssessmentSessionTable?>
+
     @Query("SELECT * FROM assessmentsessiontable WHERE id = :sessionId LIMIT 1")
     fun observeSession(sessionId: Long): Flow<AssessmentSessionTable?>
 

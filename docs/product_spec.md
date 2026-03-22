@@ -38,6 +38,16 @@ The app should launch with bilingual support for English and Spanish.
 - Open a sephira detail screen directly from a saved assessment.
 - Open a Learn/About section without starting the assessment.
 
+Locked history standard:
+
+- The History tab should show completed assessments as a real saved-results surface, not as a placeholder or roadmap note.
+- Each saved session should show enough context for calm re-entry:
+  - completion date
+  - how many sephirot were saved in that session
+  - which sephira carried the most tension
+  - which sephira looked most settled
+- Selecting a history item should open the results overview for that exact saved session.
+
 ### UX Principles
 
 - One question at a time or one short cluster at a time.

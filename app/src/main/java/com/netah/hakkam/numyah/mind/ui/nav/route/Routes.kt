@@ -16,7 +16,18 @@ sealed class AppDestination(
     data object Onboarding : AppDestination("onboarding", R.string.screen_onboarding)
     data object Home : AppDestination("home", R.string.nav_home)
     data object Assessment : AppDestination("assessment", R.string.screen_assessment)
-    data object Results : AppDestination("results", R.string.screen_results)
+    data object Results : AppDestination("results", R.string.screen_results) {
+        const val sessionIdArg = "sessionId"
+        const val routePattern = "results?sessionId={sessionId}"
+
+        fun createRoute(sessionId: Long? = null): String {
+            return if (sessionId == null) {
+                route
+            } else {
+                "$route?$sessionIdArg=$sessionId"
+            }
+        }
+    }
     data object History : AppDestination("history", R.string.screen_history)
     data object Learn : AppDestination("learn", R.string.screen_learn)
     data object LearnCourse : AppDestination("learn/course/{courseId}", R.string.screen_learn) {
@@ -54,7 +65,8 @@ fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Onboarding.route -> AppDestination.Onboarding
     AppDestination.Home.route -> AppDestination.Home
     AppDestination.Assessment.route -> AppDestination.Assessment
-    AppDestination.Results.route -> AppDestination.Results
+    AppDestination.Results.route,
+    AppDestination.Results.routePattern -> AppDestination.Results
     AppDestination.History.route -> AppDestination.History
     AppDestination.Learn.route -> AppDestination.Learn
     AppDestination.LearnCourse.route -> AppDestination.LearnCourse

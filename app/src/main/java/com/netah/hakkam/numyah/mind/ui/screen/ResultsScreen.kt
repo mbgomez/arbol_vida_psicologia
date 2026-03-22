@@ -41,14 +41,16 @@ import com.netah.hakkam.numyah.mind.viewmodel.ResultsViewModel
 @Composable
 fun ResultsRoute(
     paddingValues: PaddingValues,
-    onBackHome: () -> Unit,
+    onPrimaryAction: () -> Unit,
+    primaryActionLabel: String,
     viewModel: ResultsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     ResultsScreen(
         paddingValues = paddingValues,
         uiState = uiState,
-        onBackHome = onBackHome
+        onPrimaryAction = onPrimaryAction,
+        primaryActionLabel = primaryActionLabel
     )
 }
 
@@ -56,7 +58,8 @@ fun ResultsRoute(
 fun ResultsScreen(
     paddingValues: PaddingValues,
     uiState: ResultsUiState,
-    onBackHome: () -> Unit
+    onPrimaryAction: () -> Unit,
+    primaryActionLabel: String
 ) {
     Surface(
         modifier = Modifier
@@ -74,21 +77,22 @@ fun ResultsScreen(
                 paddingValues = PaddingValues(),
                 title = stringResource(R.string.results_empty_title),
                 body = stringResource(R.string.results_empty_body),
-                actionLabel = stringResource(R.string.placeholder_primary_action),
-                onAction = onBackHome
+                actionLabel = primaryActionLabel,
+                onAction = onPrimaryAction
             )
 
             ResultsUiState.Error -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
                 title = stringResource(R.string.results_error_title),
                 body = stringResource(R.string.results_error_body),
-                actionLabel = stringResource(R.string.placeholder_primary_action),
-                onAction = onBackHome
+                actionLabel = primaryActionLabel,
+                onAction = onPrimaryAction
             )
 
             is ResultsUiState.Loaded -> ResultsLoadedState(
                 model = uiState.model,
-                onBackHome = onBackHome
+                primaryActionLabel = primaryActionLabel,
+                onPrimaryAction = onPrimaryAction
             )
         }
     }
@@ -97,7 +101,8 @@ fun ResultsScreen(
 @Composable
 private fun ResultsLoadedState(
     model: ResultsOverviewUiModel,
-    onBackHome: () -> Unit
+    primaryActionLabel: String,
+    onPrimaryAction: () -> Unit
 ) {
     AppScreenColumn(paddingValues = PaddingValues()) {
         ResultsSummaryCard(model = model)
@@ -150,10 +155,10 @@ private fun ResultsLoadedState(
         }
 
         Button(
-            onClick = onBackHome,
+            onClick = onPrimaryAction,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.placeholder_primary_action))
+            Text(text = primaryActionLabel)
         }
     }
 }
@@ -189,7 +194,13 @@ private fun ResultsSummaryCard(model: ResultsOverviewUiModel) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = stringResource(R.string.results_overview_status_latest),
+                text = stringResource(
+                    if (model.isHistoricalSession) {
+                        R.string.results_overview_status_saved
+                    } else {
+                        R.string.results_overview_status_latest
+                    }
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

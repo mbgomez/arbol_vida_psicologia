@@ -26,6 +26,8 @@ class AssessmentSessionUseCaseTests {
     private lateinit var startOrResumeAssessmentUseCase: StartOrResumeAssessmentUseCase
     private lateinit var observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase
     private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
+    private lateinit var observeAssessmentHistoryUseCase: ObserveAssessmentHistoryUseCase
+    private lateinit var observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase
     private lateinit var saveAssessmentAnswerUseCase: SaveAssessmentAnswerUseCase
     private lateinit var updateAssessmentProgressUseCase: UpdateAssessmentProgressUseCase
     private lateinit var saveAssessmentScoreUseCase: SaveAssessmentScoreUseCase
@@ -41,6 +43,8 @@ class AssessmentSessionUseCaseTests {
         startOrResumeAssessmentUseCase = StartOrResumeAssessmentUseCase(assessmentSessionRepository)
         observeActiveAssessmentUseCase = ObserveActiveAssessmentUseCase(assessmentSessionRepository)
         observeLatestCompletedAssessmentUseCase = ObserveLatestCompletedAssessmentUseCase(assessmentSessionRepository)
+        observeAssessmentHistoryUseCase = ObserveAssessmentHistoryUseCase(assessmentSessionRepository)
+        observeCompletedAssessmentByIdUseCase = ObserveCompletedAssessmentByIdUseCase(assessmentSessionRepository)
         saveAssessmentAnswerUseCase = SaveAssessmentAnswerUseCase(assessmentSessionRepository)
         updateAssessmentProgressUseCase = UpdateAssessmentProgressUseCase(assessmentSessionRepository)
         saveAssessmentScoreUseCase = SaveAssessmentScoreUseCase(assessmentSessionRepository)
@@ -95,6 +99,31 @@ class AssessmentSessionUseCaseTests {
         val result = observeLatestCompletedAssessmentUseCase.run().toList()
 
         verify(exactly = 1) { assessmentSessionRepository.observeLatestCompletedSession() }
+        assertEquals(listOf(expected), result)
+    }
+
+    @Test
+    fun observeAssessmentHistoryUseCase_delegatesToRepository() = coroutinesRule.runBlockingTest {
+        val expected = listOf(
+            testSnapshot(status = AssessmentStatus.COMPLETED, completedAt = 3000L),
+            testSnapshot(status = AssessmentStatus.COMPLETED, completedAt = 2000L)
+        )
+        every { assessmentSessionRepository.observeCompletedSessions() } returns flowOf(expected)
+
+        val result = observeAssessmentHistoryUseCase.run().toList()
+
+        verify(exactly = 1) { assessmentSessionRepository.observeCompletedSessions() }
+        assertEquals(listOf(expected), result)
+    }
+
+    @Test
+    fun observeCompletedAssessmentByIdUseCase_delegatesToRepository() = coroutinesRule.runBlockingTest {
+        val expected = testSnapshot(status = AssessmentStatus.COMPLETED, completedAt = 2000L)
+        every { assessmentSessionRepository.observeCompletedSession(42L) } returns flowOf(expected)
+
+        val result = observeCompletedAssessmentByIdUseCase.run(42L).toList()
+
+        verify(exactly = 1) { assessmentSessionRepository.observeCompletedSession(42L) }
         assertEquals(listOf(expected), result)
     }
 

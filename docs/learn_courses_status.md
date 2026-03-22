@@ -105,7 +105,7 @@ The Learn feature is now a real product slice with:
 
 ## What Is Left
 
-### Missing Tests
+### Automated Coverage
 
 The main missing Learn Compose coverage has now been added for:
 
@@ -118,33 +118,36 @@ The main missing Learn Compose coverage has now been added for:
 
 Any further UI tests should stay focused on newly locked behavior rather than broad polished-layout snapshots.
 
-### Manual Review
+### Closeout Review
 
-The reader still needs manual review on device for:
+The final Learn closeout pass should still confirm on device:
 
+- course list footer clarity and course-card density
+- course overview readability after the content rewrite
 - chapter header feel
 - long paragraph rhythm
 - previous and next controls after the route-stack fix
+- end-of-sequence return to course behavior
+- back navigation from section -> course -> course list -> app shell
 - locked and unlocked flow
 - dark and light theme readability
-- catalog and course-card density on smaller devices
 
 ### Future Enhancement Layer
 
-Not part of the current pass, but already identified:
+Not part of the Learn closeout pass, but already identified:
 
 - optional hero and inline image support
-- more book-like visual polish if needed after manual review
+- additional authored courses beyond the Tree of Life overview
+- more book-like visual polish only if a future content batch reveals a real need
 
 ## Suggestions For The Next Thread
 
 Recommended order:
 
 1. Run the Learn-related tests first.
-2. Manually review the Learn reader and course flow on device.
-3. Fix any remaining UI issues discovered during review.
-4. Add any missing assertions for newly reviewed behavior.
-5. If the Learn standard changes again, update docs in the same pass.
+2. Do the final Learn closeout review on device.
+3. Fix only real regressions or readability issues discovered in that pass.
+4. If the Learn standard changes again, update docs in the same pass.
 
 ## Good Prompt To Continue
 
