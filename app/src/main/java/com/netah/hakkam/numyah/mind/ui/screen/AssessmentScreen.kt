@@ -236,7 +236,7 @@ private fun AssessmentQuestionState(
     onBack: () -> Unit
 ) {
     val contentSpacing = dimensionResource(R.dimen.spacing_sm)
-    val buttonSpacing = dimensionResource(R.dimen.onboarding_spacing_button)
+    val buttonSpacing = dimensionResource(R.dimen.spacing_lg)
 
     AssessmentScreenColumn {
         AssessmentProgressHeader(model.progress)
@@ -365,8 +365,8 @@ private fun AssessmentErrorState(
     errorType: AssessmentErrorType,
     onRetry: () -> Unit
 ) {
-    val horizontalPadding = dimensionResource(R.dimen.onboarding_horizontal_padding)
-    val spacing = dimensionResource(R.dimen.onboarding_spacing_medium)
+    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
+    val spacing = dimensionResource(R.dimen.screen_section_spacing)
 
     Column(
         modifier = Modifier
