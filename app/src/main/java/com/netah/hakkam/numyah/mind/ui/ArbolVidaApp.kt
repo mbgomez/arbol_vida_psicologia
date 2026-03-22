@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.nav.MainNavGraph
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
@@ -28,8 +29,11 @@ fun ArbolVidaApp(
     appStateViewModel: AppStateViewModel = hiltViewModel()
 ) {
     val uiState by appStateViewModel.uiState.collectAsState()
+    val systemInDarkTheme = isSystemInDarkTheme()
 
-    AppTheme {
+    AppTheme(
+        darkTheme = uiState.themeMode.resolve(systemInDarkTheme)
+    ) {
         if (uiState.isLoading) {
             AppLoadingScreen()
         } else {

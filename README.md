@@ -52,6 +52,7 @@ The full product plan is documented here:
 - optional learn/about content area
 - saved local assessment history
 - retake assessment flow
+- settings for language, appearance, onboarding replay, and assessment preferences
 
 ## Architectural Direction
 
@@ -148,6 +149,30 @@ Learnings from the Malkuth slice:
   - question count
   - whether the batch includes section-complete interpretation copy
   - the minimum tests required for the batch
+
+Locked settings foundation:
+
+- The first production settings slice should include only:
+  - language
+  - appearance
+  - assessment experience
+  - privacy and data
+  - about
+- Language options should be:
+  - system default
+  - English
+  - Spanish
+- Appearance options should be:
+  - system default
+  - light
+  - dark
+- The default behavior for both language and appearance should follow the device until the user chooses an override.
+- Settings are local-only and should not depend on sign-in, sync, or backend state.
+- Replaying onboarding should reset only the onboarding-completed preference. It should not erase assessment sessions, answers, scores, or history.
+- The assessment honesty notice should remain user-controllable from Settings and should affect only that pre-assessment notice.
+- Privacy and data content in Settings should explain the local-first model in clear user language and avoid technical or legalistic wording.
+- About content in Settings should reinforce the reflection-focused, non-diagnostic framing and can include app version information.
+- Theme and language preferences should be treated as app-wide settings and should apply across the full shell, not only inside the Settings screen.
 
 ## Delivery Standard
 

@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
 import android.content.SharedPreferences
+import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
 import io.mockk.mockk
@@ -28,6 +29,7 @@ class LocalAppPreferencesRepositoryTests {
         editor = mockk(relaxed = true)
         every { sharedPreferences.edit() } returns editor
         every { editor.putBoolean(any(), any()) } returns editor
+        every { editor.putString(any(), any()) } returns editor
 
         repository = LocalAppPreferencesRepository(sharedPreferences)
     }
@@ -70,5 +72,25 @@ class LocalAppPreferencesRepositoryTests {
 
         verify(exactly = 1) { sharedPreferences.getBoolean("show_assessment_honesty_notice", true) }
         assertEquals(false, result)
+    }
+
+    @Test
+    fun setThemeMode_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
+        val result = repository.setThemeMode(AppThemeMode.DARK).first()
+
+        verify(exactly = 1) { sharedPreferences.edit() }
+        verify(exactly = 1) { editor.putString("theme_mode", "DARK") }
+        verify(exactly = 1) { editor.apply() }
+        assertEquals(AppThemeMode.DARK, result)
+    }
+
+    @Test
+    fun getThemeMode_readsStoredValue() = coroutinesRule.runBlockingTest {
+        every { sharedPreferences.getString("theme_mode", AppThemeMode.SYSTEM.name) } returns "LIGHT"
+
+        val result = repository.getThemeMode().first()
+
+        verify(exactly = 1) { sharedPreferences.getString("theme_mode", AppThemeMode.SYSTEM.name) }
+        assertEquals(AppThemeMode.LIGHT, result)
     }
 }

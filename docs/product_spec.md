@@ -85,6 +85,44 @@ The app should launch with bilingual support for English and Spanish.
 - Privacy and methodology screen
 - Settings screen
 
+### Settings Scope Standard
+
+The Settings screen should be a product-grade support surface, not a generic utility list. Its role is to help the user control reading comfort, language, trust-facing preferences, and onboarding behavior without introducing complexity that does not support the reflective core loop.
+
+Locked v1 sections:
+
+- `Language`
+- `Appearance`
+- `Assessment experience`
+- `Privacy and data`
+- `About`
+
+Locked v1 controls:
+
+- Language:
+  - `System default`
+  - `English`
+  - `Spanish`
+- Appearance:
+  - `System default`
+  - `Light`
+  - `Dark`
+- Assessment experience:
+  - show or hide the pre-assessment honesty notice
+- Onboarding behavior:
+  - replay onboarding from the beginning
+
+Locked behavior rules:
+
+- Language and appearance should default to system behavior until the user explicitly selects an override.
+- Theme and language are app-wide preferences and should apply across the full app shell.
+- Settings must remain local-first and should not require sign-in, sync, or backend access.
+- Replaying onboarding resets only the onboarding completion state and does not clear saved assessments, results, answers, or history.
+- Hiding the honesty notice affects only the short pre-assessment framing notice and should not remove other trust or privacy copy elsewhere in the product.
+- Privacy and data entries in Settings should explain the local-device storage model in plain user-facing language rather than technical implementation terms.
+- About content in Settings should reinforce the non-diagnostic positioning, reflective purpose, and methodology framing.
+- Settings copy should stay calm, practical, and psychologically respectful. It should not read like developer notes or device-configuration jargon.
+
 ## 4. Domain Model
 
 The domain should center on a local-first assessment engine.
@@ -270,6 +308,16 @@ Each question should include:
 - `weight`
 
 This content structure is now the default standard unless a later review explicitly changes it in both docs and implementation.
+
+### Locked Settings Implementation Standard
+
+When implementing the Settings slice:
+
+- Keep the screen under the existing `ui/screen` structure and expose state through a dedicated `StateFlow`-backed ViewModel.
+- Keep app preference persistence isolated in the app preferences repository and expose changes through thin use cases when the feature follows the repository -> use case -> ViewModel path.
+- Treat theme and language selections as durable app preferences rather than transient screen state.
+- Keep destructive data actions out of the initial settings slice unless their behavior and confirmation model are explicitly locked first.
+- Add repository, use case, and ViewModel tests for new settings behavior when those layers are introduced.
 
 Locked scaling learning:
 

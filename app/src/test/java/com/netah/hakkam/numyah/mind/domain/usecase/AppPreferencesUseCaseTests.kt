@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.domain.usecase
 
 import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
+import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
 import io.mockk.mockk
@@ -21,6 +22,8 @@ class AppPreferencesUseCaseTests {
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var getThemeModeUseCase: GetThemeModeUseCase
+    private lateinit var setThemeModeUseCase: SetThemeModeUseCase
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -34,6 +37,8 @@ class AppPreferencesUseCaseTests {
             GetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
         setAssessmentHonestyNoticeVisibilityUseCase =
             SetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
+        getThemeModeUseCase = GetThemeModeUseCase(appPreferencesRepository)
+        setThemeModeUseCase = SetThemeModeUseCase(appPreferencesRepository)
     }
 
     @Test
@@ -74,5 +79,25 @@ class AppPreferencesUseCaseTests {
 
         verify(exactly = 1) { appPreferencesRepository.setAssessmentHonestyNoticeVisible(false) }
         assertEquals(listOf(false), result)
+    }
+
+    @Test
+    fun getThemeModeUseCase_emitsRepositoryValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.getThemeMode() } returns flowOf(AppThemeMode.DARK)
+
+        val result = getThemeModeUseCase.run().toList()
+
+        verify(exactly = 1) { appPreferencesRepository.getThemeMode() }
+        assertEquals(listOf(AppThemeMode.DARK), result)
+    }
+
+    @Test
+    fun setThemeModeUseCase_emitsSavedValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.setThemeMode(AppThemeMode.LIGHT) } returns flowOf(AppThemeMode.LIGHT)
+
+        val result = setThemeModeUseCase.run(AppThemeMode.LIGHT).toList()
+
+        verify(exactly = 1) { appPreferencesRepository.setThemeMode(AppThemeMode.LIGHT) }
+        assertEquals(listOf(AppThemeMode.LIGHT), result)
     }
 }

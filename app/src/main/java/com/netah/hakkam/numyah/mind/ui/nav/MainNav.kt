@@ -57,6 +57,7 @@ import com.netah.hakkam.numyah.mind.ui.screen.ResultsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.SettingsScreen
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
+import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
 
 @Composable
 fun MainNavGraph(
@@ -122,8 +123,28 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.Settings.route) {
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val settingsUiState by settingsViewModel.uiState.collectAsState()
             AppShell(navController = navController) { paddingValues ->
-                SettingsScreen(paddingValues = paddingValues)
+                SettingsScreen(
+                    paddingValues = paddingValues,
+                    uiState = settingsUiState,
+                    onLanguageModeSelected = settingsViewModel::onLanguageModeSelected,
+                    onThemeModeSelected = settingsViewModel::onThemeModeSelected,
+                    onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
+                    onReplayOnboarding = {
+                        settingsViewModel.replayOnboarding {
+                            navController.navigate(AppDestination.Onboarding.route) {
+                                popUpTo(AppDestination.Home.route) {
+                                    inclusive = false
+                                    saveState = false
+                                }
+                                launchSingleTop = true
+                                restoreState = false
+                            }
+                        }
+                    }
+                )
             }
         }
     }
