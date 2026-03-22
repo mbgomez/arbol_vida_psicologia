@@ -735,6 +735,30 @@ Compose screen construction guidance:
 - Prefer decomposition that improves readability and reuse without fragmenting simple logic into unnecessary wrappers.
 - For multi-step onboarding or intro flows, keep page definitions explicit so text, artwork, and behavior can evolve together without spreading page logic across the layout tree.
 
+## Locked Refactor Direction
+
+The repository also follows the locked refactor direction in:
+
+- [Refactor roadmap](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\refactor_roadmap.md)
+
+That roadmap is now the source of truth for refactor-specific standards such as:
+
+- product naming cleanup
+- template residue removal or quarantine
+- package convergence under the current `ui`, `viewmodel`, `data`, and `domain` direction
+- shared UI extraction thresholds
+- design-token naming and reuse rules
+- navigation-shell cleanup
+- Room hardening expectations
+
+Locked refactor standards to preserve during new work:
+
+- legacy starter-template concepts such as posts, generic login scaffolding, and `Foundation` naming should not define future product architecture
+- app-wide reused tokens should move toward semantic naming such as spacing, radius, size, stroke, and elevation instead of feature-local names
+- screens above the current readability threshold should be decomposed before new complexity is added to them
+- if the authored content model keeps `weight`, the scoring engine should eventually use it as real scoring input
+- destructive Room migration fallback is not the long-term persistence standard for the product
+
 ## Recommended Next Step After This Spec
 
 Before coding, define the v1 content set in detail:

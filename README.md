@@ -222,3 +222,27 @@ To work effectively on future slices:
 - Prefer reducing rework over maximizing speed when assumptions are still unstable.
 - Use product judgment plus structured execution together: strong critique on user experience, followed by concrete implementation and verification.
 - Assume the user owns local execution. Manual testing, Android Studio runs, and build or test commands should be requested from the user when verification is needed, rather than assumed to be run by the coding agent.
+
+## Locked Refactor Standard
+
+The repository now also follows a locked refactor standard:
+
+- [Refactor roadmap](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\refactor_roadmap.md)
+
+This roadmap defines the current project-standard direction for:
+
+- naming cleanup
+- package direction
+- starter-template removal or quarantine
+- Compose screen decomposition
+- shared UI standardization
+- design token standardization
+- localization cleanup
+- persistence hardening
+- navigation and shell refactor order
+
+Refactor rule:
+
+- when implementation changes one of those standards, update the implementation and the requirement files in the same pass
+- do not let temporary cleanup patterns become permanent by accident
+- prefer converging on one clear product architecture instead of preserving multiple competing patterns

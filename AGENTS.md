@@ -130,6 +130,7 @@ Data and content rules:
 - Plan content and UI strings for English and Spanish from the start.
 - Keep localized copy separate from scoring rules and domain logic.
 - When the architecture uses repositories plus use cases, prefer repository methods that return `Flow` and thin use cases that expose those flows to ViewModels.
+- The remaining sephirot should be added little by little as their questions and definitions are finalized. Do not assume all remaining sephirot are ready for one bulk implementation pass.
 
 Testing priorities:
 - scoring engine correctness
@@ -181,3 +182,10 @@ Working-together protocol:
 - Be explicit about whether a choice is a temporary experiment or a new project standard.
 - When a standard changes, update both the implementation and the requirement files in the same pass.
 - Prefer reducing assumption churn over rushing a larger implementation on unstable foundations.
+
+Locked refactor direction:
+- Follow `docs/refactor_roadmap.md` as the source of truth for refactor standards and cleanup order.
+- Do not let starter-template code such as posts, login scaffolding, generic template screens, or `Foundation` naming define new product work.
+- Prefer converging on one package and UI pattern over preserving multiple competing approaches.
+- Treat shared UI patterns, semantic design tokens, Room hardening, and bilingual cleanup as project standards rather than optional polish.
+- Before adding complexity to large files such as assessment, settings, results, or navigation shell code, prefer decomposition and standardization first.
