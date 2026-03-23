@@ -4,8 +4,8 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, and the project now has a gated tester-observability foundation plus Firebase configuration, signed release-bundle readiness, and Play testing setup guidance."
-status = "phase_1_5_observability_partially_verified_play_identity_pending"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the first Phase 2 History polish slice now adds calmer recovery states, clearer trend context, and retry support across History surfaces."
+status = "phase_2_history_polish_ready_for_manual_verification"
 
 [recent_work]
 completed = [
@@ -43,7 +43,11 @@ completed = [
   "Verified that Firebase backend initialization and local telemetry logging are active in a tester-enabled build",
   "Created a release upload keystore and produced a signed release app bundle for Play internal testing",
   "Updated the scoring engine so authored question weights now affect per-pole normalization and dominant-pole scoring",
-  "Added repository and scoring tests to verify question weights survive content loading and influence score calculation"
+  "Added repository and scoring tests to verify question weights survive content loading and influence score calculation",
+  "Added real retry support to History so loading and recovery states can retry in place instead of only navigating away",
+  "Polished History empty, loading, and error states with calmer guidance and clearer next-step copy",
+  "Refined History trend cards and deeper-trends reading with clearer session context, latest-value cues, and calmer chart helper text",
+  "Expanded History ViewModel and Compose coverage around retry and the new History-phase polish surfaces"
 ]
 
 [locked_decisions]
@@ -60,24 +64,24 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_1_seed_next_sephirot_batch"
-why = "The scoring contract now honors authored weights, but the main assessment content still covers only the currently seeded subset instead of the locked ten-sephirot v1 loop."
+name = "phase_2_copy_and_transition_polish"
+why = "History now has a calmer production-grade recovery and trend surface, so the next highest-value UX polish gap is the consistency of trust-building copy and transitions between top-level destinations and nested detail screens."
 
 [[recommended_next_slice.goals]]
-id = "lock_next_contiguous_batch"
-description = "Lock the next contiguous sephira batch in assessment order before implementation so content, detail copy, and tests stay aligned."
+id = "review_cross_surface_copy"
+description = "Tighten user-facing copy across Home, Results, Learn, and support screens so the tone stays psychologically grounded, calm, and non-pathologizing."
 
 [[recommended_next_slice.goals]]
-id = "seed_assessment_content"
-description = "Add the next authored questionnaire sections, detail content, and bilingual copy to the local assessment content pipeline."
+id = "polish_nested_screen_entry"
+description = "Refine the feeling of moving from top-level surfaces into details such as Results detail, Learn reader, and support screens so the app feels more intentional and less abrupt."
 
 [[recommended_next_slice.goals]]
-id = "expand_assessment_coverage"
-description = "Extend repository, ViewModel, and critical Compose coverage around the expanded multi-sephira assessment path."
+id = "keep_phase_2_slice_bounded"
+description = "Stay in UX and enjoyment polish work instead of drifting back into sephira expansion or larger refactor passes."
 
 [[recommended_next_slice.goals]]
-id = "keep_phase_1_mainline_priority"
-description = "Continue closing the ten-sephirot product-completion gap before returning to unfinished Phase 1.5 verification."
+id = "verify_history_polish"
+description = "Run the manual and automated checks for the new History states and trend readability before choosing the next polish slice."
 
 [production_roadmap]
 file = "docs/production_readiness_roadmap.md"
@@ -101,6 +105,7 @@ results_polish = "Strengthen bridges from Home summary into Results and detail a
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
+history_phase_2_follow_up = "After the first History polish pass, review whether the new state copy and trend helper text feel equally calm in English and Spanish during manual device checks."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
 [lessons_learned]
@@ -132,7 +137,9 @@ items = [
   "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure.",
   "Debug/demo tools for completed-history review should switch sources instead of seeding or overwriting real saved data.",
   "Compose tests for long polished screens like History and Settings should scroll to below-the-fold content or rely on stable semantics instead of assuming those sections stay immediately visible.",
-  "Scoring tests are more reliable when weighted fixtures stay comfortably away from confidence and dominant-pole thresholds unless the test is intentionally validating a boundary."
+  "Scoring tests are more reliable when weighted fixtures stay comfortably away from confidence and dominant-pole thresholds unless the test is intentionally validating a boundary.",
+  "Phase 2 polish on History is stronger when recovery states can retry in place instead of always pushing the user out to another tab.",
+  "Trend visuals feel calmer when latest context, previous context, and readable point details stay visible together instead of asking the user to infer too much from the chart alone."
 ]
 
 [verification]
@@ -147,7 +154,8 @@ notes = [
   "Firebase backend initialization was observed in Logcat and local telemetry events plus tester non-fatal logging were observed in a tester-enabled build.",
   "Analytics DebugView and Crashlytics console delivery were not yet confirmed end-to-end at the stopping point.",
   "A release upload keystore was created at `C:\\Users\\Miguel\\keys\\numyah-mind-upload.jks` and a signed release bundle was produced for Play internal testing.",
-  "The Play upload path is prepared, but account identity verification still needs to be completed before fully finishing the internal testing rollout."
+  "The Play upload path is prepared, but account identity verification still needs to be completed before fully finishing the internal testing rollout.",
+  "The new History polish slice has been implemented, but Gradle, unit, instrumented, and manual verification for that slice still need to be run by the user."
 ]
 
 [files_to_read_first]

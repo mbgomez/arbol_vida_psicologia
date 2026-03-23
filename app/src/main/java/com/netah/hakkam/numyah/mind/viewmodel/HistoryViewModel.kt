@@ -14,8 +14,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
@@ -137,30 +138,39 @@ class HistoryViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Loading)
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
+    private val reloadSignal = MutableStateFlow(0)
 
     init {
         viewModelScope.launch {
-            try {
-                combine(
-                    getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
-                    observeAssessmentHistoryUseCase.run()
-                ) { questionnaire, history ->
-                    questionnaire to history
-                }.collect { (questionnaire, history) ->
-                    _uiState.value = if (history.isEmpty()) {
-                        HistoryUiState.Empty
-                    } else {
-                        HistoryUiState.Loaded(buildModel(questionnaire, history))
+            reloadSignal.collectLatest {
+                try {
+                    combine(
+                        getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
+                        observeAssessmentHistoryUseCase.run()
+                    ) { questionnaire, history ->
+                        questionnaire to history
                     }
+                        .collect { (questionnaire, history) ->
+                            _uiState.value = if (history.isEmpty()) {
+                                HistoryUiState.Empty
+                            } else {
+                                HistoryUiState.Loaded(buildModel(questionnaire, history))
+                            }
+                        }
+                } catch (throwable: Throwable) {
+                    appTelemetry.recordNonFatal(
+                        key = NonFatalIssueKey.HISTORY_LOAD_FAILED,
+                        throwable = throwable
+                    )
+                    _uiState.value = HistoryUiState.Error
                 }
-            } catch (throwable: Throwable) {
-                appTelemetry.recordNonFatal(
-                    key = NonFatalIssueKey.HISTORY_LOAD_FAILED,
-                    throwable = throwable
-                )
-                _uiState.value = HistoryUiState.Error
             }
         }
+    }
+
+    fun retry() {
+        _uiState.value = HistoryUiState.Loading
+        reloadSignal.value += 1
     }
 
     private fun buildModel(

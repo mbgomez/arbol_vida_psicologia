@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,12 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +38,7 @@ import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppActionCard
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
+import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.viewmodel.HistorySessionUiModel
@@ -64,7 +70,8 @@ fun HistoryRoute(
         uiState = uiState,
         onOpenAssessment = onOpenAssessment,
         onOpenAssessments = onOpenAssessments,
-        onOpenTrends = onOpenTrends
+        onOpenTrends = onOpenTrends,
+        onRetry = viewModel::retry
     )
 }
 
@@ -74,30 +81,25 @@ fun HistoryScreen(
     uiState: HistoryUiState,
     onOpenAssessment: (Long) -> Unit,
     onOpenAssessments: () -> Unit,
-    onOpenTrends: () -> Unit
+    onOpenTrends: () -> Unit,
+    onRetry: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         when (uiState) {
-            HistoryUiState.Loading -> HistoryMessageState(
+            HistoryUiState.Loading -> HistoryLoadingState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_loading_title),
-                body = stringResource(R.string.history_loading_body)
+                onOpenAssessments = onOpenAssessments
             )
 
-            HistoryUiState.Empty -> HistoryMessageState(
+            HistoryUiState.Empty -> HistoryEmptyState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_empty_title),
-                body = stringResource(R.string.history_empty_body),
-                actionLabel = stringResource(R.string.history_empty_action),
-                onAction = onOpenAssessments
+                onOpenAssessments = onOpenAssessments
             )
 
-            HistoryUiState.Error -> HistoryMessageState(
+            HistoryUiState.Error -> HistoryErrorState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_error_title),
-                body = stringResource(R.string.history_error_body),
-                actionLabel = stringResource(R.string.history_error_action),
-                onAction = onOpenAssessments
+                onRetry = onRetry,
+                onOpenAssessments = onOpenAssessments
             )
 
             is HistoryUiState.Loaded -> HistoryLoadedState(
@@ -178,6 +180,26 @@ private fun HistoryTrendSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AppMetricBadge(
+                label = stringResource(R.string.history_trends_sessions_badge_label),
+                value = stringResource(R.string.history_trends_sessions_badge_value, model.sessionCount)
+            )
+            AppMetricBadge(
+                label = stringResource(R.string.history_trends_status_badge_label),
+                value = stringResource(
+                    if (model.hasComparisonData) {
+                        R.string.history_trends_status_badge_ready
+                    } else {
+                        R.string.history_trends_status_badge_growing
+                    }
+                )
+            )
+        }
+
         if (!model.hasComparisonData) {
             AppSurfaceCard(
                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.32f),
@@ -242,6 +264,16 @@ private fun HistoryTrendCard(model: HistoryTrendChartUiModel) {
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                model.previousValue?.let { previousValue ->
+                    Text(
+                        text = stringResource(
+                            R.string.history_trend_previous_summary,
+                            previousValue
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Text(
                     text = trendDirectionLabel(model),
                     style = MaterialTheme.typography.bodyMedium,
@@ -251,7 +283,8 @@ private fun HistoryTrendCard(model: HistoryTrendChartUiModel) {
 
             HistoryTrendSparkline(
                 points = model.points,
-                accentColor = accentColor
+                accentColor = accentColor,
+                metric = model.metric
             )
         }
     }
@@ -260,7 +293,8 @@ private fun HistoryTrendCard(model: HistoryTrendChartUiModel) {
 @Composable
 private fun HistoryTrendSparkline(
     points: List<HistoryTrendPointUiModel>,
-    accentColor: Color
+    accentColor: Color,
+    metric: HistoryTrendMetricType
 ) {
     val barWidth = dimensionResource(R.dimen.size_dot_md)
     val barSpacing = dimensionResource(R.dimen.spacing_sm)
@@ -322,6 +356,17 @@ private fun HistoryTrendSparkline(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+
+        Text(
+            text = stringResource(
+                when (metric) {
+                    HistoryTrendMetricType.HIGHEST_TENSION -> R.string.history_trend_scale_tension
+                    HistoryTrendMetricType.MOST_SETTLED -> R.string.history_trend_scale_settled
+                }
+            ),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -484,27 +529,135 @@ private fun trendContainerColor(metric: HistoryTrendMetricType): Color {
 }
 
 @Composable
-private fun HistoryMessageState(
+private fun HistoryLoadingState(
     paddingValues: PaddingValues,
-    title: String,
-    body: String,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null
+    onOpenAssessments: () -> Unit
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
         AppHeroCard(
             eyebrow = stringResource(R.string.history_overview_eyebrow),
-            title = title,
-            body = body
+            title = stringResource(R.string.history_loading_title),
+            body = stringResource(R.string.history_loading_body)
         )
-        if (actionLabel != null && onAction != null) {
-            Button(
-                onClick = onAction,
-                modifier = Modifier.fillMaxWidth().testTag("history_primary_action")
+        AppSectionCard(
+            title = stringResource(R.string.history_loading_card_title),
+            body = stringResource(R.string.history_loading_card_body),
+            modifier = Modifier.testTag("history_loading_card")
+        ) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("history_loading_indicator"),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        }
+        OutlinedButton(
+            onClick = onOpenAssessments,
+            modifier = Modifier.fillMaxWidth().testTag("history_secondary_action")
+        ) {
+            Text(text = stringResource(R.string.history_loading_secondary_action))
+        }
+    }
+}
+
+@Composable
+private fun HistoryEmptyState(
+    paddingValues: PaddingValues,
+    onOpenAssessments: () -> Unit
+) {
+    AppScreenColumn(paddingValues = paddingValues) {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.history_overview_eyebrow),
+            title = stringResource(R.string.history_empty_title),
+            body = stringResource(R.string.history_empty_body)
+        )
+        AppSectionCard(
+            title = stringResource(R.string.history_empty_card_title),
+            body = stringResource(R.string.history_empty_card_body),
+            modifier = Modifier.testTag("history_empty_card")
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm))
             ) {
-                Text(text = actionLabel)
+                HistorySupportLine(text = stringResource(R.string.history_empty_point_one))
+                HistorySupportLine(text = stringResource(R.string.history_empty_point_two))
+                HistorySupportLine(text = stringResource(R.string.history_empty_point_three))
             }
         }
+        Button(
+            onClick = onOpenAssessments,
+            modifier = Modifier.fillMaxWidth().testTag("history_primary_action")
+        ) {
+            Text(text = stringResource(R.string.history_empty_action))
+        }
+    }
+}
+
+@Composable
+private fun HistoryErrorState(
+    paddingValues: PaddingValues,
+    onRetry: () -> Unit,
+    onOpenAssessments: () -> Unit
+) {
+    AppScreenColumn(paddingValues = paddingValues) {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.history_overview_eyebrow),
+            title = stringResource(R.string.history_error_title),
+            body = stringResource(R.string.history_error_body)
+        )
+        AppSectionCard(
+            title = stringResource(R.string.history_error_card_title),
+            body = stringResource(R.string.history_error_card_body),
+            modifier = Modifier.testTag("history_error_card")
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md))
+        ) {
+            Button(
+                onClick = onRetry,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("history_retry_action")
+            ) {
+                Text(text = stringResource(R.string.history_retry_action))
+            }
+            OutlinedButton(
+                onClick = onOpenAssessments,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("history_primary_action")
+            ) {
+                Text(text = stringResource(R.string.history_error_action))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HistorySupportLine(text: String) {
+    val markerSize = dimensionResource(R.dimen.size_dot_sm)
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm)),
+        verticalAlignment = Alignment.Top
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(top = dimensionResource(R.dimen.spacing_xs_plus))
+                .width(markerSize)
+                .height(markerSize)
+                .background(
+                    color = MaterialTheme.colorScheme.secondary,
+                    shape = androidx.compose.foundation.shape.CircleShape
+                )
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

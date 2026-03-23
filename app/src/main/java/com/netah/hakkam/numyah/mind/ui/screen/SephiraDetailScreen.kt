@@ -1,6 +1,8 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -168,18 +171,22 @@ private fun SephiraDetailLoadedState(
         )
 
         AppSurfaceCard {
-            Text(
-                text = stringResource(R.string.sephira_detail_practices_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            model.suggestedPractices.forEachIndexed { index, practice ->
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md))
+            ) {
                 Text(
-                    text = stringResource(R.string.sephira_detail_practice_item, index + 1, practice),
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = stringResource(R.string.sephira_detail_practices_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
+                model.suggestedPractices.forEachIndexed { index, practice ->
+                    Text(
+                        text = stringResource(R.string.sephira_detail_practice_item, index + 1, practice),
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 

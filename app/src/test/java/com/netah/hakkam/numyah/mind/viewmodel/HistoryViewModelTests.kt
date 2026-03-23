@@ -2,6 +2,7 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
@@ -20,9 +21,11 @@ import com.netah.hakkam.numyah.mind.domain.usecase.ObserveAssessmentHistoryUseCa
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -163,6 +166,48 @@ class HistoryViewModelTests {
                 .points
                 .map { it.value }
         )
+    }
+
+    @Test
+    fun retry_afterInitialFailure_reloadsHistory() = coroutinesRule.runBlockingTest {
+        var questionnaireCalls = 0
+        var historyCalls = 0
+
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } answers {
+            questionnaireCalls += 1
+            if (questionnaireCalls == 1) {
+                throw IllegalStateException("history failed")
+            }
+            flowOf(testQuestionnaire())
+        }
+        every { observeAssessmentHistoryUseCase.run() } answers {
+            historyCalls += 1
+            flowOf(
+                listOf(
+                    testCompletedSnapshot(
+                        sessionId = 30L,
+                        completedAt = 400L,
+                        scores = listOf(
+                            testScore(30L, SephiraId.MALKUTH, 0.70, 0.15, 0.15)
+                        )
+                    )
+                )
+            )
+        }
+
+        val viewModel = createViewModel()
+
+        assertTrue(viewModel.uiState.value is HistoryUiState.Error)
+
+        viewModel.retry()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as HistoryUiState.Loaded
+        assertEquals(1, state.model.totalSessions)
+        assertEquals(30L, state.model.sessions.first().sessionId)
+        verify { appTelemetry.recordNonFatal(NonFatalIssueKey.HISTORY_LOAD_FAILED, any()) }
+        assertEquals(2, questionnaireCalls)
+        assertEquals(1, historyCalls)
     }
 
     private fun createViewModel() = HistoryViewModel(

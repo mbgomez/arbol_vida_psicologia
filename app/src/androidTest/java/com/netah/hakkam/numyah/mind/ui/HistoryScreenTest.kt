@@ -48,15 +48,43 @@ class HistoryScreenTest {
                     uiState = HistoryUiState.Empty,
                     onOpenAssessment = {},
                     onOpenAssessments = { startedAssessment = true },
-                    onOpenTrends = {}
+                    onOpenTrends = {},
+                    onRetry = {}
                 )
             }
         }
 
         composeTestRule.onNodeWithText(context.getString(R.string.history_empty_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("history_empty_card").assertIsDisplayed()
         composeTestRule.onNodeWithTag("history_primary_action").performClick()
 
         assertTrue(startedAssessment)
+    }
+
+    @Test
+    fun historyScreen_errorState_supportsRetry() {
+        var retried = false
+        var openedAssessments = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                HistoryScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = HistoryUiState.Error,
+                    onOpenAssessment = {},
+                    onOpenAssessments = { openedAssessments = true },
+                    onOpenTrends = {},
+                    onRetry = { retried = true }
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("history_error_card").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("history_retry_action").performClick()
+        composeTestRule.onNodeWithTag("history_primary_action").performClick()
+
+        assertTrue(retried)
+        assertTrue(openedAssessments)
     }
 
     @Test
@@ -175,13 +203,15 @@ class HistoryScreenTest {
                     ),
                     onOpenAssessment = { openedSessionId = it },
                     onOpenAssessments = {},
-                    onOpenTrends = { openedTrends = true }
+                    onOpenTrends = { openedTrends = true },
+                    onRetry = {}
                 )
             }
         }
 
         composeTestRule.onNodeWithTag("history_list").assertIsDisplayed()
         composeTestRule.onNodeWithTag("history_trend_section").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.history_trends_sessions_badge_label)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.history_list_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.history_trends_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.history_needs_attention_summary, "Hod")).performScrollTo().assertIsDisplayed()

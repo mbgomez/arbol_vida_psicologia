@@ -43,17 +43,22 @@ class HistoryTrendsScreenTest {
                 HistoryTrendsScreen(
                     paddingValues = PaddingValues(),
                     uiState = HistoryUiState.Loaded(historyUiModel()),
-                    onOpenAssessments = {}
+                    onOpenAssessments = {},
+                    onRetry = {}
                 )
             }
         }
 
         composeTestRule.onNodeWithTag("history_trends_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.history_trends_sessions_badge_label)).assertIsDisplayed()
         composeTestRule.onNodeWithTag("history_trends_mode_by_sephira").assertIsDisplayed()
         composeTestRule.onNodeWithTag("history_trends_sephira_MALKUTH").assertIsDisplayed()
         composeTestRule.onNodeWithText(
             context.getString(R.string.history_trends_chart_by_sephira_title, "Malkuth")
         ).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.history_trends_legend_value, 64))
+            .performScrollTo()
+            .assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("history_trends_mode_by_score_type").performClick()
         composeTestRule.onNodeWithTag("history_trends_score_type_EXCESS").assertIsDisplayed()

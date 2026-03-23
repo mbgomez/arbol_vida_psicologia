@@ -3,17 +3,22 @@ package com.netah.hakkam.numyah.mind.ui.screen
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -38,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
+import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
@@ -65,7 +71,8 @@ fun HistoryTrendsRoute(
     HistoryTrendsScreen(
         paddingValues = paddingValues,
         uiState = uiState,
-        onOpenAssessments = onOpenAssessments
+        onOpenAssessments = onOpenAssessments,
+        onRetry = viewModel::retry
     )
 }
 
@@ -73,30 +80,25 @@ fun HistoryTrendsRoute(
 fun HistoryTrendsScreen(
     paddingValues: PaddingValues,
     uiState: HistoryUiState,
-    onOpenAssessments: () -> Unit
+    onOpenAssessments: () -> Unit,
+    onRetry: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         when (uiState) {
-            HistoryUiState.Loading -> HistoryTrendsMessageState(
+            HistoryUiState.Loading -> HistoryTrendsLoadingState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_loading_title),
-                body = stringResource(R.string.history_loading_body)
+                onOpenAssessments = onOpenAssessments
             )
 
-            HistoryUiState.Empty -> HistoryTrendsMessageState(
+            HistoryUiState.Empty -> HistoryTrendsEmptyState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_empty_title),
-                body = stringResource(R.string.history_empty_body),
-                actionLabel = stringResource(R.string.history_empty_action),
-                onAction = onOpenAssessments
+                onOpenAssessments = onOpenAssessments
             )
 
-            HistoryUiState.Error -> HistoryTrendsMessageState(
+            HistoryUiState.Error -> HistoryTrendsErrorState(
                 paddingValues = paddingValues,
-                title = stringResource(R.string.history_error_title),
-                body = stringResource(R.string.history_error_body),
-                actionLabel = stringResource(R.string.history_error_action),
-                onAction = onOpenAssessments
+                onRetry = onRetry,
+                onOpenAssessments = onOpenAssessments
             )
 
             is HistoryUiState.Loaded -> HistoryTrendsLoadedState(
@@ -155,6 +157,25 @@ private fun HistoryTrendsLoadedState(
                 model.sessionCount
             )
         )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md))
+        ) {
+            AppMetricBadge(
+                label = stringResource(R.string.history_trends_sessions_badge_label),
+                value = stringResource(R.string.history_trends_sessions_badge_value, model.sessionCount)
+            )
+            AppMetricBadge(
+                label = stringResource(R.string.history_trends_status_badge_label),
+                value = stringResource(
+                    if (model.hasComparisonData) {
+                        R.string.history_trends_status_badge_ready
+                    } else {
+                        R.string.history_trends_status_badge_growing
+                    }
+                )
+            )
+        }
 
         if (!model.hasComparisonData) {
             AppSurfaceCard(
@@ -328,6 +349,16 @@ private fun HistoryTrendsLoadedState(
                     mode = selectedMode,
                     chartModel = chartModel
                 )
+                Text(
+                    text = stringResource(
+                        when (selectedMode) {
+                            HistoryTrendExploreMode.BY_SEPHIRA -> R.string.history_trends_chart_helper_by_sephira
+                            HistoryTrendExploreMode.BY_SCORE_TYPE -> R.string.history_trends_chart_helper_by_score_type
+                        }
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 HistoryLineChart(
                     mode = selectedMode,
                     chartModel = chartModel,
@@ -421,7 +452,10 @@ private fun TrendLegend(
                     mode = mode,
                     line = line,
                     index = index
-                )
+                ),
+                valueSummary = line.points.lastOrNull()?.value?.let {
+                    stringResource(R.string.history_trends_legend_value, it)
+                }
             )
         }
     }
@@ -430,29 +464,42 @@ private fun TrendLegend(
 @Composable
 private fun TrendLegendItem(
     label: String,
-    color: Color
+    color: Color,
+    valueSummary: String?
 ) {
     val markerSize = dimensionResource(R.dimen.size_dot_md)
     val contentSpacing = dimensionResource(R.dimen.spacing_sm)
 
     Row(
-        horizontalArrangement = Arrangement.spacedBy(contentSpacing)
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Canvas(
-            modifier = Modifier
-                .padding(top = dimensionResource(R.dimen.spacing_xs))
-                .size(markerSize)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(contentSpacing)
         ) {
-            drawCircle(
-                color = color,
-                radius = size.minDimension / 2f
+            Canvas(
+                modifier = Modifier
+                    .padding(top = dimensionResource(R.dimen.spacing_xs))
+                    .size(markerSize)
+            ) {
+                drawCircle(
+                    color = color,
+                    radius = size.minDimension / 2f
+                )
+            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        if (valueSummary != null) {
+            Text(
+                text = valueSummary,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -466,6 +513,7 @@ private fun HistoryLineChart(
     val strokeWidth = 3.dp
     val pointRadius = 4.dp
     val axisLabelPadding = dimensionResource(R.dimen.spacing_sm)
+    val axisColumnWidth = 36.dp
     val dateTextStyle = MaterialTheme.typography.labelMedium
     val firstPoint = chartModel.lines.firstOrNull()?.points?.firstOrNull()
     val lastPoint = chartModel.lines.firstOrNull()?.points?.lastOrNull()
@@ -477,68 +525,88 @@ private fun HistoryLineChart(
     Column(
         verticalArrangement = Arrangement.spacedBy(axisLabelPadding)
     ) {
-        Text(
-            text = stringResource(R.string.results_percent_value, 100),
-            style = dateTextStyle,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Canvas(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(chartHeight)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(axisLabelPadding)
         ) {
-            val lineCount = max(chartModel.lines.maxOfOrNull { it.points.size } ?: 0, 1)
-            val leftPadding = 8.dp.toPx()
-            val rightPadding = 8.dp.toPx()
-            val topPadding = 12.dp.toPx()
-            val bottomPadding = 12.dp.toPx()
-            val usableWidth = size.width - leftPadding - rightPadding
-            val usableHeight = size.height - topPadding - bottomPadding
-
-            listOf(0f, 0.5f, 1f).forEach { fraction ->
-                val y = topPadding + usableHeight * fraction
-                drawLine(
-                    color = baselineColor,
-                    start = Offset(leftPadding, y),
-                    end = Offset(size.width - rightPadding, y),
-                    strokeWidth = 1.dp.toPx()
+            Column(
+                modifier = Modifier.height(chartHeight).width(axisColumnWidth),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.results_percent_value, 100),
+                    style = dateTextStyle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.results_percent_value, 50),
+                    style = dateTextStyle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.results_percent_value, 0),
+                    style = dateTextStyle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            Canvas(
+                modifier = modifier
+                    .weight(1f)
+                    .height(chartHeight)
+            ) {
+                val lineCount = max(chartModel.lines.maxOfOrNull { it.points.size } ?: 0, 1)
+                val leftPadding = 8.dp.toPx()
+                val rightPadding = 8.dp.toPx()
+                val topPadding = 12.dp.toPx()
+                val bottomPadding = 12.dp.toPx()
+                val usableWidth = size.width - leftPadding - rightPadding
+                val usableHeight = size.height - topPadding - bottomPadding
 
-            chartModel.lines.forEachIndexed { index, line ->
-                val color = lineColors[index]
-                val nonNullPoints = line.points.mapIndexedNotNull { pointIndex, point ->
-                    point.value?.let { value ->
-                        val x = if (lineCount == 1) {
-                            leftPadding + usableWidth / 2f
-                        } else {
-                            leftPadding + (usableWidth * pointIndex / (lineCount - 1))
-                        }
-                        val y = topPadding + usableHeight - (usableHeight * value / 100f)
-                        pointIndex to Offset(x, y)
-                    }
-                }
-
-                if (nonNullPoints.size > 1) {
-                    val path = Path().apply {
-                        moveTo(nonNullPoints.first().second.x, nonNullPoints.first().second.y)
-                        nonNullPoints.drop(1).forEach { (_, offset) ->
-                            lineTo(offset.x, offset.y)
-                        }
-                    }
-                    drawPath(
-                        path = path,
-                        color = color,
-                        style = Stroke(width = strokeWidth.toPx())
+                listOf(0f, 0.5f, 1f).forEach { fraction ->
+                    val y = topPadding + usableHeight * fraction
+                    drawLine(
+                        color = baselineColor,
+                        start = Offset(leftPadding, y),
+                        end = Offset(size.width - rightPadding, y),
+                        strokeWidth = 1.dp.toPx()
                     )
                 }
 
-                nonNullPoints.forEach { (_, offset) ->
-                    drawCircle(
-                        color = color,
-                        radius = pointRadius.toPx(),
-                        center = offset
-                    )
+                chartModel.lines.forEachIndexed { index, line ->
+                    val color = lineColors[index]
+                    val nonNullPoints = line.points.mapIndexedNotNull { pointIndex, point ->
+                        point.value?.let { value ->
+                            val x = if (lineCount == 1) {
+                                leftPadding + usableWidth / 2f
+                            } else {
+                                leftPadding + (usableWidth * pointIndex / (lineCount - 1))
+                            }
+                            val y = topPadding + usableHeight - (usableHeight * value / 100f)
+                            pointIndex to Offset(x, y)
+                        }
+                    }
+
+                    if (nonNullPoints.size > 1) {
+                        val path = Path().apply {
+                            moveTo(nonNullPoints.first().second.x, nonNullPoints.first().second.y)
+                            nonNullPoints.drop(1).forEach { (_, offset) ->
+                                lineTo(offset.x, offset.y)
+                            }
+                        }
+                        drawPath(
+                            path = path,
+                            color = color,
+                            style = Stroke(width = strokeWidth.toPx())
+                        )
+                    }
+
+                    nonNullPoints.forEach { (_, offset) ->
+                        drawCircle(
+                            color = color,
+                            radius = pointRadius.toPx(),
+                            center = offset
+                        )
+                    }
                 }
             }
         }
@@ -557,11 +625,6 @@ private fun HistoryLineChart(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        Text(
-            text = stringResource(R.string.results_percent_value, 0),
-            style = dateTextStyle,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
@@ -677,31 +740,138 @@ private fun HistoryTimeSeriesChartUiModel.filteredByVisibleSephirot(
 }
 
 @Composable
-private fun HistoryTrendsMessageState(
+private fun HistoryTrendsLoadingState(
     paddingValues: PaddingValues,
-    title: String,
-    body: String,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null
+    onOpenAssessments: () -> Unit
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
         AppHeroCard(
             eyebrow = stringResource(R.string.history_trends_detail_eyebrow),
-            title = title,
-            body = body
+            title = stringResource(R.string.history_loading_title),
+            body = stringResource(R.string.history_loading_body)
         )
-        if (actionLabel != null && onAction != null) {
-            AppSurfaceCard(
-                modifier = Modifier.testTag("history_trends_primary_action"),
-                onClick = onAction
+        AppSectionCard(
+            title = stringResource(R.string.history_trends_loading_card_title),
+            body = stringResource(R.string.history_trends_loading_card_body),
+            modifier = Modifier.testTag("history_trends_loading_card")
+        ) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("history_trends_loading_indicator"),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        }
+        OutlinedButton(
+            onClick = onOpenAssessments,
+            modifier = Modifier.fillMaxWidth().testTag("history_trends_secondary_action")
+        ) {
+            Text(text = stringResource(R.string.history_loading_secondary_action))
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendsEmptyState(
+    paddingValues: PaddingValues,
+    onOpenAssessments: () -> Unit
+) {
+    AppScreenColumn(paddingValues = paddingValues) {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.history_trends_detail_eyebrow),
+            title = stringResource(R.string.history_empty_title),
+            body = stringResource(R.string.history_empty_body)
+        )
+        AppSectionCard(
+            title = stringResource(R.string.history_trends_empty_card_title),
+            body = stringResource(R.string.history_trends_empty_card_body),
+            modifier = Modifier.testTag("history_trends_empty_card")
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm))
             ) {
-                Text(
-                    text = actionLabel,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                HistoryTrendsSupportLine(stringResource(R.string.history_trends_empty_point_one))
+                HistoryTrendsSupportLine(stringResource(R.string.history_trends_empty_point_two))
+            }
+        }
+        Button(
+            onClick = onOpenAssessments,
+            modifier = Modifier.fillMaxWidth().testTag("history_trends_primary_action")
+        ) {
+            Text(text = stringResource(R.string.history_empty_action))
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendsErrorState(
+    paddingValues: PaddingValues,
+    onRetry: () -> Unit,
+    onOpenAssessments: () -> Unit
+) {
+    AppScreenColumn(paddingValues = paddingValues) {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.history_trends_detail_eyebrow),
+            title = stringResource(R.string.history_error_title),
+            body = stringResource(R.string.history_error_body)
+        )
+        AppSectionCard(
+            title = stringResource(R.string.history_trends_error_card_title),
+            body = stringResource(R.string.history_trends_error_card_body),
+            modifier = Modifier.testTag("history_trends_error_card")
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md))
+        ) {
+            Button(
+                onClick = onRetry,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("history_trends_retry_action")
+            ) {
+                Text(text = stringResource(R.string.history_retry_action))
+            }
+            OutlinedButton(
+                onClick = onOpenAssessments,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("history_trends_primary_action")
+            ) {
+                Text(text = stringResource(R.string.history_error_action))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendsSupportLine(text: String) {
+    val markerColor = MaterialTheme.colorScheme.secondary
+    val markerSize = dimensionResource(R.dimen.size_dot_sm)
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm)),
+        verticalAlignment = androidx.compose.ui.Alignment.Top
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(top = dimensionResource(R.dimen.spacing_xs_plus))
+                .width(markerSize)
+                .height(markerSize)
+        ) {
+            Canvas(modifier = Modifier.size(markerSize)) {
+                drawCircle(
+                    color = markerColor,
+                    radius = size.minDimension / 2f
                 )
             }
         }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
