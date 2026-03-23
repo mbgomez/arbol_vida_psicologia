@@ -91,6 +91,7 @@ Scoring guidance:
 - Score each sephira independently.
 - Store raw responses and derived scores.
 - Support low-confidence or mixed outcomes internally, even if the UI presents a softened dominant tendency.
+- Treat authored question `weight` as real scoring input. Keep `1.0` as the default unless a sephira batch explicitly locks tuned weighting.
 - Keep scoring logic isolated and unit-testable.
 
 Architecture rules:

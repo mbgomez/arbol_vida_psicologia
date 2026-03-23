@@ -227,11 +227,7 @@ Scoring remains deterministic and isolated.
 Locked scoring refactor rule:
 
 - if `weight` remains in the authored model, the scoring engine should use it as real input
-
-Until that refactor is complete:
-
-- treat the current implementation as incomplete relative to the content contract
-- do not introduce non-default weights in authored content without engine support
+- keep `1.0` as the authored default until a sephira batch explicitly locks tuned weighting
 
 ### 11. Persistence Standard
 

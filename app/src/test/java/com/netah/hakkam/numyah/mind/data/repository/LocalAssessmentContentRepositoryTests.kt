@@ -127,7 +127,99 @@ class LocalAssessmentContentRepositoryTests {
         assertEquals(6, cachedQuestions.size)
     }
 
+    @Test
+    fun getCurrentQuestionnaire_preservesQuestionWeightsFromSeedContent() = coroutinesRule.runBlockingTest {
+        val weightedRepository = LocalAssessmentContentRepository(
+            jsonAssessmentContentDataSource = JsonAssessmentContentDataSource(
+                jsonLoader = { WEIGHTED_QUESTIONNAIRE_JSON },
+                moshi = Moshi.Builder()
+                    .add(KotlinJsonAdapterFactory())
+                    .build()
+            ),
+            questionnaireContentDao = db.getQuestionnaireContentDao()
+        )
+
+        val questionnaire = weightedRepository.getCurrentQuestionnaire(Locale.ENGLISH).first()
+
+        assertEquals(2.5, questionnaire.sections.first().questions.first().weight, 0.0)
+        assertEquals(0.5, questionnaire.sections.first().questions[1].weight, 0.0)
+    }
+
     private companion object {
+        val WEIGHTED_QUESTIONNAIRE_JSON = """
+            {
+              "version": "weighted-v1",
+              "title": {
+                "en": "Weighted reflection",
+                "es": "Reflexion ponderada"
+              },
+              "responseScale": [
+                { "id": "strongly_disagree", "label": { "en": "Strongly disagree", "es": "Muy en desacuerdo" }, "numericValue": 0 },
+                { "id": "strongly_agree", "label": { "en": "Strongly agree", "es": "Muy de acuerdo" }, "numericValue": 4 }
+              ],
+              "sections": [
+                {
+                  "sephiraId": "MALKUTH",
+                  "displayName": { "en": "Malkuth", "es": "Malkuth" },
+                  "shortMeaning": {
+                    "en": "Weighted meaning",
+                    "es": "Significado ponderado"
+                  },
+                  "introText": {
+                    "en": "Weighted intro",
+                    "es": "Introduccion ponderada"
+                  },
+                  "healthyExpression": {
+                    "en": "Healthy Malkuth",
+                    "es": "Malkuth saludable"
+                  },
+                  "deficiencyPattern": {
+                    "en": "Deficient Malkuth",
+                    "es": "Malkuth en carencia"
+                  },
+                  "excessPattern": {
+                    "en": "Excessive Malkuth",
+                    "es": "Malkuth en exceso"
+                  },
+                  "suggestedPractices": [
+                    {
+                      "id": "malkuth_practice_1",
+                      "text": { "en": "Practice one", "es": "Practica uno" }
+                    }
+                  ],
+                  "pages": [
+                    {
+                      "id": "weighted_page",
+                      "title": { "en": "Weighted page", "es": "Pagina ponderada" },
+                      "description": { "en": "Weighted description", "es": "Descripcion ponderada" },
+                      "questionIds": ["weighted_q1", "weighted_q2"]
+                    }
+                  ],
+                  "questions": [
+                    {
+                      "id": "weighted_q1",
+                      "sephiraId": "MALKUTH",
+                      "pageId": "weighted_page",
+                      "prompt": { "en": "Weighted question one", "es": "Pregunta ponderada uno" },
+                      "format": "LIKERT_5",
+                      "targetPole": "BALANCE",
+                      "weight": 2.5
+                    },
+                    {
+                      "id": "weighted_q2",
+                      "sephiraId": "MALKUTH",
+                      "pageId": "weighted_page",
+                      "prompt": { "en": "Weighted question two", "es": "Pregunta ponderada dos" },
+                      "format": "LIKERT_5",
+                      "targetPole": "DEFICIENCY",
+                      "weight": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+        """.trimIndent()
+
         val TEST_QUESTIONNAIRE_JSON = """
             {
               "version": "malkuth-v1",

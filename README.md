@@ -184,7 +184,7 @@ Locked foundation decisions before scaling:
 
 - Canonical spelling is `Malkuth` in user-facing copy and `MALKUTH` in code identifiers and content ids.
 - One assessment session must span the full ten-sephirot assessment. Completing one sephira should save section progress and score data, but should not mark the whole assessment session complete.
-- `weight` remains part of the authored question model and is intended to be real scoring input, not decorative metadata. Until the engine applies it, authored content should continue using `1.0` as the default.
+- `weight` remains part of the authored question model and is real scoring input, not decorative metadata. Keep `1.0` as the default unless a sephira batch explicitly locks tuned weighting.
 
 Learnings from the Malkuth slice:
 

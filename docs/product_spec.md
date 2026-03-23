@@ -506,7 +506,7 @@ This allows some questions to reflect mixed patterns without overcomplicating th
 Locked decision:
 
 - `weight` is a real scoring field and should remain in the authored content model.
-- Until weighted scoring is fully applied in implementation, authored v1 content should continue using `1.0` by default so the content contract stays stable without implying tuned weighting that the engine does not yet honor.
+- Weighted scoring is part of the live implementation contract. Authored v1 content should continue using `1.0` by default unless a sephira batch explicitly locks tuned weighting.
 
 ### Per-Sephira Calculation
 

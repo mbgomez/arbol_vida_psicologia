@@ -24,14 +24,34 @@ class AssessmentScoringEngine @Inject constructor() {
             QuestionFormat.SINGLE_CHOICE -> input.questionnaire.responseScale.options.maxOfOrNull { it.numericValue } ?: 0
         }.toDouble()
 
-        val poleQuestionCounts = section.questions.groupingBy { it.targetPole }.eachCount()
         val responsesByPole = sectionResponses.groupBy { response ->
             questionsById.getValue(response.questionId).targetPole
         }
+        val poleWeightTotals = section.questions
+            .groupBy { it.targetPole }
+            .mapValues { (_, questions) -> questions.sumOf { it.weight } }
 
-        val balanceScore = normalizedPoleScore(Pole.BALANCE, responsesByPole, poleQuestionCounts, maxLikertValue)
-        val deficiencyScore = normalizedPoleScore(Pole.DEFICIENCY, responsesByPole, poleQuestionCounts, maxLikertValue)
-        val excessScore = normalizedPoleScore(Pole.EXCESS, responsesByPole, poleQuestionCounts, maxLikertValue)
+        val balanceScore = normalizedPoleScore(
+            pole = Pole.BALANCE,
+            responsesByPole = responsesByPole,
+            questionsById = questionsById,
+            poleWeightTotals = poleWeightTotals,
+            maxLikertValue = maxLikertValue
+        )
+        val deficiencyScore = normalizedPoleScore(
+            pole = Pole.DEFICIENCY,
+            responsesByPole = responsesByPole,
+            questionsById = questionsById,
+            poleWeightTotals = poleWeightTotals,
+            maxLikertValue = maxLikertValue
+        )
+        val excessScore = normalizedPoleScore(
+            pole = Pole.EXCESS,
+            responsesByPole = responsesByPole,
+            questionsById = questionsById,
+            poleWeightTotals = poleWeightTotals,
+            maxLikertValue = maxLikertValue
+        )
 
         val scorePairs = listOf(
             Pole.BALANCE to balanceScore,
@@ -69,11 +89,15 @@ class AssessmentScoringEngine @Inject constructor() {
     private fun normalizedPoleScore(
         pole: Pole,
         responsesByPole: Map<Pole, List<com.netah.hakkam.numyah.mind.domain.model.SavedResponse>>,
-        poleQuestionCounts: Map<Pole, Int>,
+        questionsById: Map<String, com.netah.hakkam.numyah.mind.domain.model.QuestionContent>,
+        poleWeightTotals: Map<Pole, Double>,
         maxLikertValue: Double
     ): Double {
-        val totalForPole = responsesByPole[pole].orEmpty().sumOf { it.numericValue.toDouble() }
-        val maxForPole = (poleQuestionCounts[pole] ?: 0) * maxLikertValue
+        val totalForPole = responsesByPole[pole].orEmpty().sumOf { response ->
+            val weight = questionsById.getValue(response.questionId).weight
+            response.numericValue.toDouble() * weight
+        }
+        val maxForPole = (poleWeightTotals[pole] ?: 0.0) * maxLikertValue
         if (maxForPole <= 0.0) {
             return 0.0
         }

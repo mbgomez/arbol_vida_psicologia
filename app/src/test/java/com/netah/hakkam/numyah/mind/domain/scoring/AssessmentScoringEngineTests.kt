@@ -12,6 +12,14 @@ import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
+import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
+import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
+import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
+import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
+import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
+import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.util.Locale
@@ -137,6 +145,31 @@ class AssessmentScoringEngineTests {
         assertFalse(score.isLowConfidence)
     }
 
+    @Test
+    fun score_usesQuestionWeightsWhenNormalizingPoleScores() = coroutinesRule.runBlockingTest {
+        val questionnaire = weightedQuestionnaire()
+
+        val score = scoringEngine.score(
+            input = ScoreInput(
+                questionnaire = questionnaire,
+                sephiraId = SephiraId.MALKUTH,
+                responses = listOf(
+                    response("balance_weighted", 4, 0),
+                    response("balance_light", 0, 1),
+                    response("deficiency_weighted", 1, 2),
+                    response("excess_weighted", 0, 3)
+                )
+            ),
+            sessionId = 13L
+        )
+
+        assertEquals(Pole.BALANCE, score.dominantPole)
+        assertEquals(0.60, score.balanceScore, 0.0001)
+        assertEquals(0.25, score.deficiencyScore, 0.0001)
+        assertEquals(0.0, score.excessScore, 0.0001)
+        assertFalse(score.isLowConfidence)
+    }
+
     private fun response(questionId: String, numericValue: Int, questionOrder: Int): SavedResponse {
         return SavedResponse(
             questionId = questionId,
@@ -144,6 +177,85 @@ class AssessmentScoringEngineTests {
             numericValue = numericValue,
             questionOrder = questionOrder,
             answeredAt = questionOrder.toLong()
+        )
+    }
+
+    private fun weightedQuestionnaire(): QuestionnaireContent {
+        return QuestionnaireContent(
+            version = "weighted-v1",
+            title = "Weighted reflection",
+            responseScale = ResponseScaleDefinition(
+                format = QuestionFormat.LIKERT_5,
+                options = listOf(
+                    AnswerOption("low", "Low", 0),
+                    AnswerOption("high", "High", 4)
+                )
+            ),
+            sections = listOf(
+                SephiraSectionContent(
+                    sephiraId = SephiraId.MALKUTH,
+                    displayName = "Malkuth",
+                    shortMeaning = "Meaning",
+                    introText = "Intro",
+                    detailContent = SephiraDetailContent(
+                        healthyExpression = "Healthy",
+                        deficiencyPattern = "Deficiency",
+                        excessPattern = "Excess",
+                        suggestedPractices = listOf("Practice")
+                    ),
+                    pages = listOf(
+                        QuestionPageContent(
+                            id = "weighted_page",
+                            title = "Weighted page",
+                            description = "Weighted description",
+                            questionIds = listOf(
+                                "balance_weighted",
+                                "balance_light",
+                                "deficiency_weighted",
+                                "excess_weighted"
+                            )
+                        )
+                    ),
+                    questions = listOf(
+                        QuestionContent(
+                            id = "balance_weighted",
+                            sephiraId = SephiraId.MALKUTH,
+                            pageId = "weighted_page",
+                            prompt = "Balance weighted",
+                            format = QuestionFormat.LIKERT_5,
+                            targetPole = Pole.BALANCE,
+                            weight = 3.0
+                        ),
+                        QuestionContent(
+                            id = "balance_light",
+                            sephiraId = SephiraId.MALKUTH,
+                            pageId = "weighted_page",
+                            prompt = "Balance light",
+                            format = QuestionFormat.LIKERT_5,
+                            targetPole = Pole.BALANCE,
+                            weight = 2.0
+                        ),
+                        QuestionContent(
+                            id = "deficiency_weighted",
+                            sephiraId = SephiraId.MALKUTH,
+                            pageId = "weighted_page",
+                            prompt = "Deficiency weighted",
+                            format = QuestionFormat.LIKERT_5,
+                            targetPole = Pole.DEFICIENCY,
+                            weight = 2.0
+                        ),
+                        QuestionContent(
+                            id = "excess_weighted",
+                            sephiraId = SephiraId.MALKUTH,
+                            pageId = "weighted_page",
+                            prompt = "Excess weighted",
+                            format = QuestionFormat.LIKERT_5,
+                            targetPole = Pole.EXCESS,
+                            weight = 2.0
+                        )
+                    )
+                )
+            )
         )
     }
 

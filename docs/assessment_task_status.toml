@@ -4,7 +4,7 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a gated tester-observability foundation plus Firebase configuration, signed release-bundle readiness, and Play testing setup guidance."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, and the project now has a gated tester-observability foundation plus Firebase configuration, signed release-bundle readiness, and Play testing setup guidance."
 status = "phase_1_5_observability_partially_verified_play_identity_pending"
 
 [recent_work]
@@ -41,7 +41,9 @@ completed = [
   "Added a dedicated tester-distribution and observability setup guide for Firebase and Google Play testing",
   "Updated telemetry-related Compose tests and confirmed that the broad `No compose hierarchies found` androidTest failure was caused by device state rather than production-code regressions",
   "Verified that Firebase backend initialization and local telemetry logging are active in a tester-enabled build",
-  "Created a release upload keystore and produced a signed release app bundle for Play internal testing"
+  "Created a release upload keystore and produced a signed release app bundle for Play internal testing",
+  "Updated the scoring engine so authored question weights now affect per-pole normalization and dominant-pole scoring",
+  "Added repository and scoring tests to verify question weights survive content loading and influence score calculation"
 ]
 
 [locked_decisions]
@@ -58,24 +60,24 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_1_5_finish_firebase_delivery_and_play_rollout"
-why = "Firebase is configured and a signed tester bundle exists, but Analytics and Crashlytics delivery still need end-to-end confirmation and Play internal testing is blocked on account identity verification."
+name = "phase_1_seed_next_sephirot_batch"
+why = "The scoring contract now honors authored weights, but the main assessment content still covers only the currently seeded subset instead of the locked ten-sephirot v1 loop."
 
 [[recommended_next_slice.goals]]
-id = "assessments_tab_shell"
-description = "Done in this slice."
+id = "lock_next_contiguous_batch"
+description = "Lock the next contiguous sephira batch in assessment order before implementation so content, detail copy, and tests stay aligned."
 
 [[recommended_next_slice.goals]]
-id = "home_and_assessments_balance"
-description = "Done in this slice."
+id = "seed_assessment_content"
+description = "Add the next authored questionnaire sections, detail content, and bilingual copy to the local assessment content pipeline."
 
 [[recommended_next_slice.goals]]
-id = "history_graph_foundation"
-description = "Done in this slice."
+id = "expand_assessment_coverage"
+description = "Extend repository, ViewModel, and critical Compose coverage around the expanded multi-sephira assessment path."
 
 [[recommended_next_slice.goals]]
-id = "production_roadmap_alignment"
-description = "Done in this slice."
+id = "keep_phase_1_mainline_priority"
+description = "Continue closing the ten-sephirot product-completion gap before returning to unfinished Phase 1.5 verification."
 
 [production_roadmap]
 file = "docs/production_readiness_roadmap.md"
@@ -94,6 +96,7 @@ side_mission = "Sephira content enrichment can continue in parallel and be added
 [future_options]
 assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
+next_sephirot_batch = "Continue the mainline Phase 1 assessment expansion by locking and seeding the next contiguous batch after Netzach."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
