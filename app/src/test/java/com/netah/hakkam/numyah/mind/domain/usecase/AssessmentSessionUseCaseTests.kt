@@ -58,13 +58,15 @@ class AssessmentSessionUseCaseTests {
         val params = StartOrResumeAssessmentParams(
             questionnaireVersion = "malkuth-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = true
         )
         every {
             assessmentSessionRepository.startOrResumeSession(
                 questionnaireVersion = "malkuth-v1",
                 initialSephiraId = SephiraId.MALKUTH,
-                totalQuestions = 6
+                totalQuestions = 6,
+                forceStartFresh = true
             )
         } returns flowOf(expected)
 
@@ -74,7 +76,8 @@ class AssessmentSessionUseCaseTests {
             assessmentSessionRepository.startOrResumeSession(
                 questionnaireVersion = "malkuth-v1",
                 initialSephiraId = SephiraId.MALKUTH,
-                totalQuestions = 6
+                totalQuestions = 6,
+                forceStartFresh = true
             )
         }
         assertEquals(listOf(expected), result)

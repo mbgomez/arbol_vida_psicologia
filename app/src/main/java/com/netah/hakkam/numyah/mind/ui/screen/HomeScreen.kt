@@ -9,6 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +21,7 @@ import com.netah.hakkam.numyah.mind.ui.components.AppCard
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
+import com.netah.hakkam.numyah.mind.ui.components.ReplaceInProgressAssessmentDialog
 import com.netah.hakkam.numyah.mind.viewmodel.HomeActiveAssessmentUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeSummaryUiModel
@@ -28,6 +32,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.HomeViewModel
 fun HomeRoute(
     paddingValues: PaddingValues,
     onStartAssessment: () -> Unit,
+    onStartFreshAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -40,6 +45,7 @@ fun HomeRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onStartAssessment = onStartAssessment,
+        onStartFreshAssessment = onStartFreshAssessment,
         onResumeAssessment = onResumeAssessment,
         onOpenLatestResults = onOpenLatestResults,
         onOpenHistory = onOpenHistory,
@@ -53,6 +59,7 @@ fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
     onStartAssessment: () -> Unit,
+    onStartFreshAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -62,6 +69,7 @@ fun HomeScreen(
     val loadedModel = (uiState as? HomeUiState.Loaded)?.model
     val activeAssessment = loadedModel?.activeAssessment
     val hasLatestReflection = loadedModel?.latestReflection != null
+    var showReplaceDialog by remember { mutableStateOf(false) }
 
     AppScreenColumn(paddingValues = paddingValues) {
         Text(
@@ -92,6 +100,15 @@ fun HomeScreen(
                     }
                 )
             )
+        }
+
+        if (activeAssessment != null) {
+            OutlinedButton(
+                onClick = { showReplaceDialog = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.home_start_fresh_cta))
+            }
         }
 
         if (hasLatestReflection) {
@@ -136,6 +153,17 @@ fun HomeScreen(
             title = stringResource(R.string.home_card_settings_title),
             body = stringResource(R.string.home_card_settings_body),
             onClick = onOpenSettings
+        )
+    }
+
+    if (showReplaceDialog && activeAssessment != null) {
+        ReplaceInProgressAssessmentDialog(
+            currentSephiraName = activeAssessment.sephiraName,
+            onConfirm = {
+                showReplaceDialog = false
+                onStartFreshAssessment()
+            },
+            onDismiss = { showReplaceDialog = false }
         )
     }
 }

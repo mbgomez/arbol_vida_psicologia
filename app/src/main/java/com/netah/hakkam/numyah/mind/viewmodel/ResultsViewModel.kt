@@ -9,6 +9,7 @@ import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
@@ -33,6 +34,7 @@ sealed interface ResultsUiState {
 data class ResultsOverviewUiModel(
     val title: String,
     val isHistoricalSession: Boolean,
+    val activeAssessment: ActiveAssessmentUiModel?,
     val completedCount: Int,
     val totalCount: Int,
     val mostBalanced: ResultsSephiraUiModel?,
@@ -60,6 +62,7 @@ class ResultsViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
     private val observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase,
     private val observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase,
+    private val observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase,
     savedStateHandle: SavedStateHandle,
     private val currentLocaleProvider: CurrentLocaleProvider
 ) : ViewModel() {
@@ -74,12 +77,19 @@ class ResultsViewModel @Inject constructor(
             try {
                 combine(
                     getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
-                    selectedAssessmentFlow()
-                ) { questionnaire, snapshot ->
-                    questionnaire to snapshot
-                }.collect { (questionnaire, snapshot) ->
+                    selectedAssessmentFlow(),
+                    observeActiveAssessmentUseCase.run()
+                ) { questionnaire, snapshot, activeAssessment ->
+                    Triple(questionnaire, snapshot, activeAssessment)
+                }.collect { (questionnaire, snapshot, activeAssessment) ->
                     _uiState.value = snapshot?.let {
-                        ResultsUiState.Loaded(buildModel(questionnaire, it))
+                        ResultsUiState.Loaded(
+                            buildModel(
+                                questionnaire = questionnaire,
+                                snapshot = it,
+                                activeAssessment = activeAssessment
+                            )
+                        )
                     } ?: ResultsUiState.Empty
                 }
             } catch (_: Throwable) {
@@ -94,7 +104,8 @@ class ResultsViewModel @Inject constructor(
 
     private fun buildModel(
         questionnaire: QuestionnaireContent,
-        snapshot: AssessmentSessionSnapshot
+        snapshot: AssessmentSessionSnapshot,
+        activeAssessment: AssessmentSessionSnapshot?
     ): ResultsOverviewUiModel {
         val rankedScores = questionnaire.sections.mapNotNull { section ->
             snapshot.scores.firstOrNull { it.sephiraId == section.sephiraId }?.let { score ->
@@ -133,6 +144,9 @@ class ResultsViewModel @Inject constructor(
         return ResultsOverviewUiModel(
             title = questionnaire.title,
             isHistoricalSession = selectedSessionId != null,
+            activeAssessment = activeAssessment?.let {
+                buildActiveAssessmentUiModel(questionnaire, it)
+            },
             completedCount = rankedScores.size,
             totalCount = questionnaire.sections.size,
             mostBalanced = mostBalanced,

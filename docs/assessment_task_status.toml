@@ -4,7 +4,7 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a locked production-readiness roadmap with a parallel sephira-content side mission."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a locked production-readiness roadmap with a parallel sephira-content side mission."
 status = "stable_after_tests_and_manual_checks"
 
 [recent_work]
@@ -20,6 +20,11 @@ completed = [
   "Adjusted five-tab bottom-nav labeling to keep long labels readable on smaller phones without wrapping",
   "Shifted empty/error History actions toward the dedicated Assessments surface",
   "Added per-sephira results detail screen and navigation",
+  "Added explicit fresh-start actions on Home, Assessments, and Results",
+  "Added confirmation before replacing an unfinished in-progress assessment session",
+  "Locked that replacing an unfinished session keeps completed History entries intact",
+  "Added route-driven fresh-start assessment support instead of screen-local reset workarounds",
+  "Expanded repository, route, ViewModel, and Compose coverage for the fresh-start flow",
   "Extended seeded assessment content shape with detailContent",
   "Added safe JSON fallbacks so unfinished seeded sections still load",
   "Locked the first History trend metrics and chart-ready state models while keeping the completed-session list primary",
@@ -79,7 +84,8 @@ side_mission = "Sephira content enrichment can continue in parallel and be added
 [future_options]
 assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
-results_polish = "Add retake assessment and stronger bridges from Home summary into Results and detail."
+results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
+assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
@@ -95,6 +101,9 @@ items = [
   "The first History graph slice is stronger when it locks a small chart-ready metric contract instead of overreaching into dashboard behavior.",
   "The lightweight History trend section works best as the entry point, with deeper chart exploration moved onto a secondary screen instead of crowding the main saved-session surface.",
   "Explicit by-sephira and by-score-type modes keep the deeper trends experience easier to read than one overloaded graph control.",
+  "Starting a fresh assessment is a trust-sensitive moment, so the app should confirm before replacing an unfinished session and should preserve completed History entries.",
+  "Fresh-start behavior is safest when the route carries an explicit intent and the repository owns the replacement semantics, instead of each screen trying to reset assessment state on its own.",
+  "Coverage for trust-sensitive flow changes is strongest when it spans repository behavior, route/use-case wiring, ViewModel state, and the visible confirmation path on production surfaces.",
   "Per-sephira visibility toggles in score-type trend mode are a UI concern, so filtering the chart-ready screen model locally is cleaner than pushing transient selection state into repository contracts.",
   "Dynamic graph screens are easier to keep stable when test tags target specific controls and saved-point rows instead of relying on repeated sephira names in visible text.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
@@ -110,7 +119,8 @@ notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
   "Manual checks passed for Home summary and Results detail navigation.",
   "User verified the new top-level Assessments tab and assessment-exit shell behavior.",
-  "User verified the destination-aware exit dialog copy and the footer-copy cleanup."
+  "User verified the destination-aware exit dialog copy and the footer-copy cleanup.",
+  "User reported that all tests passed for the explicit fresh-start and retake flow."
 ]
 
 [files_to_read_first]

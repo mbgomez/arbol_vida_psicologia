@@ -107,8 +107,11 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 HomeRoute(
                     paddingValues = paddingValues,
-                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
-                    onResumeAssessment = { navController.navigate(AppDestination.Assessment.route) },
+                    onStartAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
+                    onStartFreshAssessment = {
+                        navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
+                    },
+                    onResumeAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
                     onOpenLatestResults = { navController.navigate(AppDestination.Results.createRoute()) },
                     onOpenHistory = { navController.navigate(AppDestination.History.route) },
                     onOpenLearn = { navController.navigate(AppDestination.Learn.route) },
@@ -120,11 +123,22 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 AssessmentLibraryRoute(
                     paddingValues = paddingValues,
-                    onOpenAssessment = { navController.navigate(AppDestination.Assessment.route) }
+                    onOpenAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
+                    onStartFreshAssessment = {
+                        navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
+                    }
                 )
             }
         }
-        composable(AppDestination.Assessment.route) {
+        composable(
+            route = AppDestination.Assessment.routePattern,
+            arguments = listOf(
+                navArgument(AppDestination.Assessment.startFreshArg) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) {
             val assessmentViewModel: AssessmentViewModel = hiltViewModel()
             val assessmentUiState by assessmentViewModel.uiState.collectAsState()
             AppShell(
@@ -161,6 +175,9 @@ fun MainNavGraph(
                         } else {
                             navController.navigate(AppDestination.Home.route)
                         }
+                    },
+                    onRetakeAssessment = {
+                        navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
                     },
                     primaryActionLabel = if (selectedSessionId != null) {
                         stringResource(R.string.results_back_to_history_action)
@@ -401,13 +418,13 @@ private fun AppShell(
                         val selected = currentDestination?.hierarchy?.any {
                             it.route == topLevelDestination.destination.route
                         } == true || (
-                            currentRoute == AppDestination.Assessment.route &&
+                            isAssessmentRoute(currentRoute) &&
                                 topLevelDestination.destination == AppDestination.AssessmentLibrary
                             )
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
-                                if (currentRoute == AppDestination.Assessment.route) {
+                                if (isAssessmentRoute(currentRoute)) {
                                     exitAssessmentDestination = topLevelDestination.destination
                                 } else {
                                     navigateToTopLevelDestination(
@@ -655,12 +672,18 @@ private fun AppShellDetailHeader(
 @Composable
 private fun destinationTitle(currentRoute: String?): String {
     return when (currentRoute) {
-        AppDestination.Assessment.route -> stringResource(R.string.screen_assessment)
+        AppDestination.Assessment.route,
+        AppDestination.Assessment.routePattern -> stringResource(R.string.screen_assessment)
 
         else -> stringResource(
             destinationForRoute(currentRoute)?.titleRes ?: AppDestination.Home.titleRes
         )
     }
+}
+
+private fun isAssessmentRoute(route: String?): Boolean {
+    return route == AppDestination.Assessment.route ||
+        route == AppDestination.Assessment.routePattern
 }
 
 @Composable

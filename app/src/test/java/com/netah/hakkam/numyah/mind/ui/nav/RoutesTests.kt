@@ -30,4 +30,16 @@ class RoutesTests {
             destinationForRoute(AppDestination.HistoryTrends.route)
         )
     }
+
+    @Test
+    fun assessmentRoute_supportsFreshStartQuery() {
+        assertEquals(
+            "assessment?startFresh=true",
+            AppDestination.Assessment.createRoute(startFresh = true)
+        )
+        assertSame(
+            AppDestination.Assessment,
+            destinationForRoute(AppDestination.Assessment.routePattern)
+        )
+    }
 }

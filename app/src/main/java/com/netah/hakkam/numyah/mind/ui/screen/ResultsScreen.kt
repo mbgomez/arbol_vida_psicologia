@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
@@ -30,6 +34,7 @@ import com.netah.hakkam.numyah.mind.ui.components.AppHighlightCard
 import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppProgressMeter
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
+import com.netah.hakkam.numyah.mind.ui.components.ReplaceInProgressAssessmentDialog
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceLabel
 import com.netah.hakkam.numyah.mind.ui.components.assessmentDominantLabel
@@ -42,6 +47,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.ResultsViewModel
 fun ResultsRoute(
     paddingValues: PaddingValues,
     onPrimaryAction: () -> Unit,
+    onRetakeAssessment: () -> Unit,
     primaryActionLabel: String,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit,
     viewModel: ResultsViewModel = hiltViewModel()
@@ -51,6 +57,7 @@ fun ResultsRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onPrimaryAction = onPrimaryAction,
+        onRetakeAssessment = onRetakeAssessment,
         primaryActionLabel = primaryActionLabel,
         onOpenSephiraDetail = onOpenSephiraDetail
     )
@@ -61,6 +68,7 @@ fun ResultsScreen(
     paddingValues: PaddingValues,
     uiState: ResultsUiState,
     onPrimaryAction: () -> Unit,
+    onRetakeAssessment: () -> Unit,
     primaryActionLabel: String,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
@@ -96,6 +104,7 @@ fun ResultsScreen(
                 model = uiState.model,
                 primaryActionLabel = primaryActionLabel,
                 onPrimaryAction = onPrimaryAction,
+                onRetakeAssessment = onRetakeAssessment,
                 onOpenSephiraDetail = onOpenSephiraDetail
             )
         }
@@ -107,8 +116,11 @@ private fun ResultsLoadedState(
     model: ResultsOverviewUiModel,
     primaryActionLabel: String,
     onPrimaryAction: () -> Unit,
+    onRetakeAssessment: () -> Unit,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
+    var showReplaceDialog by remember { mutableStateOf(false) }
+
     AppScreenColumn(paddingValues = PaddingValues()) {
         ResultsSummaryCard(model = model)
 
@@ -160,12 +172,36 @@ private fun ResultsLoadedState(
             )
         }
 
+        OutlinedButton(
+            onClick = {
+                if (model.activeAssessment != null) {
+                    showReplaceDialog = true
+                } else {
+                    onRetakeAssessment()
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.results_retake_action))
+        }
+
         Button(
             onClick = onPrimaryAction,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = primaryActionLabel)
         }
+    }
+
+    if (showReplaceDialog && model.activeAssessment != null) {
+        ReplaceInProgressAssessmentDialog(
+            currentSephiraName = model.activeAssessment.sephiraName,
+            onConfirm = {
+                showReplaceDialog = false
+                onRetakeAssessment()
+            },
+            onDismiss = { showReplaceDialog = false }
+        )
     }
 }
 

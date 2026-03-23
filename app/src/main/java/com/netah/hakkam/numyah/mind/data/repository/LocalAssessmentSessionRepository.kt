@@ -24,7 +24,8 @@ interface AssessmentSessionRepository {
     fun startOrResumeSession(
         questionnaireVersion: String,
         initialSephiraId: SephiraId,
-        totalQuestions: Int
+        totalQuestions: Int,
+        forceStartFresh: Boolean
     ): Flow<AssessmentSessionSnapshot>
 
     fun observeActiveSession(): Flow<AssessmentSessionSnapshot?>
@@ -77,12 +78,16 @@ class LocalAssessmentSessionRepository @Inject constructor(
     override fun startOrResumeSession(
         questionnaireVersion: String,
         initialSephiraId: SephiraId,
-        totalQuestions: Int
+        totalQuestions: Int,
+        forceStartFresh: Boolean
     ): Flow<AssessmentSessionSnapshot> = flow {
         val existingSession = assessmentSessionDao.getActiveInProgressSession()
-        val sessionId = if (existingSession != null) {
+        val sessionId = if (existingSession != null && !forceStartFresh) {
             existingSession.id
         } else {
+            existingSession?.let { session ->
+                assessmentSessionDao.deleteSession(session.id)
+            }
             assessmentSessionDao.deactivateActiveSessions()
             assessmentSessionDao.insertSession(
                 AssessmentSessionTable(

@@ -42,6 +42,7 @@ Focus:
 - tighten retake, resume, and saved-session re-entry flows
 - close remaining production-surface placeholders
 - ensure the app feels complete even where some authored sephira content still uses approved fallback copy
+- treat trust-sensitive continuation and replacement moments as product work, not only navigation work, so users always understand when an unfinished session will be replaced and when completed history will remain untouched
 
 Release gate:
 

@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -25,6 +26,7 @@ import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentParams
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressParams
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressUseCase
+import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,7 +125,8 @@ class AssessmentViewModel @Inject constructor(
     private val advanceAssessmentSectionUseCase: AdvanceAssessmentSectionUseCase,
     private val completeAssessmentUseCase: CompleteAssessmentUseCase,
     private val assessmentScoringEngine: AssessmentScoringEngine,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AssessmentUiState>(AssessmentUiState.Loading)
@@ -135,6 +138,7 @@ class AssessmentViewModel @Inject constructor(
     private var doNotShowHonestyNoticeAgain: Boolean = false
     private var introDismissed: Boolean = false
     private var pendingNextSection: SephiraSectionContent? = null
+    private val forceStartFresh = savedStateHandle[AppDestination.Assessment.startFreshArg] ?: false
 
     init {
         initialize()
@@ -155,7 +159,8 @@ class AssessmentViewModel @Inject constructor(
                     StartOrResumeAssessmentParams(
                         questionnaireVersion = questionnaire.version,
                         initialSephiraId = firstSection.sephiraId,
-                        totalQuestions = firstSection.questions.size
+                        totalQuestions = firstSection.questions.size,
+                        forceStartFresh = forceStartFresh
                     )
                 ).first()
 

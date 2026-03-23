@@ -17,6 +17,7 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByIdUseCase
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
@@ -37,6 +38,7 @@ class ResultsViewModelTests {
     private lateinit var getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase
     private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
     private lateinit var observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase
+    private lateinit var observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
 
     @get:Rule
@@ -47,6 +49,7 @@ class ResultsViewModelTests {
         getCurrentQuestionnaireUseCase = mockk(relaxed = true)
         observeLatestCompletedAssessmentUseCase = mockk(relaxed = true)
         observeCompletedAssessmentByIdUseCase = mockk(relaxed = true)
+        observeActiveAssessmentUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
@@ -55,6 +58,7 @@ class ResultsViewModelTests {
     fun init_withoutCompletedAssessment_emitsEmptyState() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
         every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(null)
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
 
         val viewModel = createViewModel()
 
@@ -65,6 +69,7 @@ class ResultsViewModelTests {
     fun init_withCompletedAssessment_buildsRankedOverview() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
         every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(testCompletedSnapshot())
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(activeSnapshot())
 
         val viewModel = createViewModel()
         val state = viewModel.uiState.value as ResultsUiState.Loaded
@@ -72,6 +77,7 @@ class ResultsViewModelTests {
         assertEquals(3, state.model.completedCount)
         assertEquals(3, state.model.totalCount)
         assertEquals(false, state.model.isHistoricalSession)
+        assertEquals("Yesod", state.model.activeAssessment?.sephiraName)
         assertEquals("Hod", state.model.needsAttention?.sephiraName)
         assertEquals("Malkuth", state.model.mostBalanced?.sephiraName)
         assertEquals(listOf("Hod", "Yesod", "Malkuth"), state.model.sephirot.map { it.sephiraName })
@@ -84,6 +90,7 @@ class ResultsViewModelTests {
     fun init_withSelectedSessionId_observesRequestedSavedAssessment() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
         every { observeCompletedAssessmentByIdUseCase.run(7L) } returns flowOf(testCompletedSnapshot())
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
 
         val viewModel = createViewModel(
             savedStateHandle = SavedStateHandle(
@@ -106,6 +113,7 @@ class ResultsViewModelTests {
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
             observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
             observeCompletedAssessmentByIdUseCase = observeCompletedAssessmentByIdUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
             savedStateHandle = savedStateHandle,
             currentLocaleProvider = currentLocaleProvider
         )
@@ -195,6 +203,22 @@ class ResultsViewModelTests {
                     isLowConfidence = false
                 )
             )
+        )
+    }
+
+    private fun activeSnapshot(): AssessmentSessionSnapshot {
+        return AssessmentSessionSnapshot(
+            sessionId = 11L,
+            questionnaireVersion = "tree-v1",
+            status = AssessmentStatus.IN_PROGRESS,
+            currentSephiraId = SephiraId.YESOD,
+            currentPageIndex = 0,
+            currentQuestionIndex = 1,
+            totalQuestions = 6,
+            startedAt = 3L,
+            completedAt = null,
+            responses = emptyList(),
+            scores = emptyList()
         )
     }
 

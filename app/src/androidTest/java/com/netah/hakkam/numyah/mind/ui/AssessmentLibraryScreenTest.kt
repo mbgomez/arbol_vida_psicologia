@@ -25,6 +25,7 @@ class AssessmentLibraryScreenTest {
     @Test
     fun assessmentLibrary_loadedState_showsResumeEntryAndAction() {
         var openedAssessment = false
+        var startedFreshAssessment = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -46,7 +47,8 @@ class AssessmentLibraryScreenTest {
                             )
                         )
                     ),
-                    onOpenAssessment = { openedAssessment = true }
+                    onOpenAssessment = { openedAssessment = true },
+                    onStartFreshAssessment = { startedFreshAssessment = true }
                 )
             }
         }
@@ -54,8 +56,12 @@ class AssessmentLibraryScreenTest {
         composeTestRule.onNodeWithText("Tree of Life reflection").assertIsDisplayed()
         composeTestRule.onNodeWithText("Resume reflection").assertIsDisplayed()
         composeTestRule.onNodeWithText("Resume reflection").performClick()
+        composeTestRule.onNodeWithText("Start new reflection").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Start new reflection").performClick()
+        composeTestRule.onNodeWithText("Start fresh reflection").performClick()
 
         assertTrue(openedAssessment)
+        assertTrue(startedFreshAssessment)
     }
 
     @Test
@@ -75,7 +81,8 @@ class AssessmentLibraryScreenTest {
                             )
                         )
                     ),
-                    onOpenAssessment = {}
+                    onOpenAssessment = {},
+                    onStartFreshAssessment = {}
                 )
             }
         }

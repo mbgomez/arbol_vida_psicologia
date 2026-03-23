@@ -67,13 +67,15 @@ class LocalAssessmentSessionRepositoryTest {
         val first = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         val second = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         assertNotNull(first)
@@ -87,7 +89,8 @@ class LocalAssessmentSessionRepositoryTest {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         val updated = repository.saveAnswer(
@@ -110,7 +113,8 @@ class LocalAssessmentSessionRepositoryTest {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         val updated = repository.advanceToSephira(
@@ -130,7 +134,8 @@ class LocalAssessmentSessionRepositoryTest {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         val score = SephiraScore(
@@ -161,7 +166,8 @@ class LocalAssessmentSessionRepositoryTest {
         val olderSession = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
         repository.completeSession(
             sessionId = olderSession.sessionId,
@@ -172,7 +178,8 @@ class LocalAssessmentSessionRepositoryTest {
         val newerSession = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",
             initialSephiraId = SephiraId.YESOD,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
         repository.completeSession(
             sessionId = newerSession.sessionId,
@@ -190,7 +197,8 @@ class LocalAssessmentSessionRepositoryTest {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         repository.completeSession(
@@ -221,7 +229,8 @@ class LocalAssessmentSessionRepositoryTest {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
             initialSephiraId = SephiraId.MALKUTH,
-            totalQuestions = 6
+            totalQuestions = 6,
+            forceStartFresh = false
         ).first()
 
         repository.saveAnswer(
@@ -252,6 +261,38 @@ class LocalAssessmentSessionRepositoryTest {
         assertEquals(Pole.BALANCE, completed.scores.first().dominantPole)
         assertEquals(1, completed.responses.size)
         assertTrue(repository.observeActiveSession().first() == null)
+    }
+
+    @Test
+    fun startOrResumeSession_forceStartFresh_replacesExistingInProgressSession() = runBlocking {
+        val first = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6,
+            forceStartFresh = false
+        ).first()
+
+        repository.saveAnswer(
+            sessionId = first.sessionId,
+            questionId = "m1",
+            selectedOptionId = "agree",
+            numericValue = 3,
+            questionOrder = 0,
+            nextPageIndex = 0,
+            nextQuestionIndex = 0
+        ).first()
+
+        val fresh = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.YESOD,
+            totalQuestions = 6,
+            forceStartFresh = true
+        ).first()
+
+        assertTrue(fresh.sessionId != first.sessionId)
+        assertEquals(SephiraId.YESOD, fresh.currentSephiraId)
+        assertTrue(fresh.responses.isEmpty())
+        assertEquals(null, db.getAssessmentSessionDao().getSessionById(first.sessionId))
     }
 
     private fun completedScore(

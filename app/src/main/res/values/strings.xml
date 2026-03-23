@@ -25,6 +25,7 @@
     <string name="home_subtitle">A calm, local-first space for psychological self-reflection through the ten sephirot.</string>
     <string name="home_primary_cta">Start assessment</string>
     <string name="home_resume_cta">Resume assessment</string>
+    <string name="home_start_fresh_cta">Start new reflection</string>
     <string name="home_secondary_cta">View latest results</string>
     <string name="home_active_eyebrow">In progress</string>
     <string name="home_active_title">Resume your current reflection</string>
@@ -96,6 +97,7 @@
     <string name="assessment_library_resume_question_body">Your current in-progress session is in %1$s at question %2$d of %3$d. %4$d of %5$d sephirot already have saved results.</string>
     <string name="assessment_library_start_action">Start reflection</string>
     <string name="assessment_library_resume_action">Resume reflection</string>
+    <string name="assessment_library_start_fresh_action">Start new reflection</string>
     <string name="assessment_library_footer">More reflections may be added here over time. For now, this space begins with the Tree of Life reflection and keeps the experience calm and focused.</string>
     <string name="assessment_honesty_title">A small note before you begin</string>
     <string name="assessment_honesty_card_title">This reflection works best with honesty</string>
@@ -161,6 +163,10 @@
     <string name="assessment_exit_dialog_confirm">Go to Home</string>
     <string name="assessment_exit_dialog_confirm_to">Go to %1$s</string>
     <string name="assessment_exit_dialog_cancel">Stay here</string>
+    <string name="replace_assessment_dialog_title">Start a fresh reflection?</string>
+    <string name="replace_assessment_dialog_body">This will replace your current in-progress reflection in %1$s and start again from the beginning. Your completed reflection history will stay saved.</string>
+    <string name="replace_assessment_dialog_confirm">Start fresh reflection</string>
+    <string name="replace_assessment_dialog_cancel">Keep current reflection</string>
     <string name="placeholder_results_title">Results overview</string>
     <string name="placeholder_results_body">This area will gradually grow into your full Tree of Life profile as more sephirot are completed and interpreted.</string>
     <string name="results_empty_title">No completed results yet</string>
@@ -177,6 +183,7 @@
     <string name="results_needs_attention_body">%1$s is currently carrying the most tension, with an imbalance score of %2$d.</string>
     <string name="results_most_balanced_title">Most in balance right now</string>
     <string name="results_most_balanced_body">%1$s currently looks the most settled, with %2$d balance.</string>
+    <string name="results_retake_action">Retake assessment</string>
     <string name="results_rank_badge">Rank %1$d of %2$d</string>
     <string name="results_imbalance_badge">Imbalance %1$d</string>
     <string name="results_percent_value">%1$d%%</string>

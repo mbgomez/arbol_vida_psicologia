@@ -297,6 +297,9 @@ Additional guidance:
   - start new assessment
   - resume current assessment
   - open latest completed reflection
+- Starting a new assessment while another one is in progress should require a confirmation dialog before the unfinished session is replaced.
+- Replacing the unfinished session should leave completed saved-history entries untouched.
+- The same fresh-start contract should be reused by `Home`, `Assessments`, and `Results` instead of each screen inventing separate replacement behavior.
 - `Assessments` should own the browsing surface for the growing assessment library.
 - The assessment library should be shaped to support both future first-party assessments and future user-authored assessments without reshaping the shell again.
 - In the five-tab bottom shell, tab labels should remain single-line on smaller phones. Prefer adaptive label sizing or a shorter nav-specific label over wrapped text.
@@ -400,6 +403,7 @@ A refactor pass is considered complete only when:
 - Compose tests on polished screens need to tolerate legitimate growth in above-the-fold content or they turn refactors into false regressions.
 - Dynamic chart screens are safer to test when detail rows and filter chips expose explicit test tags instead of relying on repeated visible text that may also appear in legends, chips, or headings.
 - Refactor work should support the mainline release track from the production roadmap rather than delaying product completion for cleanup that is not yet release-relevant.
+- Trust-sensitive actions such as replacing an unfinished assessment should be implemented once in the data/session contract and reused upward through navigation and UI, rather than reset separately at each screen.
 
 ## Immediate Next Step
 

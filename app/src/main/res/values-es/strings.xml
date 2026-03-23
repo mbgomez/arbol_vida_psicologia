@@ -25,6 +25,7 @@
     <string name="home_subtitle">Un espacio sereno y local para la autorreflexion psicologica a traves de las diez sefirot.</string>
     <string name="home_primary_cta">Iniciar evaluacion</string>
     <string name="home_resume_cta">Retomar evaluacion</string>
+    <string name="home_start_fresh_cta">Iniciar nueva reflexion</string>
     <string name="home_secondary_cta">Ver ultimos resultados</string>
     <string name="home_active_eyebrow">En progreso</string>
     <string name="home_active_title">Retoma tu reflexion actual</string>
@@ -96,6 +97,7 @@
     <string name="assessment_library_resume_question_body">Tu sesion actual en progreso esta en %1$s, pregunta %2$d de %3$d. %4$d de %5$d sefirot ya tienen resultados guardados.</string>
     <string name="assessment_library_start_action">Comenzar reflexion</string>
     <string name="assessment_library_resume_action">Retomar reflexion</string>
+    <string name="assessment_library_start_fresh_action">Iniciar nueva reflexion</string>
     <string name="assessment_library_footer">Con el tiempo podran sumarse mas reflexiones aqui. Por ahora, este espacio comienza con la reflexion del Arbol de la Vida y mantiene la experiencia serena y enfocada.</string>
     <string name="assessment_honesty_title">Una nota breve antes de comenzar</string>
     <string name="assessment_honesty_card_title">Esta reflexion funciona mejor con honestidad</string>
@@ -161,6 +163,10 @@
     <string name="assessment_exit_dialog_confirm">Ir a Inicio</string>
     <string name="assessment_exit_dialog_confirm_to">Ir a %1$s</string>
     <string name="assessment_exit_dialog_cancel">Quedarme aqui</string>
+    <string name="replace_assessment_dialog_title">Iniciar una reflexion nueva?</string>
+    <string name="replace_assessment_dialog_body">Esto reemplazara tu reflexion actual en progreso en %1$s y volvera a comenzar desde el inicio. Tu historial de reflexiones completadas seguira guardado.</string>
+    <string name="replace_assessment_dialog_confirm">Iniciar reflexion nueva</string>
+    <string name="replace_assessment_dialog_cancel">Conservar reflexion actual</string>
     <string name="placeholder_results_title">Vista general de resultados</string>
     <string name="placeholder_results_body">Esta area ira creciendo poco a poco hasta convertirse en tu perfil completo del Arbol de la Vida a medida que se completen e interpreten mas sefirot.</string>
     <string name="results_empty_title">Todavia no hay resultados completados</string>
@@ -177,6 +183,7 @@
     <string name="results_needs_attention_body">%1$s es la sefira que ahora mismo carga mas tension, con un puntaje de desequilibrio de %2$d.</string>
     <string name="results_most_balanced_title">La mas equilibrada ahora</string>
     <string name="results_most_balanced_body">%1$s es la que ahora mismo se ve mas asentada, con %2$d de balance.</string>
+    <string name="results_retake_action">Repetir evaluacion</string>
     <string name="results_rank_badge">Puesto %1$d de %2$d</string>
     <string name="results_imbalance_badge">Desequilibrio %1$d</string>
     <string name="results_percent_value">%1$d%%</string>

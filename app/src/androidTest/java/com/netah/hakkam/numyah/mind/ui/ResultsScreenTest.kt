@@ -11,6 +11,7 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.ui.screen.ResultsScreen
 import com.netah.hakkam.numyah.mind.ui.screen.SephiraDetailScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
+import com.netah.hakkam.numyah.mind.viewmodel.ActiveAssessmentUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsOverviewUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsSephiraUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.ResultsUiState
@@ -28,6 +29,7 @@ class ResultsScreenTest {
     @Test
     fun resultsScreen_loadedState_opensSephiraDetail() {
         var openedSephiraId: SephiraId? = null
+        var retookAssessment = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -35,6 +37,7 @@ class ResultsScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = ResultsUiState.Loaded(resultsModel()),
                     onPrimaryAction = {},
+                    onRetakeAssessment = { retookAssessment = true },
                     primaryActionLabel = "Back home",
                     onOpenSephiraDetail = { openedSephiraId = it.sephiraId }
                 )
@@ -43,8 +46,11 @@ class ResultsScreenTest {
 
         composeTestRule.onNodeWithText("Yesod").assertIsDisplayed()
         composeTestRule.onNodeWithText("Open full interpretation").performClick()
+        composeTestRule.onNodeWithText("Retake assessment").performClick()
+        composeTestRule.onNodeWithText("Start fresh reflection").performClick()
 
         assertEquals(SephiraId.YESOD, openedSephiraId)
+        assertEquals(true, retookAssessment)
     }
 
     @Test
@@ -67,6 +73,14 @@ class ResultsScreenTest {
     private fun resultsModel() = ResultsOverviewUiModel(
         title = "Tree of Life reflection",
         isHistoricalSession = false,
+        activeAssessment = ActiveAssessmentUiModel(
+            sephiraName = "Yesod",
+            completedSephirotCount = 1,
+            totalSephirotCount = 10,
+            currentQuestionNumber = 2,
+            totalQuestions = 6,
+            isAtSectionStart = false
+        ),
         completedCount = 2,
         totalCount = 4,
         mostBalanced = null,

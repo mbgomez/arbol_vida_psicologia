@@ -35,6 +35,7 @@ class HomeScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = HomeUiState.Empty,
                     onStartAssessment = {},
+                    onStartFreshAssessment = {},
                     onResumeAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
@@ -80,6 +81,7 @@ class HomeScreenTest {
                         )
                     ),
                     onStartAssessment = { startedAssessment = true },
+                    onStartFreshAssessment = {},
                     onResumeAssessment = {},
                     onOpenLatestResults = { openedResults = true },
                     onOpenHistory = {},
@@ -120,6 +122,7 @@ class HomeScreenTest {
                         )
                     ),
                     onStartAssessment = {},
+                    onStartFreshAssessment = {},
                     onResumeAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
@@ -145,6 +148,7 @@ class HomeScreenTest {
     fun homeScreen_activeAssessment_showsResumeContentAndAction() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var resumedAssessment = false
+        var startedFresh = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -164,6 +168,7 @@ class HomeScreenTest {
                         )
                     ),
                     onStartAssessment = {},
+                    onStartFreshAssessment = { startedFresh = true },
                     onResumeAssessment = { resumedAssessment = true },
                     onOpenLatestResults = {},
                     onOpenHistory = {},
@@ -178,7 +183,12 @@ class HomeScreenTest {
             context.getString(R.string.home_active_question_body, "Yesod", 2, 6, 1, 10)
         ).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.home_resume_cta)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_start_fresh_cta)).performClick()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.replace_assessment_dialog_confirm)
+        ).performClick()
 
         assertTrue(resumedAssessment)
+        assertTrue(startedFresh)
     }
 }

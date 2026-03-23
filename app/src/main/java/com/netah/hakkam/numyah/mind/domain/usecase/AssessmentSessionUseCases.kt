@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.Flow
 data class StartOrResumeAssessmentParams(
     val questionnaireVersion: String,
     val initialSephiraId: SephiraId,
-    val totalQuestions: Int
+    val totalQuestions: Int,
+    val forceStartFresh: Boolean = false
 )
 
 data class SaveAnswerParams(
@@ -42,7 +43,8 @@ class StartOrResumeAssessmentUseCase @Inject constructor(
         return assessmentSessionRepository.startOrResumeSession(
             questionnaireVersion = params.questionnaireVersion,
             initialSephiraId = params.initialSephiraId,
-            totalQuestions = params.totalQuestions
+            totalQuestions = params.totalQuestions,
+            forceStartFresh = params.forceStartFresh
         )
     }
 }

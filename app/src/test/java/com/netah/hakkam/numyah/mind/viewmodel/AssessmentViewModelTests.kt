@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -455,7 +456,8 @@ class AssessmentViewModelTests {
             advanceAssessmentSectionUseCase = advanceAssessmentSectionUseCase,
             completeAssessmentUseCase = completeAssessmentUseCase,
             assessmentScoringEngine = assessmentScoringEngine,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            savedStateHandle = SavedStateHandle()
         )
     }
 

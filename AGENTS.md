@@ -208,6 +208,9 @@ UX guidance:
   - starting a new assessment
   - resuming an in-progress assessment
   - viewing the latest completed reflection
+- Starting a new assessment while another one is still in progress should require explicit confirmation before the unfinished session is replaced.
+- Replacing an unfinished in-progress session should not erase completed saved reflections from History.
+- Results and Assessments should follow the same fresh-start rule as Home so the user never encounters inconsistent replacement behavior across entry surfaces.
 - `Assessments` is now a justified top-level tab because the product intends to grow into a multi-assessment surface, including future user-authored assessments.
 - Home should keep the current flow of starting or resuming an assessment, while `Assessments` becomes the dedicated browsing surface for the expanding assessment library.
 - In a five-tab bottom navigation shell, tab labels should stay readable on narrower phones. Prefer adaptive single-line label sizing or a dedicated shorter nav label resource over awkward wrapping.
@@ -263,3 +266,5 @@ Refactor lessons to preserve:
 - Debug-only QA tools are safer when they switch the read source for completed-history surfaces instead of seeding or overwriting real saved history.
 - Compose tests for polished, scrollable screens should be written to survive legitimate section growth without treating below-the-fold content as a regression.
 - For dynamic graph screens, prefer filtering chart-ready UI models in the screen layer for temporary visibility controls rather than pushing transient chip-selection state into data or repository contracts.
+- Replacing an unfinished assessment is a trust-sensitive action. Keep the confirmation copy explicit about what will be replaced and what will remain saved.
+- Fresh-start behavior is stronger when it is implemented in the session/repository contract rather than as screen-local reset logic, so every entry surface shares the same rule.

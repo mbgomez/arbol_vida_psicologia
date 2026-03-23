@@ -261,6 +261,9 @@ Locked assessment entry direction:
   - viewing the latest completed reflection
 - `Assessments` is now a top-level product surface.
 - Home should still keep direct actions for starting a new assessment and resuming the current one.
+- Starting a new assessment while another one is still in progress should require explicit confirmation before replacing the unfinished session.
+- Replacing an unfinished in-progress session should not erase completed saved reflections from History.
+- The same replacement rule should apply consistently from `Home`, `Assessments`, and `Results` so retake behavior stays trustworthy across the app.
 - `Assessments` should own the expanding library and future multi-assessment browsing, including future user-authored assessments when that capability enters scope.
 - `History` remains the completed-results surface and is the planned home for graph-based trends across saved sessions.
 - In the five-tab bottom shell, nav labels should remain single-line and readable on smaller phones. It is acceptable to use a shorter nav-only label resource while keeping the fuller screen title unchanged.

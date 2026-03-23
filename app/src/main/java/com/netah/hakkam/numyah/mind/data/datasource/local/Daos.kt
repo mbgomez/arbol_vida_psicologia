@@ -22,6 +22,9 @@ interface AssessmentSessionDao {
     @Query("UPDATE assessmentsessiontable SET isActive = 0 WHERE isActive = 1")
     suspend fun deactivateActiveSessions()
 
+    @Query("DELETE FROM assessmentsessiontable WHERE id = :sessionId")
+    suspend fun deleteSession(sessionId: Long)
+
     @Query("SELECT * FROM assessmentsessiontable WHERE isActive = 1 AND status = 'IN_PROGRESS' ORDER BY startedAt DESC LIMIT 1")
     fun observeActiveInProgressSession(): Flow<AssessmentSessionTable?>
 

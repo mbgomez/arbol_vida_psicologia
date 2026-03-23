@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +22,7 @@ import com.netah.hakkam.numyah.mind.ui.components.AppFooterCard
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
+import com.netah.hakkam.numyah.mind.ui.components.ReplaceInProgressAssessmentDialog
 import com.netah.hakkam.numyah.mind.ui.components.StatusChip
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentLibraryEntryUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentLibraryUiState
@@ -27,13 +32,15 @@ import com.netah.hakkam.numyah.mind.viewmodel.AssessmentLibraryViewModel
 fun AssessmentLibraryRoute(
     paddingValues: PaddingValues,
     onOpenAssessment: () -> Unit,
+    onStartFreshAssessment: () -> Unit,
     viewModel: AssessmentLibraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     AssessmentLibraryScreen(
         paddingValues = paddingValues,
         uiState = uiState,
-        onOpenAssessment = onOpenAssessment
+        onOpenAssessment = onOpenAssessment,
+        onStartFreshAssessment = onStartFreshAssessment
     )
 }
 
@@ -41,7 +48,8 @@ fun AssessmentLibraryRoute(
 fun AssessmentLibraryScreen(
     paddingValues: PaddingValues,
     uiState: AssessmentLibraryUiState,
-    onOpenAssessment: () -> Unit
+    onOpenAssessment: () -> Unit,
+    onStartFreshAssessment: () -> Unit
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
         Text(
@@ -69,7 +77,8 @@ fun AssessmentLibraryScreen(
             is AssessmentLibraryUiState.Loaded -> {
                 AssessmentLibraryEntryCard(
                     model = uiState.model.entry,
-                    onOpenAssessment = onOpenAssessment
+                    onOpenAssessment = onOpenAssessment,
+                    onStartFreshAssessment = onStartFreshAssessment
                 )
                 AppFooterCard(text = stringResource(R.string.assessment_library_footer))
             }
@@ -80,8 +89,11 @@ fun AssessmentLibraryScreen(
 @Composable
 private fun AssessmentLibraryEntryCard(
     model: AssessmentLibraryEntryUiModel,
-    onOpenAssessment: () -> Unit
+    onOpenAssessment: () -> Unit,
+    onStartFreshAssessment: () -> Unit
 ) {
+    var showReplaceDialog by remember { mutableStateOf(false) }
+
     AppSurfaceCard {
         Column(
             verticalArrangement = Arrangement.spacedBy(
@@ -147,6 +159,26 @@ private fun AssessmentLibraryEntryCard(
                     )
                 )
             }
+
+            if (model.activeAssessment != null) {
+                OutlinedButton(
+                    onClick = { showReplaceDialog = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.assessment_library_start_fresh_action))
+                }
+            }
         }
+    }
+
+    if (showReplaceDialog && model.activeAssessment != null) {
+        ReplaceInProgressAssessmentDialog(
+            currentSephiraName = model.activeAssessment.sephiraName,
+            onConfirm = {
+                showReplaceDialog = false
+                onStartFreshAssessment()
+            },
+            onDismiss = { showReplaceDialog = false }
+        )
     }
 }

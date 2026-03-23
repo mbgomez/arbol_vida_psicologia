@@ -44,6 +44,8 @@ The current phase roadmap toward a production-ready release is documented in [pr
   - opening the latest completed reflection
 - If a user leaves an in-progress assessment for Home, the shell should return them to the existing Home surface when possible instead of rebuilding a new navigation stack unnecessarily.
 - Retake assessment from the results screen.
+- If a user starts a new assessment while another one is still in progress, the app should ask for explicit confirmation before replacing that unfinished session.
+- The same replacement rule should apply consistently from Home, Assessments, and Results so users do not have to learn different restart behavior on different surfaces.
 - Review previous completed assessments from history.
 - Open a sephira detail screen directly from a saved assessment.
 - Open a Learn/About section without starting the assessment.
@@ -325,6 +327,8 @@ Locked workflow learning:
 
 - Future sephira content should be seeded manually from the authored question set rather than generated from prior slices by default.
 - Manual verification and project execution are user-owned. The implementation workflow should assume the user runs builds, tests, and interactive checks locally and reports the first failure or mismatch back into the collaboration loop.
+- Starting a fresh reflection while another one is still in progress should be treated as a user-trust moment: require confirmation, replace only the unfinished session, and leave completed History entries intact.
+- When that behavior changes, cover it across repository, use case/ViewModel, and the user-facing entry screens rather than testing only one layer.
 - Production readiness should advance on a mainline release track even while authored sephira enrichment continues gradually in parallel.
 
 ### Locked Content Structure Standard
