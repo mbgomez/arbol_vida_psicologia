@@ -4,8 +4,8 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the first Phase 2 History polish slice is now implemented and verified with calmer recovery states, clearer trend context, retry support, aligned support bullets, improved detail spacing, and integrated chart-axis labels. Phase 2 overall remains open beyond History."
-status = "phase_2_in_progress_history_slice_verified"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the Phase 2 History polish slice is complete. Phase 2 overall remains unfinished, and before continuing more UX polish the project now needs a deliberate return to Phase 1 content-contract work so section-complete reflection copy becomes fully JSON-driven per sephira instead of depending on screen-level interpretation assumptions."
+status = "phase_2_unfinished_phase_1_content_contract_return_next"
 
 [recent_work]
 completed = [
@@ -50,7 +50,11 @@ completed = [
   "Expanded History ViewModel and Compose coverage around retry and the new History-phase polish surfaces",
   "Adjusted support-list bullet alignment so multiline History guidance reads cleanly on device",
   "Added more breathing room under the full-interpretation Suggested practices heading",
-  "Integrated 100, 50, and 0 labels into the graph axis so History trend charts read as one surface instead of separate text blocks"
+  "Integrated 100, 50, and 0 labels into the graph axis so History trend charts read as one surface instead of separate text blocks",
+  "Reworked shared placeholder/state surfaces so Learn, Results, and Sephira detail loading and recovery screens feel more intentional during nested-screen entry",
+  "Tightened cross-surface production copy to remove roadmap-style and normative 'should' phrasing from onboarding, Assessments, Learn, and Settings",
+  "Updated Learn Compose coverage to match the calmer single-surface locked-state presentation",
+  "Confirmed a content-contract gap in the assessment section-complete screen: Yesod, Hod, and Netzach can inherit Malkuth-shaped interpretation copy when that screen relies on shared screen-level text mapping instead of sephira-authored completion content."
 ]
 
 [locked_decisions]
@@ -67,35 +71,34 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_2_copy_and_transition_polish"
-why = "History now has a calmer production-grade recovery and trend surface, so the next highest-value UX polish gap is the consistency of trust-building copy and transitions between top-level destinations and nested detail screens."
+name = "phase_1_section_complete_content_contract"
+why = "Phase 2 polish should pause briefly because the next highest-value issue is a Phase 1 content-architecture correction: section-complete reflection interpretation needs to be fully driven by per-sephira JSON content before more UX polish is layered on top."
 
 [[recommended_next_slice.goals]]
-id = "review_cross_surface_copy"
-description = "Tighten user-facing copy across Home, Results, Learn, and support screens so the tone stays psychologically grounded, calm, and non-pathologizing."
+id = "lock_json_shape"
+description = "Define a stable JSON-backed completion-content shape for each sephira so section-complete interpretation no longer depends on screen-level hardcoded assumptions."
 
 [[recommended_next_slice.goals]]
-id = "polish_nested_screen_entry"
-description = "Refine the feeling of moving from top-level surfaces into details such as Results detail, Learn reader, and support screens so the app feels more intentional and less abrupt."
+id = "move_selection_out_of_ui"
+description = "Move section-complete interpretation selection into repository/domain/ViewModel mapping so the screen only renders authored per-sephira content."
 
 [[recommended_next_slice.goals]]
-id = "keep_phase_2_slice_bounded"
-description = "Stay in UX and enjoyment polish work instead of drifting back into sephira expansion or larger refactor passes."
+id = "preserve_future_assessment_flexibility"
+description = "Keep the new completion-content contract assessment-agnostic so future assessments or added energy views can reuse it cleanly."
 
 [[recommended_next_slice.goals]]
-id = "verify_history_polish"
-description = "Run the manual and automated checks for the new History states and trend readability before choosing the next polish slice."
+id = "verify_yesod_hod_netzach_fix"
+description = "Verify that Yesod, Hod, and Netzach section-complete screens read from sephira-authored JSON content instead of inheriting Malkuth-oriented reflection copy."
 
 [phase_2_status]
 overall = "in_progress"
-completed_slices = ["history_polish"]
+completed_slices = ["history_polish", "copy_and_transition_polish"]
 remaining_focus = [
-  "copy consistency review across production surfaces",
+  "phase 1 return for section-complete JSON content contract",
   "visual readability polish outside History",
-  "smoother transitions between top-level destinations and detail screens",
   "remaining richer empty, loading, and recovery states outside the History slice"
 ]
-next_recommended_slice = "phase_2_copy_and_transition_polish"
+next_recommended_slice = "phase_1_section_complete_content_contract"
 
 [production_roadmap]
 file = "docs/production_readiness_roadmap.md"
@@ -116,6 +119,7 @@ assessment_library_screen = "Now lives in the top-level Assessments tab while Ho
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 next_sephirot_batch = "Continue the mainline Phase 1 assessment expansion by locking and seeding the next contiguous batch after Netzach."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
+section_complete_content_contract = "Return briefly to Phase 1 and move section-complete interpretation onto a dedicated per-sephira JSON content contract so completed assessment copy stays aligned with the same authored content pipeline as intros and detail screens."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
@@ -149,6 +153,9 @@ items = [
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
   "Assessment exit confirmation has to name the actual destination in both the body and the confirm action or the shell feels untrustworthy.",
   "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure.",
+  "Once nested content screens become real product destinations, their loading, locked, and recovery states need the same visual tone as the rest of the app or the transition into detail feels abrupt.",
+  "Small copy shifts away from 'should', 'will', and rollout language make trust-sensitive surfaces feel more present and less like staged product scaffolding.",
+  "Section-complete assessment interpretation is part of the authored content contract, not just a UI copy problem. If it is not modeled per sephira in content, later sephirot will inherit accidental Malkuth assumptions.",
   "Debug/demo tools for completed-history review should switch sources instead of seeding or overwriting real saved data.",
   "Compose tests for long polished screens like History and Settings should scroll to below-the-fold content or rely on stable semantics instead of assuming those sections stay immediately visible.",
   "Scoring tests are more reliable when weighted fixtures stay comfortably away from confidence and dominant-pole thresholds unless the test is intentionally validating a boundary.",
@@ -174,7 +181,9 @@ notes = [
   "The Play upload path is prepared, but account identity verification still needs to be completed before fully finishing the internal testing rollout.",
   "The new History polish slice passed the targeted unit and instrumented tests.",
   "Manual checks also passed for History bullet alignment, Sephira detail Suggested practices spacing, and the integrated History graph axis labels.",
-  "The targeted compile issue from a Canvas draw lambda was resolved by hoisting the theme color lookup out of the draw block."
+  "The targeted compile issue from a Canvas draw lambda was resolved by hoisting the theme color lookup out of the draw block.",
+  "The cross-surface copy and transition polish slice has been implemented in code, but its updated Gradle and manual verification steps still need to be run by the user.",
+  "A new issue was identified in the section-complete assessment screen: authored per-sephira content is not yet the sole source of truth for that interpretation layer, so a Phase 1 content-contract thread should happen before continuing deeper Phase 2 polish."
 ]
 
 [files_to_read_first]
