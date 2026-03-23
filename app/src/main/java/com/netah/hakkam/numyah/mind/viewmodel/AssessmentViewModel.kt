@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -126,6 +128,7 @@ class AssessmentViewModel @Inject constructor(
     private val completeAssessmentUseCase: CompleteAssessmentUseCase,
     private val assessmentScoringEngine: AssessmentScoringEngine,
     private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -186,7 +189,11 @@ class AssessmentViewModel @Inject constructor(
                 doNotShowHonestyNoticeAgain = false
                 introDismissed = hasCurrentSectionProgress
                 emitPhaseState()
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.ASSESSMENT_LOAD_FAILED,
+                    throwable = throwable
+                )
                 _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)
             }
         }
@@ -237,7 +244,12 @@ class AssessmentViewModel @Inject constructor(
                 ).first()
                 currentSnapshot = updatedSnapshot
                 emitPhaseState()
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.ASSESSMENT_SAVE_ANSWER_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf("sephira_id" to snapshot.currentSephiraId.name.lowercase())
+                )
                 _uiState.value = AssessmentUiState.Error(AssessmentErrorType.SAVE_ANSWER)
             }
         }
@@ -286,6 +298,7 @@ class AssessmentViewModel @Inject constructor(
                                 val completedSnapshot = completeAssessmentUseCase.run(updatedSnapshot.sessionId to score).first()
                                 currentSnapshot = completedSnapshot
                                 pendingNextSection = null
+                                appTelemetry.trackAssessmentCompleted(completedSnapshot.scores.size)
                                 emitCompletedState(completedSnapshot, nextSection = null)
                             } else {
                                 val savedScoreSnapshot = saveAssessmentScoreUseCase
@@ -299,7 +312,12 @@ class AssessmentViewModel @Inject constructor(
                             currentSnapshot = updatedSnapshot
                             emitPhaseState()
                         }
-                    } catch (_: Throwable) {
+                    } catch (throwable: Throwable) {
+                        appTelemetry.recordNonFatal(
+                            key = NonFatalIssueKey.ASSESSMENT_CONTINUE_FAILED,
+                            throwable = throwable,
+                            attributes = mapOf("sephira_id" to snapshot.currentSephiraId.name.lowercase())
+                        )
                         _uiState.value = AssessmentUiState.Error(AssessmentErrorType.CONTINUE)
                     }
                 }
@@ -325,7 +343,12 @@ class AssessmentViewModel @Inject constructor(
                 pendingNextSection = null
                 introDismissed = false
                 emitPhaseState()
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.ASSESSMENT_CONTINUE_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf("sephira_id" to snapshot.currentSephiraId.name.lowercase())
+                )
                 _uiState.value = AssessmentUiState.Error(AssessmentErrorType.CONTINUE)
             }
         }
@@ -356,7 +379,12 @@ class AssessmentViewModel @Inject constructor(
                 ).first()
                 currentSnapshot = updatedSnapshot
                 emitPhaseState()
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.ASSESSMENT_GO_BACK_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf("sephira_id" to snapshot.currentSephiraId.name.lowercase())
+                )
                 _uiState.value = AssessmentUiState.Error(AssessmentErrorType.GO_BACK)
             }
         }

@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.LearningCatalog
 import com.netah.hakkam.numyah.mind.domain.model.LearningCourse
@@ -36,6 +37,7 @@ class LearnViewModelTests {
     private lateinit var getCompletedLearningSectionsUseCase: GetCompletedLearningSectionsUseCase
     private lateinit var markLearningSectionCompletedUseCase: MarkLearningSectionCompletedUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
+    private lateinit var appTelemetry: AppTelemetry
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -48,6 +50,7 @@ class LearnViewModelTests {
         getCompletedLearningSectionsUseCase = mockk(relaxed = true)
         markLearningSectionCompletedUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
+        appTelemetry = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
         every { getCompletedLearningSectionsUseCase.run() } returns flowOf(emptySet())
     }
@@ -58,7 +61,8 @@ class LearnViewModelTests {
 
         val viewModel = LearnViewModel(
             getLearningCatalogUseCase = getLearningCatalogUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
         val state = viewModel.uiState.value as LearnUiState.Loaded
 
@@ -80,7 +84,8 @@ class LearnViewModelTests {
             ),
             getLearningCourseUseCase = getLearningCourseUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
 
         assertTrue(viewModel.uiState.value is LearnCourseUiState.NotFound)
@@ -111,7 +116,8 @@ class LearnViewModelTests {
             getLearningSectionUseCase = getLearningSectionUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
             markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
         val state = viewModel.uiState.value as LearnSectionUiState.Loaded
 
@@ -121,6 +127,9 @@ class LearnViewModelTests {
         assertEquals("Malkuth", state.model.nextSectionTitle)
         assertEquals(3, state.model.totalAvailableSections)
         assertEquals(true, state.model.isCompleted)
+        verify(exactly = 1) {
+            appTelemetry.trackLearnSectionOpened("tree-course", "intro", 1)
+        }
     }
 
     @Test
@@ -148,7 +157,8 @@ class LearnViewModelTests {
             getLearningSectionUseCase = getLearningSectionUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
             markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
         val state = viewModel.uiState.value as LearnSectionUiState.Loaded
 
@@ -171,7 +181,8 @@ class LearnViewModelTests {
             ),
             getLearningCourseUseCase = getLearningCourseUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
         val state = viewModel.uiState.value as LearnCourseUiState.Loaded
 
@@ -205,7 +216,8 @@ class LearnViewModelTests {
             getLearningSectionUseCase = getLearningSectionUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
             markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
 
         assertTrue(viewModel.uiState.value is LearnSectionUiState.Locked)
@@ -244,7 +256,8 @@ class LearnViewModelTests {
             getLearningSectionUseCase = getLearningSectionUseCase,
             getCompletedLearningSectionsUseCase = getCompletedLearningSectionsUseCase,
             markLearningSectionCompletedUseCase = markLearningSectionCompletedUseCase,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
 
         viewModel.markSectionCompleted()

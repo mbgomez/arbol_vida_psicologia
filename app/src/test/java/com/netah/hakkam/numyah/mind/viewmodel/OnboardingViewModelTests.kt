@@ -1,5 +1,7 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.OnboardingCompletionMethod
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
@@ -17,6 +19,7 @@ import org.junit.Test
 class OnboardingViewModelTests {
 
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
+    private lateinit var appTelemetry: AppTelemetry
     private lateinit var onboardingViewModel: OnboardingViewModel
 
     @get:Rule
@@ -25,7 +28,8 @@ class OnboardingViewModelTests {
     @Before
     fun setup() {
         setOnboardingCompletedUseCase = mockk(relaxed = true)
-        onboardingViewModel = OnboardingViewModel(setOnboardingCompletedUseCase)
+        appTelemetry = mockk(relaxed = true)
+        onboardingViewModel = OnboardingViewModel(setOnboardingCompletedUseCase, appTelemetry)
     }
 
     @Test
@@ -55,6 +59,9 @@ class OnboardingViewModelTests {
         }
 
         verify(exactly = 1) { setOnboardingCompletedUseCase.run(true) }
+        verify(exactly = 1) {
+            appTelemetry.trackOnboardingCompleted(OnboardingCompletionMethod.FINISH)
+        }
         assertTrue(callbackInvoked)
     }
 
@@ -68,6 +75,9 @@ class OnboardingViewModelTests {
         }
 
         verify(exactly = 1) { setOnboardingCompletedUseCase.run(true) }
+        verify(exactly = 1) {
+            appTelemetry.trackOnboardingCompleted(OnboardingCompletionMethod.SKIP)
+        }
         assertTrue(callbackInvoked)
     }
 }

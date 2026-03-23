@@ -41,6 +41,7 @@ The full product plan is documented here:
 
 - [Product spec](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\product_spec.md)
 - [Production readiness roadmap](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md)
+- [Tester distribution and observability](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\tester_distribution_and_observability.md)
 
 ## Scope For First Build
 
@@ -254,6 +255,7 @@ Production roadmap standard:
 - Treat finalized sephira-content enrichment as an ongoing side mission that can be added one sephira at a time during the main roadmap.
 - The roadmap now includes a dedicated tester-distribution and observability phase before deeper polish and release hardening.
 - Telemetry during that phase should stay minimal and product-relevant, focusing on crashes, key journey events, and tester learning rather than broad user tracking.
+- The current tester-observability implementation is gated by Gradle flags and routes through an app-owned telemetry layer so Firebase can be enabled for tester builds without making observability a permanent always-on assumption.
 
 Locked assessment entry direction:
 

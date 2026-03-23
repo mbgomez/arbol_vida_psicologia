@@ -46,6 +46,8 @@ fun SettingsScreen(
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
     onMockHistoryEnabledChanged: (Boolean) -> Unit,
+    onReportTestNonFatal: () -> Unit,
+    onForceTestCrash: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
@@ -59,6 +61,8 @@ fun SettingsScreen(
             onThemeModeSelected = onThemeModeSelected,
             onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged,
             onMockHistoryEnabledChanged = onMockHistoryEnabledChanged,
+            onReportTestNonFatal = onReportTestNonFatal,
+            onForceTestCrash = onForceTestCrash,
             onOpenPrivacy = onOpenPrivacy,
             onOpenAbout = onOpenAbout,
             onReplayOnboarding = onReplayOnboarding
@@ -91,6 +95,8 @@ private fun SettingsContent(
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
     onMockHistoryEnabledChanged: (Boolean) -> Unit,
+    onReportTestNonFatal: () -> Unit,
+    onForceTestCrash: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
@@ -125,6 +131,10 @@ private fun SettingsContent(
                         onMockHistoryEnabledChanged(false)
                     }
                 }
+            )
+            ObservabilityChecksSection(
+                onReportTestNonFatal = onReportTestNonFatal,
+                onForceTestCrash = onForceTestCrash
             )
         }
         OnboardingSection(
@@ -354,6 +364,32 @@ private fun OnboardingSection(
 }
 
 @Composable
+private fun ObservabilityChecksSection(
+    onReportTestNonFatal: () -> Unit,
+    onForceTestCrash: () -> Unit
+) {
+    SettingsSectionCard(
+        title = stringResource(R.string.settings_observability_checks_title),
+        body = stringResource(R.string.settings_observability_checks_body)
+    ) {
+        SettingsActionRow(
+            title = stringResource(R.string.settings_observability_nonfatal_title),
+            body = stringResource(R.string.settings_observability_nonfatal_body),
+            actionLabel = stringResource(R.string.settings_observability_nonfatal_action),
+            buttonTestTag = "settings_observability_nonfatal_button",
+            onAction = onReportTestNonFatal
+        )
+        SettingsActionRow(
+            title = stringResource(R.string.settings_observability_crash_title),
+            body = stringResource(R.string.settings_observability_crash_body),
+            actionLabel = stringResource(R.string.settings_observability_crash_action),
+            buttonTestTag = "settings_observability_crash_button",
+            onAction = onForceTestCrash
+        )
+    }
+}
+
+@Composable
 private fun SettingsSectionCard(
     title: String,
     body: String,
@@ -408,13 +444,14 @@ private fun SettingsActionRow(
     title: String,
     body: String,
     actionLabel: String,
+    buttonTestTag: String = "settings_replay_onboarding_button",
     onAction: () -> Unit
 ) {
     PreferenceActionRow(
         title = title,
         body = body,
         actionLabel = actionLabel,
-        buttonTestTag = "settings_replay_onboarding_button",
+        buttonTestTag = buttonTestTag,
         onAction = onAction
     )
 }

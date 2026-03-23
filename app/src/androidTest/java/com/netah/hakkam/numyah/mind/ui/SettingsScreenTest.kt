@@ -42,6 +42,8 @@ class SettingsScreenTest {
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -65,6 +67,8 @@ class SettingsScreenTest {
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -100,6 +104,8 @@ class SettingsScreenTest {
                     },
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -131,6 +137,8 @@ class SettingsScreenTest {
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -163,6 +171,8 @@ class SettingsScreenTest {
                         uiState = readyState(honestyNoticeVisible = it)
                     },
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -190,6 +200,8 @@ class SettingsScreenTest {
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = { replayedOnboarding = true }
@@ -220,6 +232,8 @@ class SettingsScreenTest {
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
                     onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = { openedPrivacy = true },
                     onOpenAbout = { openedAbout = true },
                     onReplayOnboarding = {}
@@ -253,6 +267,8 @@ class SettingsScreenTest {
                         mockHistoryEnabled = it
                         uiState = readyState(mockHistoryEnabled = it)
                     },
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -266,6 +282,40 @@ class SettingsScreenTest {
         ).performClick()
 
         assertTrue(mockHistoryEnabled)
+    }
+
+    @Test
+    fun settingsScreen_observabilityChecks_invokeCallbacks() {
+        var reportedNonFatal = false
+        var forcedCrash = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = readyState(),
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = { reportedNonFatal = true },
+                    onForceTestCrash = { forcedCrash = true },
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_observability_nonfatal_button")
+            .performScrollTo()
+            .performClick()
+        composeTestRule.onNodeWithTag("settings_observability_crash_button")
+            .performScrollTo()
+            .performClick()
+
+        assertTrue(reportedNonFatal)
+        assertTrue(forcedCrash)
     }
 
     private fun readyState(

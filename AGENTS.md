@@ -247,6 +247,8 @@ Working-together protocol:
 - Follow `docs/production_readiness_roadmap.md` for the current phase order toward a production-ready release.
 - Treat finalized sephira-content enrichment as an approved side mission that can be added one sephira at a time during the main roadmap, unless a thread explicitly locks a feature that depends on all related sephirot being finalized first.
 - If the roadmap introduces a tester-distribution and observability phase, keep crash reporting and analytics minimal, product-relevant, and aligned with the app's local-first trust model.
+- During tester-distribution work, keep observability behind an app-owned interface and explicit build-time enablement so Firebase or Play testing setup does not become a hidden always-on dependency of normal local work.
+- Privacy-facing copy for tester builds must stay explicit that telemetry is limited to crashes, recoverable failures, and a small approved flow taxonomy, and must not include answer content, interpretation copy, or saved score details.
 
 Locked refactor direction:
 - Follow `docs/refactor_roadmap.md` as the source of truth for refactor standards and cleanup order.

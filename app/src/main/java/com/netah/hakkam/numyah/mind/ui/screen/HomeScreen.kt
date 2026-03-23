@@ -34,6 +34,7 @@ fun HomeRoute(
     onStartAssessment: () -> Unit,
     onStartFreshAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
+    onConfirmStartFreshAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenLearn: () -> Unit,
@@ -47,6 +48,7 @@ fun HomeRoute(
         onStartAssessment = onStartAssessment,
         onStartFreshAssessment = onStartFreshAssessment,
         onResumeAssessment = onResumeAssessment,
+        onConfirmStartFreshAssessment = onConfirmStartFreshAssessment,
         onOpenLatestResults = onOpenLatestResults,
         onOpenHistory = onOpenHistory,
         onOpenLearn = onOpenLearn,
@@ -61,6 +63,7 @@ fun HomeScreen(
     onStartAssessment: () -> Unit,
     onStartFreshAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
+    onConfirmStartFreshAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenLearn: () -> Unit,
@@ -161,6 +164,7 @@ fun HomeScreen(
             currentSephiraName = activeAssessment.sephiraName,
             onConfirm = {
                 showReplaceDialog = false
+                onConfirmStartFreshAssessment()
                 onStartFreshAssessment()
             },
             onDismiss = { showReplaceDialog = false }

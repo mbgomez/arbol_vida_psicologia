@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
+import com.netah.hakkam.numyah.mind.app.observability.ResultsSessionScope
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -53,7 +56,8 @@ class SephiraDetailViewModel @Inject constructor(
     private val observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase,
     private val observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase,
     savedStateHandle: SavedStateHandle,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SephiraDetailUiState>(SephiraDetailUiState.Loading)
@@ -63,6 +67,7 @@ class SephiraDetailViewModel @Inject constructor(
         ?.takeIf { it > 0L }
     private val selectedSephiraId = savedStateHandle.get<String>(AppDestination.ResultsDetail.sephiraIdArg)
         ?.let { rawValue -> runCatching { SephiraId.valueOf(rawValue) }.getOrNull() }
+    private var hasTrackedOpen = false
 
     init {
         observeDetail()
@@ -90,11 +95,30 @@ class SephiraDetailViewModel @Inject constructor(
                             snapshot = snapshot,
                             sephiraId = selectedSephiraId
                         )?.let { model ->
+                            if (!hasTrackedOpen) {
+                                hasTrackedOpen = true
+                                appTelemetry.trackResultsDetailOpened(
+                                    sephiraId = model.sephiraId,
+                                    sessionScope = if (model.isHistoricalSession) {
+                                        ResultsSessionScope.SAVED
+                                    } else {
+                                        ResultsSessionScope.LATEST
+                                    }
+                                )
+                            }
                             SephiraDetailUiState.Loaded(model)
                         } ?: SephiraDetailUiState.NotFound
                     }
                 }
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.SEPHIRA_DETAIL_LOAD_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf(
+                        "session_scope" to if (selectedSessionId != null) "saved" else "latest",
+                        "sephira_id" to (selectedSephiraId?.name?.lowercase() ?: "unknown")
+                    )
+                )
                 _uiState.value = SephiraDetailUiState.Error
             }
         }

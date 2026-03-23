@@ -20,12 +20,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.ui.nav.MainNavGraph
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.AppStateViewModel
 
 @Composable
 fun ArbolVidaApp(
+    appTelemetry: AppTelemetry,
     appStateViewModel: AppStateViewModel = hiltViewModel()
 ) {
     val uiState by appStateViewModel.uiState.collectAsState()
@@ -40,7 +42,8 @@ fun ArbolVidaApp(
             val navController = rememberNavController()
             MainNavGraph(
                 navController = navController,
-                startDestination = uiState.startDestination
+                startDestination = uiState.startDestination,
+                appTelemetry = appTelemetry
             )
         }
     }

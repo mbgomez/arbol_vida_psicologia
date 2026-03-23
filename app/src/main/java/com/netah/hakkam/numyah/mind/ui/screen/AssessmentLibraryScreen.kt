@@ -31,8 +31,9 @@ import com.netah.hakkam.numyah.mind.viewmodel.AssessmentLibraryViewModel
 @Composable
 fun AssessmentLibraryRoute(
     paddingValues: PaddingValues,
-    onOpenAssessment: () -> Unit,
+    onOpenAssessment: (Boolean) -> Unit,
     onStartFreshAssessment: () -> Unit,
+    onConfirmStartFreshAssessment: () -> Unit,
     viewModel: AssessmentLibraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -40,7 +41,8 @@ fun AssessmentLibraryRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onOpenAssessment = onOpenAssessment,
-        onStartFreshAssessment = onStartFreshAssessment
+        onStartFreshAssessment = onStartFreshAssessment,
+        onConfirmStartFreshAssessment = onConfirmStartFreshAssessment
     )
 }
 
@@ -48,8 +50,9 @@ fun AssessmentLibraryRoute(
 fun AssessmentLibraryScreen(
     paddingValues: PaddingValues,
     uiState: AssessmentLibraryUiState,
-    onOpenAssessment: () -> Unit,
-    onStartFreshAssessment: () -> Unit
+    onOpenAssessment: (Boolean) -> Unit,
+    onStartFreshAssessment: () -> Unit,
+    onConfirmStartFreshAssessment: () -> Unit
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
         Text(
@@ -78,7 +81,8 @@ fun AssessmentLibraryScreen(
                 AssessmentLibraryEntryCard(
                     model = uiState.model.entry,
                     onOpenAssessment = onOpenAssessment,
-                    onStartFreshAssessment = onStartFreshAssessment
+                    onStartFreshAssessment = onStartFreshAssessment,
+                    onConfirmStartFreshAssessment = onConfirmStartFreshAssessment
                 )
                 AppFooterCard(text = stringResource(R.string.assessment_library_footer))
             }
@@ -89,8 +93,9 @@ fun AssessmentLibraryScreen(
 @Composable
 private fun AssessmentLibraryEntryCard(
     model: AssessmentLibraryEntryUiModel,
-    onOpenAssessment: () -> Unit,
-    onStartFreshAssessment: () -> Unit
+    onOpenAssessment: (Boolean) -> Unit,
+    onStartFreshAssessment: () -> Unit,
+    onConfirmStartFreshAssessment: () -> Unit
 ) {
     var showReplaceDialog by remember { mutableStateOf(false) }
 
@@ -146,7 +151,7 @@ private fun AssessmentLibraryEntryCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Button(
-                onClick = onOpenAssessment,
+                onClick = { onOpenAssessment(model.activeAssessment != null) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -176,6 +181,7 @@ private fun AssessmentLibraryEntryCard(
             currentSephiraName = model.activeAssessment.sephiraName,
             onConfirm = {
                 showReplaceDialog = false
+                onConfirmStartFreshAssessment()
                 onStartFreshAssessment()
             },
             onDismiss = { showReplaceDialog = false }

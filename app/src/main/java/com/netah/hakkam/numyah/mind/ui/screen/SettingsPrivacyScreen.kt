@@ -28,6 +28,10 @@ fun SettingsPrivacyScreen(
             body = stringResource(R.string.settings_privacy_onboarding_body)
         )
         SettingsDetailSection(
+            title = stringResource(R.string.settings_privacy_tester_telemetry_title),
+            body = stringResource(R.string.settings_privacy_tester_telemetry_body)
+        )
+        SettingsDetailSection(
             title = stringResource(R.string.settings_privacy_boundary_title),
             body = stringResource(R.string.settings_privacy_boundary_body)
         )

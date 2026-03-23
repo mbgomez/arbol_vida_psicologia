@@ -21,6 +21,8 @@ Locked tester-distribution and observability direction:
 - Telemetry should stay minimal, focused on product learning and reliability, and aligned with the app's local-first trust model.
 - Instrumentation should prioritize events such as onboarding completion, assessment start, assessment resume, start-fresh confirmation, assessment completion, results detail open, history re-entry, learn reading, and important settings changes.
 - Telemetry should not drift into broad or invasive behavioral tracking that would undermine the product's reflective and privacy-respectful positioning.
+- The implementation standard for that phase is to keep telemetry behind an app-owned interface, enable Firebase only for builds that explicitly opt into tester observability, and keep local debug verification available without requiring remote telemetry setup.
+- Approved telemetry content excludes answer selections, written interpretation copy, and saved sephira score details.
 
 ## 2. User Flow
 

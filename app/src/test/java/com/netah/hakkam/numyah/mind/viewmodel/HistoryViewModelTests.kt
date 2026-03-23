@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -34,6 +35,7 @@ class HistoryViewModelTests {
     private lateinit var getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase
     private lateinit var observeAssessmentHistoryUseCase: ObserveAssessmentHistoryUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
+    private lateinit var appTelemetry: AppTelemetry
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -43,6 +45,7 @@ class HistoryViewModelTests {
         getCurrentQuestionnaireUseCase = mockk(relaxed = true)
         observeAssessmentHistoryUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
+        appTelemetry = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
 
@@ -165,7 +168,8 @@ class HistoryViewModelTests {
     private fun createViewModel() = HistoryViewModel(
         getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
         observeAssessmentHistoryUseCase = observeAssessmentHistoryUseCase,
-        currentLocaleProvider = currentLocaleProvider
+        currentLocaleProvider = currentLocaleProvider,
+        appTelemetry = appTelemetry
     )
 
     private fun testQuestionnaire(): QuestionnaireContent {

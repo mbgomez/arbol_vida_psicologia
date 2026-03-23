@@ -26,6 +26,7 @@ class AssessmentLibraryScreenTest {
     fun assessmentLibrary_loadedState_showsResumeEntryAndAction() {
         var openedAssessment = false
         var startedFreshAssessment = false
+        var confirmedStartFresh = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -47,8 +48,9 @@ class AssessmentLibraryScreenTest {
                             )
                         )
                     ),
-                    onOpenAssessment = { openedAssessment = true },
-                    onStartFreshAssessment = { startedFreshAssessment = true }
+                    onOpenAssessment = { openedAssessment = it },
+                    onStartFreshAssessment = { startedFreshAssessment = true },
+                    onConfirmStartFreshAssessment = { confirmedStartFresh = true }
                 )
             }
         }
@@ -62,6 +64,7 @@ class AssessmentLibraryScreenTest {
 
         assertTrue(openedAssessment)
         assertTrue(startedFreshAssessment)
+        assertTrue(confirmedStartFresh)
     }
 
     @Test
@@ -82,7 +85,8 @@ class AssessmentLibraryScreenTest {
                         )
                     ),
                     onOpenAssessment = {},
-                    onStartFreshAssessment = {}
+                    onStartFreshAssessment = {},
+                    onConfirmStartFreshAssessment = {}
                 )
             }
         }

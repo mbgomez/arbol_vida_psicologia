@@ -57,6 +57,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.AssessmentEntryMode
+import com.netah.hakkam.numyah.mind.app.observability.AssessmentEntrySource
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
@@ -87,7 +90,8 @@ import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    appTelemetry: AppTelemetry
 ) {
     NavHost(
         navController = navController,
@@ -107,11 +111,30 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 HomeRoute(
                     paddingValues = paddingValues,
-                    onStartAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
+                    onStartAssessment = {
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.HOME,
+                            mode = AssessmentEntryMode.START
+                        )
+                        navController.navigate(AppDestination.Assessment.createRoute())
+                    },
                     onStartFreshAssessment = {
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.HOME,
+                            mode = AssessmentEntryMode.START_FRESH
+                        )
                         navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
                     },
-                    onResumeAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
+                    onResumeAssessment = {
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.HOME,
+                            mode = AssessmentEntryMode.RESUME
+                        )
+                        navController.navigate(AppDestination.Assessment.createRoute())
+                    },
+                    onConfirmStartFreshAssessment = {
+                        appTelemetry.trackAssessmentFreshStartConfirmed(AssessmentEntrySource.HOME)
+                    },
                     onOpenLatestResults = { navController.navigate(AppDestination.Results.createRoute()) },
                     onOpenHistory = { navController.navigate(AppDestination.History.route) },
                     onOpenLearn = { navController.navigate(AppDestination.Learn.route) },
@@ -123,9 +146,26 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 AssessmentLibraryRoute(
                     paddingValues = paddingValues,
-                    onOpenAssessment = { navController.navigate(AppDestination.Assessment.createRoute()) },
+                    onOpenAssessment = { hasActiveAssessment ->
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.ASSESSMENTS,
+                            mode = if (hasActiveAssessment) {
+                                AssessmentEntryMode.RESUME
+                            } else {
+                                AssessmentEntryMode.START
+                            }
+                        )
+                        navController.navigate(AppDestination.Assessment.createRoute())
+                    },
                     onStartFreshAssessment = {
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.ASSESSMENTS,
+                            mode = AssessmentEntryMode.START_FRESH
+                        )
                         navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
+                    },
+                    onConfirmStartFreshAssessment = {
+                        appTelemetry.trackAssessmentFreshStartConfirmed(AssessmentEntrySource.ASSESSMENTS)
                     }
                 )
             }
@@ -177,7 +217,14 @@ fun MainNavGraph(
                         }
                     },
                     onRetakeAssessment = {
+                        appTelemetry.trackAssessmentEntry(
+                            source = AssessmentEntrySource.RESULTS,
+                            mode = AssessmentEntryMode.START_FRESH
+                        )
                         navController.navigate(AppDestination.Assessment.createRoute(startFresh = true))
+                    },
+                    onConfirmReplaceActiveAssessment = {
+                        appTelemetry.trackAssessmentFreshStartConfirmed(AssessmentEntrySource.RESULTS)
                     },
                     primaryActionLabel = if (selectedSessionId != null) {
                         stringResource(R.string.results_back_to_history_action)
@@ -227,6 +274,7 @@ fun MainNavGraph(
                 HistoryRoute(
                     paddingValues = paddingValues,
                     onOpenAssessment = { sessionId ->
+                        appTelemetry.trackHistorySessionOpened()
                         navController.navigate(AppDestination.Results.createRoute(sessionId))
                     },
                     onOpenAssessments = { navController.navigate(AppDestination.AssessmentLibrary.route) },
@@ -337,6 +385,10 @@ fun MainNavGraph(
                     onThemeModeSelected = settingsViewModel::onThemeModeSelected,
                     onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
                     onMockHistoryEnabledChanged = settingsViewModel::onMockHistoryEnabledChanged,
+                    onReportTestNonFatal = settingsViewModel::reportTestNonFatal,
+                    onForceTestCrash = {
+                        error("Numyah Mind tester crash verification")
+                    },
                     onOpenPrivacy = { navController.navigate(AppDestination.SettingsPrivacy.route) },
                     onOpenAbout = { navController.navigate(AppDestination.SettingsAbout.route) },
                     onReplayOnboarding = {

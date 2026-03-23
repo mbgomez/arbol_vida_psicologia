@@ -6,6 +6,20 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val enableFirebase = providers.gradleProperty("numyah.enableFirebase")
+    .orElse("false")
+    .map { value -> value.equals("true", ignoreCase = true) }
+    .get()
+val enableTesterObservability = providers.gradleProperty("numyah.enableTesterObservability")
+    .orElse("false")
+    .map { value -> value.equals("true", ignoreCase = true) }
+    .get()
+
+if (enableFirebase) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+}
+
 android {
     namespace = "com.netah.hakkam.numyah.mind"
     compileSdk {
@@ -20,6 +34,16 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "boolean",
+            "ENABLE_TESTER_OBSERVABILITY",
+            enableTesterObservability.toString()
+        )
+        buildConfigField(
+            "boolean",
+            "ENABLE_FIREBASE_BACKEND",
+            enableFirebase.toString()
+        )
     }
 
     buildTypes {
@@ -81,6 +105,12 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    if (enableFirebase) {
+        implementation(platform(libs.firebase.bom))
+        implementation(libs.firebase.analytics)
+        implementation(libs.firebase.crashlytics)
+    }
 
     ksp(libs.hilt.compiler)
     ksp(libs.room.compiler)

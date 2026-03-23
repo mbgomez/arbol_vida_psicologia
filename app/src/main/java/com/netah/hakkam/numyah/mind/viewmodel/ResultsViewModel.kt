@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -64,7 +66,8 @@ class ResultsViewModel @Inject constructor(
     private val observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase,
     private val observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase,
     savedStateHandle: SavedStateHandle,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ResultsUiState>(ResultsUiState.Loading)
@@ -92,7 +95,14 @@ class ResultsViewModel @Inject constructor(
                         )
                     } ?: ResultsUiState.Empty
                 }
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.RESULTS_LOAD_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf(
+                        "session_scope" to if (selectedSessionId != null) "saved" else "latest"
+                    )
+                )
                 _uiState.value = ResultsUiState.Error
             }
         }

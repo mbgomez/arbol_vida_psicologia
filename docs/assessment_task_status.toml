@@ -4,8 +4,8 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a locked production-readiness roadmap with a parallel sephira-content side mission."
-status = "stable_after_tests_and_manual_checks"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a gated tester-observability foundation plus Firebase and Play testing setup guidance."
+status = "phase_1_5_slice_implemented_manual_verification_pending"
 
 [recent_work]
 completed = [
@@ -32,7 +32,13 @@ completed = [
   "Added explicit deeper-trends exploration modes for by sephira and by score type",
   "Kept deeper-trends chart state chart-ready and stable without adding repository-contract churn",
   "Added per-sephira visibility toggles in the score-type trends mode with immediate graph and detail-row updates",
-  "Updated tests for Home, shell route ordering, the assessment library, Results detail, repository content mapping, and viewmodels"
+  "Updated tests for Home, shell route ordering, the assessment library, Results detail, repository content mapping, and viewmodels",
+  "Added a gated tester-observability foundation behind an app-owned telemetry interface",
+  "Defined a small stable analytics taxonomy for onboarding, assessment entry, fresh-start confirmation, completion, results detail, history re-entry, learn reading, and key settings changes",
+  "Added non-fatal reporting hooks for assessment, results, history, learn, and sephira-detail recoverable failures",
+  "Added Gradle flags so tester observability and Firebase can be enabled only for tester builds",
+  "Updated privacy-facing copy to explain limited tester telemetry and preserve the local-first trust boundary",
+  "Added a dedicated tester-distribution and observability setup guide for Firebase and Google Play testing"
 ]
 
 [locked_decisions]
@@ -49,8 +55,8 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_1_product_completion_mainline"
-why = "The project now has a locked production-readiness roadmap, so the next slice should advance the mainline release track while allowing sephira authored content to continue arriving in parallel."
+name = "phase_1_5_manual_firebase_and_play_verification"
+why = "The app now has a gated observability foundation, so the next slice is the manual Firebase enablement, Play tester rollout, and verification pass that validates the approved telemetry boundary with real tester builds."
 
 [[recommended_next_slice.goals]]
 id = "assessments_tab_shell"
@@ -87,7 +93,7 @@ assessment_library_screen = "Now lives in the top-level Assessments tab while Ho
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
-tester_distribution_and_observability = "Add Google Play tester distribution, crash reporting, and a minimal analytics/event taxonomy for the core reflective journey without weakening the local-first trust model."
+tester_distribution_and_observability = "A gated observability foundation is now in place. The next step is manual Firebase wiring, Play internal or closed testing setup, and tester verification against the approved event taxonomy."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
@@ -108,6 +114,7 @@ items = [
   "Coverage for trust-sensitive flow changes is strongest when it spans repository behavior, route/use-case wiring, ViewModel state, and the visible confirmation path on production surfaces.",
   "Tester analytics are most useful when they stay narrowly focused on the core journey and key recoverable failures instead of trying to measure everything at once.",
   "Crash and telemetry instrumentation should respect the product's privacy posture and be explained clearly once tester-distribution work begins.",
+  "A small app-owned telemetry layer keeps the event contract stable and lets Firebase be enabled only for tester builds instead of becoming a hidden requirement for every local build.",
   "Per-sephira visibility toggles in score-type trend mode are a UI concern, so filtering the chart-ready screen model locally is cleaner than pushing transient selection state into repository contracts.",
   "Dynamic graph screens are easier to keep stable when test tags target specific controls and saved-point rows instead of relying on repeated sephira names in visible text.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
@@ -118,13 +125,14 @@ items = [
 ]
 
 [verification]
-status = "user_reported_passed"
+status = "manual_verification_pending_for_phase_1_5"
 notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
   "Manual checks passed for Home summary and Results detail navigation.",
   "User verified the new top-level Assessments tab and assessment-exit shell behavior.",
   "User verified the destination-aware exit dialog copy and the footer-copy cleanup.",
-  "User reported that all tests passed for the explicit fresh-start and retake flow."
+  "User reported that all tests passed for the explicit fresh-start and retake flow.",
+  "Phase 1.5 observability wiring, updated UI tests, and new telemetry-related unit tests still need the user's requested local Gradle, Firebase, emulator, and Play verification pass."
 ]
 
 [files_to_read_first]

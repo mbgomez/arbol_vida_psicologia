@@ -2,6 +2,7 @@ package com.netah.hakkam.numyah.mind
 
 import android.app.Application
 import com.netah.hakkam.numyah.mind.app.AppLanguageManager
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import timber.log.Timber
@@ -13,11 +14,15 @@ class NumyahMindApplication : Application() {
     @Inject
     lateinit var appLanguageManager: AppLanguageManager
 
+    @Inject
+    lateinit var appTelemetry: AppTelemetry
+
     override fun onCreate() {
         super.onCreate()
         appLanguageManager.applyStoredLanguageMode()
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
+        appTelemetry.initialize()
     }
 }

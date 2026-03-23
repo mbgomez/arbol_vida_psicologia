@@ -37,6 +37,7 @@ class HomeScreenTest {
                     onStartAssessment = {},
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
+                    onConfirmStartFreshAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
                     onOpenLearn = {},
@@ -83,6 +84,7 @@ class HomeScreenTest {
                     onStartAssessment = { startedAssessment = true },
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
+                    onConfirmStartFreshAssessment = {},
                     onOpenLatestResults = { openedResults = true },
                     onOpenHistory = {},
                     onOpenLearn = {},
@@ -124,6 +126,7 @@ class HomeScreenTest {
                     onStartAssessment = {},
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
+                    onConfirmStartFreshAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
                     onOpenLearn = {},
@@ -149,6 +152,7 @@ class HomeScreenTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var resumedAssessment = false
         var startedFresh = false
+        var confirmedStartFresh = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -170,6 +174,7 @@ class HomeScreenTest {
                     onStartAssessment = {},
                     onStartFreshAssessment = { startedFresh = true },
                     onResumeAssessment = { resumedAssessment = true },
+                    onConfirmStartFreshAssessment = { confirmedStartFresh = true },
                     onOpenLatestResults = {},
                     onOpenHistory = {},
                     onOpenLearn = {},
@@ -190,5 +195,6 @@ class HomeScreenTest {
 
         assertTrue(resumedAssessment)
         assertTrue(startedFresh)
+        assertTrue(confirmedStartFresh)
     }
 }

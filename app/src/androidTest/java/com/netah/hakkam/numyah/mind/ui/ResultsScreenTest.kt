@@ -30,6 +30,7 @@ class ResultsScreenTest {
     fun resultsScreen_loadedState_opensSephiraDetail() {
         var openedSephiraId: SephiraId? = null
         var retookAssessment = false
+        var confirmedReplaceAssessment = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -38,6 +39,7 @@ class ResultsScreenTest {
                     uiState = ResultsUiState.Loaded(resultsModel()),
                     onPrimaryAction = {},
                     onRetakeAssessment = { retookAssessment = true },
+                    onConfirmReplaceActiveAssessment = { confirmedReplaceAssessment = true },
                     primaryActionLabel = "Back home",
                     onOpenSephiraDetail = { openedSephiraId = it.sephiraId }
                 )
@@ -51,6 +53,7 @@ class ResultsScreenTest {
 
         assertEquals(SephiraId.YESOD, openedSephiraId)
         assertEquals(true, retookAssessment)
+        assertEquals(true, confirmedReplaceAssessment)
     }
 
     @Test

@@ -1,6 +1,8 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.ResultsSessionScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -22,6 +24,7 @@ import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -38,6 +41,7 @@ class SephiraDetailViewModelTests {
     private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
     private lateinit var observeCompletedAssessmentByIdUseCase: ObserveCompletedAssessmentByIdUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
+    private lateinit var appTelemetry: AppTelemetry
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -48,6 +52,7 @@ class SephiraDetailViewModelTests {
         observeLatestCompletedAssessmentUseCase = mockk(relaxed = true)
         observeCompletedAssessmentByIdUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
+        appTelemetry = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
 
@@ -68,6 +73,9 @@ class SephiraDetailViewModelTests {
         assertEquals(46, state.model.deficiencyPercent)
         assertEquals("Healthy Yesod", state.model.healthyExpression)
         assertEquals(listOf("Practice one", "Practice two"), state.model.suggestedPractices)
+        verify(exactly = 1) {
+            appTelemetry.trackResultsDetailOpened(SephiraId.YESOD, ResultsSessionScope.LATEST)
+        }
     }
 
     @Test
@@ -92,7 +100,8 @@ class SephiraDetailViewModelTests {
             observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
             observeCompletedAssessmentByIdUseCase = observeCompletedAssessmentByIdUseCase,
             savedStateHandle = savedStateHandle,
-            currentLocaleProvider = currentLocaleProvider
+            currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry
         )
     }
 

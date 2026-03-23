@@ -3,6 +3,8 @@ package com.netah.hakkam.numyah.mind.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
@@ -129,7 +131,8 @@ data class HistorySessionUiModel(
 class HistoryViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
     private val observeAssessmentHistoryUseCase: ObserveAssessmentHistoryUseCase,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Loading)
@@ -150,7 +153,11 @@ class HistoryViewModel @Inject constructor(
                         HistoryUiState.Loaded(buildModel(questionnaire, history))
                     }
                 }
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.HISTORY_LOAD_FAILED,
+                    throwable = throwable
+                )
                 _uiState.value = HistoryUiState.Error
             }
         }

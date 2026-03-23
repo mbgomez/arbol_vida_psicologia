@@ -64,6 +64,14 @@ Focus:
 - prefer minimal, product-relevant analytics over broad behavioral tracking
 - add non-fatal reporting for important recoverable failures that testers may hit during real usage
 
+Current implementation standard for this phase:
+
+- gate tester observability behind explicit Gradle properties instead of making Firebase mandatory for every build
+- keep telemetry calls behind an app-owned interface so the product event contract stays stable if the backend changes
+- allow local Timber logging for observability verification when Firebase is not enabled
+- restrict the approved event taxonomy to the small journey set documented in [tester_distribution_and_observability.md](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\tester_distribution_and_observability.md)
+- keep privacy-facing copy explicit that crash and flow telemetry in tester builds does not include answers, interpretation copy, or saved score details
+
 Release gate:
 
 - tester builds should surface actionable crash and product-flow signals without violating the app's calm, privacy-respectful positioning

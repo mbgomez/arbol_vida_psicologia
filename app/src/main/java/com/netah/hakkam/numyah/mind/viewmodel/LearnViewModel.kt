@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.LearningCatalog
 import com.netah.hakkam.numyah.mind.domain.model.LearningCourse
 import com.netah.hakkam.numyah.mind.domain.model.LearningSection
@@ -104,7 +106,8 @@ data class LearnSectionUiModel(
 @HiltViewModel
 class LearnViewModel @Inject constructor(
     private val getLearningCatalogUseCase: GetLearningCatalogUseCase,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LearnUiState>(LearnUiState.Loading)
@@ -124,7 +127,11 @@ class LearnViewModel @Inject constructor(
             try {
                 val catalog = getLearningCatalogUseCase.run(currentLocaleProvider.current()).first()
                 _uiState.value = LearnUiState.Loaded(catalog.toUiModel())
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.LEARN_CATALOG_LOAD_FAILED,
+                    throwable = throwable
+                )
                 _uiState.value = LearnUiState.Error
             }
         }
@@ -136,7 +143,8 @@ class LearnCourseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getLearningCourseUseCase: GetLearningCourseUseCase,
     private val getCompletedLearningSectionsUseCase: GetCompletedLearningSectionsUseCase,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val courseId: String = checkNotNull(
@@ -173,7 +181,12 @@ class LearnCourseViewModel @Inject constructor(
                     } ?: LearnCourseUiState.NotFound
                 }.first()
                 _uiState.value = state
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.LEARN_COURSE_LOAD_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf("course_id" to courseId)
+                )
                 _uiState.value = LearnCourseUiState.Error
             }
         }
@@ -187,7 +200,8 @@ class LearnSectionViewModel @Inject constructor(
     private val getLearningSectionUseCase: GetLearningSectionUseCase,
     private val getCompletedLearningSectionsUseCase: GetCompletedLearningSectionsUseCase,
     private val markLearningSectionCompletedUseCase: MarkLearningSectionCompletedUseCase,
-    private val currentLocaleProvider: CurrentLocaleProvider
+    private val currentLocaleProvider: CurrentLocaleProvider,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val courseId: String = checkNotNull(
@@ -199,6 +213,7 @@ class LearnSectionViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<LearnSectionUiState>(LearnSectionUiState.Loading)
     val uiState: StateFlow<LearnSectionUiState> = _uiState.asStateFlow()
+    private var hasTrackedOpen = false
 
     init {
         loadSection()
@@ -218,7 +233,15 @@ class LearnSectionViewModel @Inject constructor(
                     )
                 ).firstOrNull()
                 loadSection()
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.LEARN_SECTION_COMPLETE_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf(
+                        "course_id" to courseId,
+                        "section_id" to sectionId
+                    )
+                )
                 _uiState.value = LearnSectionUiState.Error
             }
         }
@@ -243,9 +266,26 @@ class LearnSectionViewModel @Inject constructor(
                 _uiState.value = when {
                     course == null || section == null -> LearnSectionUiState.NotFound
                     !course.isSectionUnlocked(section.id, completedSectionKeys) -> LearnSectionUiState.Locked
-                    else -> LearnSectionUiState.Loaded(course.toSectionUiModel(section, completedSectionKeys))
+                    else -> LearnSectionUiState.Loaded(course.toSectionUiModel(section, completedSectionKeys)).also {
+                        if (!hasTrackedOpen) {
+                            hasTrackedOpen = true
+                            appTelemetry.trackLearnSectionOpened(
+                                courseId = course.id,
+                                sectionId = section.id,
+                                sectionOrder = section.order
+                            )
+                        }
+                    }
                 }
-            } catch (_: Throwable) {
+            } catch (throwable: Throwable) {
+                appTelemetry.recordNonFatal(
+                    key = NonFatalIssueKey.LEARN_SECTION_LOAD_FAILED,
+                    throwable = throwable,
+                    attributes = mapOf(
+                        "course_id" to courseId,
+                        "section_id" to sectionId
+                    )
+                )
                 _uiState.value = LearnSectionUiState.Error
             }
         }

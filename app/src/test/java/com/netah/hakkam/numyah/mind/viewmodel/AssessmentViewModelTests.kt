@@ -1,6 +1,7 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
@@ -60,6 +61,7 @@ class AssessmentViewModelTests {
     private lateinit var completeAssessmentUseCase: CompleteAssessmentUseCase
     private lateinit var assessmentScoringEngine: AssessmentScoringEngine
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
+    private lateinit var appTelemetry: AppTelemetry
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -77,6 +79,7 @@ class AssessmentViewModelTests {
         completeAssessmentUseCase = mockk(relaxed = true)
         assessmentScoringEngine = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
+        appTelemetry = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
     }
 
@@ -265,6 +268,7 @@ class AssessmentViewModelTests {
         assertEquals(ConfidenceLevel.LOW, state.model.confidence)
         assertFalse(state.model.hasNextSephira)
         assertEquals(null, state.model.nextSephiraName)
+        verify(exactly = 1) { appTelemetry.trackAssessmentCompleted(1) }
     }
 
     @Test
@@ -457,6 +461,7 @@ class AssessmentViewModelTests {
             completeAssessmentUseCase = completeAssessmentUseCase,
             assessmentScoringEngine = assessmentScoringEngine,
             currentLocaleProvider = currentLocaleProvider,
+            appTelemetry = appTelemetry,
             savedStateHandle = SavedStateHandle()
         )
     }

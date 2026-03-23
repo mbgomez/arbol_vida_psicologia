@@ -48,6 +48,7 @@ fun ResultsRoute(
     paddingValues: PaddingValues,
     onPrimaryAction: () -> Unit,
     onRetakeAssessment: () -> Unit,
+    onConfirmReplaceActiveAssessment: () -> Unit,
     primaryActionLabel: String,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit,
     viewModel: ResultsViewModel = hiltViewModel()
@@ -58,6 +59,7 @@ fun ResultsRoute(
         uiState = uiState,
         onPrimaryAction = onPrimaryAction,
         onRetakeAssessment = onRetakeAssessment,
+        onConfirmReplaceActiveAssessment = onConfirmReplaceActiveAssessment,
         primaryActionLabel = primaryActionLabel,
         onOpenSephiraDetail = onOpenSephiraDetail
     )
@@ -69,6 +71,7 @@ fun ResultsScreen(
     uiState: ResultsUiState,
     onPrimaryAction: () -> Unit,
     onRetakeAssessment: () -> Unit,
+    onConfirmReplaceActiveAssessment: () -> Unit,
     primaryActionLabel: String,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
@@ -105,6 +108,7 @@ fun ResultsScreen(
                 primaryActionLabel = primaryActionLabel,
                 onPrimaryAction = onPrimaryAction,
                 onRetakeAssessment = onRetakeAssessment,
+                onConfirmReplaceActiveAssessment = onConfirmReplaceActiveAssessment,
                 onOpenSephiraDetail = onOpenSephiraDetail
             )
         }
@@ -117,6 +121,7 @@ private fun ResultsLoadedState(
     primaryActionLabel: String,
     onPrimaryAction: () -> Unit,
     onRetakeAssessment: () -> Unit,
+    onConfirmReplaceActiveAssessment: () -> Unit,
     onOpenSephiraDetail: (ResultsSephiraUiModel) -> Unit
 ) {
     var showReplaceDialog by remember { mutableStateOf(false) }
@@ -198,6 +203,7 @@ private fun ResultsLoadedState(
             currentSephiraName = model.activeAssessment.sephiraName,
             onConfirm = {
                 showReplaceDialog = false
+                onConfirmReplaceActiveAssessment()
                 onRetakeAssessment()
             },
             onDismiss = { showReplaceDialog = false }

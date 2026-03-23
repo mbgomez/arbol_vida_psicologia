@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netah.hakkam.numyah.mind.BuildConfig
 import com.netah.hakkam.numyah.mind.app.AppLanguageManager
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
+import com.netah.hakkam.numyah.mind.app.observability.SettingsChangeKey
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
@@ -48,7 +51,8 @@ class SettingsViewModel @Inject constructor(
     private val setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase,
     private val getMockHistoryModeUseCase: GetMockHistoryModeUseCase,
     private val setMockHistoryModeUseCase: SetMockHistoryModeUseCase,
-    private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
+    private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
@@ -81,18 +85,30 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             setLanguageModeUseCase.run(languageMode).collect { }
             appLanguageManager.applyLanguageMode(languageMode)
+            appTelemetry.trackSettingChanged(
+                key = SettingsChangeKey.LANGUAGE,
+                value = languageMode.analyticsValue
+            )
         }
     }
 
     fun onThemeModeSelected(themeMode: AppThemeMode) {
         viewModelScope.launch {
             setThemeModeUseCase.run(themeMode).collect { }
+            appTelemetry.trackSettingChanged(
+                key = SettingsChangeKey.THEME,
+                value = themeMode.analyticsValue
+            )
         }
     }
 
     fun onAssessmentHonestyNoticeChanged(visible: Boolean) {
         viewModelScope.launch {
             setAssessmentHonestyNoticeVisibilityUseCase.run(visible).collect { }
+            appTelemetry.trackSettingChanged(
+                key = SettingsChangeKey.HONESTY_NOTICE,
+                value = visible.toString()
+            )
         }
     }
 
@@ -106,8 +122,32 @@ class SettingsViewModel @Inject constructor(
     fun replayOnboarding(onCompleted: () -> Unit) {
         viewModelScope.launch {
             setOnboardingCompletedUseCase.run(false).collect {
+                appTelemetry.trackOnboardingReplayed()
                 onCompleted()
             }
         }
     }
+
+    fun reportTestNonFatal() {
+        if (!BuildConfig.DEBUG) return
+        appTelemetry.recordNonFatal(
+            key = NonFatalIssueKey.TESTER_VERIFICATION_NON_FATAL,
+            throwable = IllegalStateException("Manual tester non-fatal verification"),
+            attributes = mapOf("source" to "settings_debug")
+        )
+    }
 }
+
+private val AppLanguageMode.analyticsValue: String
+    get() = when (this) {
+        AppLanguageMode.SYSTEM -> "system"
+        AppLanguageMode.ENGLISH -> "english"
+        AppLanguageMode.SPANISH -> "spanish"
+    }
+
+private val AppThemeMode.analyticsValue: String
+    get() = when (this) {
+        AppThemeMode.SYSTEM -> "system"
+        AppThemeMode.LIGHT -> "light"
+        AppThemeMode.DARK -> "dark"
+    }

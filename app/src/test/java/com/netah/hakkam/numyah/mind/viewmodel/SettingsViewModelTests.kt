@@ -1,6 +1,9 @@
 package com.netah.hakkam.numyah.mind.viewmodel
 
 import com.netah.hakkam.numyah.mind.app.AppLanguageManager
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
+import com.netah.hakkam.numyah.mind.app.observability.SettingsChangeKey
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
@@ -36,6 +39,7 @@ class SettingsViewModelTests {
     private lateinit var getMockHistoryModeUseCase: GetMockHistoryModeUseCase
     private lateinit var setMockHistoryModeUseCase: SetMockHistoryModeUseCase
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
+    private lateinit var appTelemetry: AppTelemetry
 
     @get:Rule
     var coroutinesRule = CoroutinesTestRule()
@@ -52,6 +56,7 @@ class SettingsViewModelTests {
         getMockHistoryModeUseCase = mockk(relaxed = true)
         setMockHistoryModeUseCase = mockk(relaxed = true)
         setOnboardingCompletedUseCase = mockk(relaxed = true)
+        appTelemetry = mockk(relaxed = true)
 
         every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SYSTEM)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.SYSTEM)
@@ -75,7 +80,8 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         val uiState = viewModel.uiState.value as SettingsUiState.Ready
@@ -99,13 +105,17 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         viewModel.onLanguageModeSelected(AppLanguageMode.ENGLISH)
 
         verify(exactly = 1) { setLanguageModeUseCase.run(AppLanguageMode.ENGLISH) }
         verify(exactly = 1) { appLanguageManager.applyLanguageMode(AppLanguageMode.ENGLISH) }
+        verify(exactly = 1) {
+            appTelemetry.trackSettingChanged(SettingsChangeKey.LANGUAGE, "english")
+        }
     }
 
     @Test
@@ -122,12 +132,16 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         viewModel.onThemeModeSelected(AppThemeMode.LIGHT)
 
         verify(exactly = 1) { setThemeModeUseCase.run(AppThemeMode.LIGHT) }
+        verify(exactly = 1) {
+            appTelemetry.trackSettingChanged(SettingsChangeKey.THEME, "light")
+        }
     }
 
     @Test
@@ -144,12 +158,16 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         viewModel.onAssessmentHonestyNoticeChanged(false)
 
         verify(exactly = 1) { setAssessmentHonestyNoticeVisibilityUseCase.run(false) }
+        verify(exactly = 1) {
+            appTelemetry.trackSettingChanged(SettingsChangeKey.HONESTY_NOTICE, "false")
+        }
     }
 
     @Test
@@ -166,7 +184,8 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         viewModel.onMockHistoryEnabledChanged(true)
@@ -189,7 +208,8 @@ class SettingsViewModelTests {
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
-            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
         )
 
         viewModel.replayOnboarding {
@@ -197,6 +217,34 @@ class SettingsViewModelTests {
         }
 
         verify(exactly = 1) { setOnboardingCompletedUseCase.run(false) }
+        verify(exactly = 1) { appTelemetry.trackOnboardingReplayed() }
         assertEquals(1, callbackCount)
+    }
+
+    @Test
+    fun reportTestNonFatal_recordsVerificationIssue() = coroutinesRule.runBlockingTest {
+        val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
+            getThemeModeUseCase = getThemeModeUseCase,
+            setThemeModeUseCase = setThemeModeUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
+        )
+
+        viewModel.reportTestNonFatal()
+
+        verify(exactly = 1) {
+            appTelemetry.recordNonFatal(
+                key = NonFatalIssueKey.TESTER_VERIFICATION_NON_FATAL,
+                throwable = any(),
+                attributes = mapOf("source" to "settings_debug")
+            )
+        }
     }
 }

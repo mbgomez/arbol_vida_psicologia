@@ -2,6 +2,8 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
+import com.netah.hakkam.numyah.mind.app.observability.OnboardingCompletionMethod
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,7 +23,8 @@ data class OnboardingUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
+    private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase,
+    private val appTelemetry: AppTelemetry
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -45,19 +48,29 @@ class OnboardingViewModel @Inject constructor(
     fun onContinue(onFinished: () -> Unit) {
         val currentState = _uiState.value
         if (currentState.isLastPage) {
-            completeOnboarding(onFinished)
+            completeOnboarding(
+                method = OnboardingCompletionMethod.FINISH,
+                onFinished = onFinished
+            )
         } else {
             _uiState.value = currentState.copy(currentPage = currentState.currentPage + 1)
         }
     }
 
     fun skip(onFinished: () -> Unit) {
-        completeOnboarding(onFinished)
+        completeOnboarding(
+            method = OnboardingCompletionMethod.SKIP,
+            onFinished = onFinished
+        )
     }
 
-    private fun completeOnboarding(onFinished: () -> Unit) {
+    private fun completeOnboarding(
+        method: OnboardingCompletionMethod,
+        onFinished: () -> Unit
+    ) {
         viewModelScope.launch {
             setOnboardingCompletedUseCase.run(true).collect {
+                appTelemetry.trackOnboardingCompleted(method)
                 onFinished()
             }
         }
