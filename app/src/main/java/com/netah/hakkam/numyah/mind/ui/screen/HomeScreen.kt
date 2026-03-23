@@ -27,7 +27,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.HomeViewModel
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
-    onOpenAssessmentLibrary: () -> Unit,
+    onStartAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -39,7 +39,7 @@ fun HomeRoute(
     HomeScreen(
         paddingValues = paddingValues,
         uiState = uiState,
-        onOpenAssessmentLibrary = onOpenAssessmentLibrary,
+        onStartAssessment = onStartAssessment,
         onResumeAssessment = onResumeAssessment,
         onOpenLatestResults = onOpenLatestResults,
         onOpenHistory = onOpenHistory,
@@ -52,7 +52,7 @@ fun HomeRoute(
 fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
-    onOpenAssessmentLibrary: () -> Unit,
+    onStartAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
     onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -80,7 +80,7 @@ fun HomeScreen(
         }
 
         Button(
-            onClick = if (activeAssessment != null) onResumeAssessment else onOpenAssessmentLibrary,
+            onClick = if (activeAssessment != null) onResumeAssessment else onStartAssessment,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -94,20 +94,12 @@ fun HomeScreen(
             )
         }
 
-        if (hasLatestReflection || activeAssessment != null) {
+        if (hasLatestReflection) {
             OutlinedButton(
-                onClick = if (hasLatestReflection) onOpenLatestResults else onOpenAssessmentLibrary,
+                onClick = onOpenLatestResults,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(
-                        if (hasLatestReflection) {
-                            R.string.home_secondary_cta
-                        } else {
-                            R.string.home_library_cta
-                        }
-                    )
-                )
+                Text(text = stringResource(R.string.home_secondary_cta))
             }
         }
 

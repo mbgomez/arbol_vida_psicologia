@@ -2,13 +2,14 @@ package com.netah.hakkam.numyah.mind.ui.nav.route
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Assignment
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.netah.hakkam.numyah.mind.R
-import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 
 sealed class AppDestination(
     val route: String,
@@ -67,12 +68,18 @@ sealed class AppDestination(
 
 data class TopLevelDestination(
     val destination: AppDestination,
-    val icon: ImageVector
+    val icon: ImageVector,
+    @StringRes val navLabelRes: Int = destination.titleRes
 )
 
 val topLevelDestinations = listOf(
     TopLevelDestination(AppDestination.Home, Icons.Outlined.Home),
-    TopLevelDestination(AppDestination.History, Icons.Outlined.List),
+    TopLevelDestination(
+        destination = AppDestination.AssessmentLibrary,
+        icon = Icons.Outlined.Assignment,
+        navLabelRes = R.string.nav_assessments
+    ),
+    TopLevelDestination(AppDestination.History, Icons.Outlined.History),
     TopLevelDestination(AppDestination.Learn, Icons.Outlined.Info),
     TopLevelDestination(AppDestination.Settings, Icons.Outlined.Settings)
 )

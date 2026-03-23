@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
+import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentLibraryScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.ActiveAssessmentUiModel
@@ -54,5 +56,32 @@ class AssessmentLibraryScreenTest {
         composeTestRule.onNodeWithText("Resume reflection").performClick()
 
         assertTrue(openedAssessment)
+    }
+
+    @Test
+    fun assessmentLibrary_loadedState_showsUserFacingFooterCopy() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentLibraryScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentLibraryUiState.Loaded(
+                        AssessmentLibraryUiModel(
+                            entry = AssessmentLibraryEntryUiModel(
+                                title = "Tree of Life reflection",
+                                sephiraCount = 10,
+                                activeAssessment = null
+                            )
+                        )
+                    ),
+                    onOpenAssessment = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_library_footer)
+        ).assertIsDisplayed()
     }
 }

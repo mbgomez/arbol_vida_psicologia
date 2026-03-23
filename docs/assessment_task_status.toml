@@ -1,10 +1,10 @@
 version = 1
 project = "Numyah Mind"
-updated_utc = "2026-03-22"
+updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Home now separates start/resume/latest-reflection responsibilities more clearly, an assessment library exists, Results has per-sephira detail, History opens saved result overviews, Learn is present, Settings is present, and assessment supports multi-sephira progression across the seeded set."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the five-tab shell now has destination-aware exit messaging plus adaptive single-line nav labeling."
 status = "stable_after_tests_and_manual_checks"
 
 [recent_work]
@@ -13,11 +13,16 @@ completed = [
   "Added Home summary driven by latest completed assessment",
   "Added last assessment date and relative days-since text on Home",
   "Separated Home resume state from latest-completed reflection state",
-  "Introduced an assessment library screen behind Home while keeping the top-level tabs unchanged",
+  "Promoted Assessments into the top-level shell and routed the library through that tab",
+  "Kept Home focused on direct assessment continuation and latest-reflection value instead of library browsing",
+  "Made shell exit-from-assessment confirmation work consistently when switching to any top-level tab",
+  "Made shell exit dialog body and confirm action destination-aware instead of hardcoding Home",
+  "Adjusted five-tab bottom-nav labeling to keep long labels readable on smaller phones without wrapping",
+  "Shifted empty/error History actions toward the dedicated Assessments surface",
   "Added per-sephira results detail screen and navigation",
   "Extended seeded assessment content shape with detailContent",
   "Added safe JSON fallbacks so unfinished seeded sections still load",
-  "Updated tests for Home, the assessment library, Results detail, repository content mapping, and viewmodels"
+  "Updated tests for Home, shell route ordering, the assessment library, Results detail, repository content mapping, and viewmodels"
 ]
 
 [locked_decisions]
@@ -30,22 +35,22 @@ history_behavior = "History remains the surface for completed sessions, opens th
 
 [recommended_next_slice]
 name = "assessments_tab_and_history_trend_foundation"
-why = "The product direction is now explicit: add a top-level Assessments tab while preserving Home's fast-entry flow, then prepare History to grow into trends and graphs."
+why = "The shell direction is now implemented, so the next slice can stop revisiting entry-surface debates and focus on History trend foundations plus stronger completed-results polish."
 
 [[recommended_next_slice.goals]]
 id = "assessments_tab_shell"
-description = "Add a top-level Assessments tab that routes to the library while keeping Home start/resume actions intact."
+description = "Done in this slice."
 
 [[recommended_next_slice.goals]]
 id = "home_and_assessments_balance"
-description = "Rebalance Home and Assessments so Home keeps fast actions and value summary while Assessments owns browsing."
+description = "Done in this slice."
 
 [[recommended_next_slice.goals]]
 id = "history_graph_foundation"
 description = "Lock the first History trend metrics and chart-ready state models so a later thread can build graph UI cleanly."
 
 [future_options]
-assessment_library_screen = "Should move into the top-level Assessments tab while Home keeps direct start/resume entry points."
+assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Add retake assessment and stronger bridges from Home summary into Results and detail."
 history_graphs = "Add calm, readable trend graphs inside History after the first chart metrics and empty states are locked."
@@ -58,14 +63,19 @@ items = [
   "A dedicated per-sephira detail route adds real product value and makes Results feel less like a terminal dashboard.",
   "Keeping result-detail content in the same seeded questionnaire pipeline is simpler than inventing a second local content system.",
   "The moment the product wants to signal a real multi-assessment future, including user-authored assessments, a top-level Assessments tab becomes a product statement rather than unnecessary shell noise.",
-  "History is the right long-term home for graphs because it already owns completed-session re-entry and time-based reflection."
+  "History is the right long-term home for graphs because it already owns completed-session re-entry and time-based reflection.",
+  "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
+  "Assessment exit confirmation has to name the actual destination in both the body and the confirm action or the shell feels untrustworthy.",
+  "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure."
 ]
 
 [verification]
 status = "user_reported_passed"
 notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
-  "Manual checks passed for Home summary and Results detail navigation."
+  "Manual checks passed for Home summary and Results detail navigation.",
+  "User verified the new top-level Assessments tab and assessment-exit shell behavior.",
+  "User verified the destination-aware exit dialog copy and the footer-copy cleanup."
 ]
 
 [files_to_read_first]

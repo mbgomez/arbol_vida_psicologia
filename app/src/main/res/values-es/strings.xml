@@ -2,6 +2,7 @@
     <string name="app_name">Numyah Mind</string>
     <string name="progress_indicator_desccription">Cargando, por favor espera</string>
     <string name="nav_home">Inicio</string>
+    <string name="nav_assessments">Evaluaciones</string>
     <string name="nav_history">Historial</string>
     <string name="nav_learn">Aprender</string>
     <string name="nav_settings">Ajustes</string>
@@ -23,7 +24,6 @@
     <string name="home_subtitle">Un espacio sereno y local para la autorreflexion psicologica a traves de las diez sefirot.</string>
     <string name="home_primary_cta">Iniciar evaluacion</string>
     <string name="home_resume_cta">Retomar evaluacion</string>
-    <string name="home_library_cta">Biblioteca de evaluaciones</string>
     <string name="home_secondary_cta">Ver ultimos resultados</string>
     <string name="home_active_eyebrow">En progreso</string>
     <string name="home_active_title">Retoma tu reflexion actual</string>
@@ -95,7 +95,7 @@
     <string name="assessment_library_resume_question_body">Tu sesion actual en progreso esta en %1$s, pregunta %2$d de %3$d. %4$d de %5$d sefirot ya tienen resultados guardados.</string>
     <string name="assessment_library_start_action">Comenzar reflexion</string>
     <string name="assessment_library_resume_action">Retomar reflexion</string>
-    <string name="assessment_library_footer">La biblioteca se mantiene pequena por ahora para que el flujo de evaluacion siga siendo sereno mientras se agregan futuras evaluaciones detras del mismo punto de entrada.</string>
+    <string name="assessment_library_footer">Con el tiempo podran sumarse mas reflexiones aqui. Por ahora, este espacio comienza con la reflexion del Arbol de la Vida y mantiene la experiencia serena y enfocada.</string>
     <string name="assessment_honesty_title">Una nota breve antes de comenzar</string>
     <string name="assessment_honesty_card_title">Esta reflexion funciona mejor con honestidad</string>
     <string name="assessment_honesty_body">Esta reflexion es mas util cuando tus respuestas son honestas sobre como te sientes hoy.\n\nNo hay respuestas correctas aqui. No necesitas mostrar tu mejor version, solo tu experiencia real en este momento.</string>
@@ -156,7 +156,9 @@
     <string name="assessment_error_back">La pregunta anterior no pudo restaurarse en este momento. Intentalo de nuevo.</string>
     <string name="assessment_exit_dialog_title">Salir de esta reflexion?</string>
     <string name="assessment_exit_dialog_body">Tu progreso se guarda mientras avanzas. Si vuelves al inicio ahora, podras continuar esta reflexion despues.</string>
+    <string name="assessment_exit_dialog_body_to">Tu progreso se guarda mientras avanzas. Si vas a %1$s ahora, podras continuar esta reflexion despues.</string>
     <string name="assessment_exit_dialog_confirm">Ir a Inicio</string>
+    <string name="assessment_exit_dialog_confirm_to">Ir a %1$s</string>
     <string name="assessment_exit_dialog_cancel">Quedarme aqui</string>
     <string name="placeholder_results_title">Vista general de resultados</string>
     <string name="placeholder_results_body">Esta area ira creciendo poco a poco hasta convertirse en tu perfil completo del Arbol de la Vida a medida que se completen e interpreten mas sefirot.</string>
@@ -200,10 +202,10 @@
     <string name="history_loading_body">Reuniendo evaluaciones completadas desde tu dispositivo para que puedas volver a ellas con calma.</string>
     <string name="history_empty_title">Todavia no hay reflexiones guardadas</string>
     <string name="history_empty_body">Cuando completes una evaluacion, aparecera aqui para que puedas revisitar esa reflexion mas adelante.</string>
-    <string name="history_empty_action">Iniciar una reflexion</string>
+    <string name="history_empty_action">Ver evaluaciones</string>
     <string name="history_error_title">El historial no esta disponible ahora</string>
     <string name="history_error_body">Tus evaluaciones guardadas no pudieron cargarse en este momento. Puedes volver a la evaluacion e intentarlo despues.</string>
-    <string name="history_error_action">Iniciar una reflexion</string>
+    <string name="history_error_action">Ver evaluaciones</string>
     <string name="history_overview_eyebrow">Reflexiones guardadas</string>
     <string name="history_overview_title">Tu historial de reflexion</string>
     <string name="history_overview_body">Hay %1$d sesiones guardadas de %2$s. Cada una abre la vista completa que quedo guardada en ese momento.</string>

@@ -172,6 +172,7 @@ String rules:
 - stable UI copy belongs in string resources
 - hardcoded user-facing strings in Kotlin should be removed
 - English and Spanish copy should remain semantically aligned
+- footer and supporting copy on production surfaces should stay user-facing and should not explain internal architecture, staged rollout structure, or developer intent
 
 Current copy cleanup targets:
 
@@ -292,6 +293,10 @@ Avoid:
   - open latest completed reflection
 - `Assessments` should own the browsing surface for the growing assessment library.
 - The assessment library should be shaped to support both future first-party assessments and future user-authored assessments without reshaping the shell again.
+- In the five-tab bottom shell, tab labels should remain single-line on smaller phones. Prefer adaptive label sizing or a shorter nav-specific label over wrapped text.
+- The bottom-nav label may be shorter than the destination title when needed for fit, but the destination title itself should remain the fuller product-facing wording.
+- Assessment-exit confirmation should be destination-aware in both the button label and supporting body text.
+- Returning from an in-progress assessment to Home should prefer popping back to the existing Home surface when that route is already in the stack.
 
 ### 16. History Trend Standard
 
@@ -371,6 +376,8 @@ A refactor pass is considered complete only when:
 - Semantic tokens reduce churn only when they replace app-wide reuse. Onboarding-specific tokens should stay onboarding-specific.
 - Large screens improve fastest when the screen becomes an orchestrator and the repeated visual sections move into owned components.
 - Navigation state should follow real routes whenever possible. Mirrored local shell state becomes fragile and causes unnecessary coupling.
+- Five-tab bottom navigation reaches a readability threshold quickly on narrow devices. Label fit and destination wording need to be locked as part of shell design, not as afterthought polish.
+- Destination-aware confirmation copy is part of navigation trust, not optional polish.
 - When a refactor changes a project standard, updating the docs in the same pass prevents the next thread from rebuilding old patterns.
 - Manual smoke testing remains the fastest way to catch UI regressions during refactor work, especially for shell behavior, nested navigation, and visual elevation issues.
 - Persistence and content hardening should be timed intentionally. Not every long-term standard needs to be implemented immediately if the delivery milestone is different.

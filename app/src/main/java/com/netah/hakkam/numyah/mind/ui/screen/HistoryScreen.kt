@@ -39,7 +39,7 @@ import java.util.Locale
 fun HistoryRoute(
     paddingValues: PaddingValues,
     onOpenAssessment: (Long) -> Unit,
-    onStartAssessment: () -> Unit,
+    onOpenAssessments: () -> Unit,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -47,7 +47,7 @@ fun HistoryRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onOpenAssessment = onOpenAssessment,
-        onStartAssessment = onStartAssessment
+        onOpenAssessments = onOpenAssessments
     )
 }
 
@@ -56,7 +56,7 @@ fun HistoryScreen(
     paddingValues: PaddingValues,
     uiState: HistoryUiState,
     onOpenAssessment: (Long) -> Unit,
-    onStartAssessment: () -> Unit
+    onOpenAssessments: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         when (uiState) {
@@ -71,7 +71,7 @@ fun HistoryScreen(
                 title = stringResource(R.string.history_empty_title),
                 body = stringResource(R.string.history_empty_body),
                 actionLabel = stringResource(R.string.history_empty_action),
-                onAction = onStartAssessment
+                onAction = onOpenAssessments
             )
 
             HistoryUiState.Error -> HistoryMessageState(
@@ -79,7 +79,7 @@ fun HistoryScreen(
                 title = stringResource(R.string.history_error_title),
                 body = stringResource(R.string.history_error_body),
                 actionLabel = stringResource(R.string.history_error_action),
-                onAction = onStartAssessment
+                onAction = onOpenAssessments
             )
 
             is HistoryUiState.Loaded -> HistoryLoadedState(

@@ -41,9 +41,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavType
@@ -102,7 +106,7 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 HomeRoute(
                     paddingValues = paddingValues,
-                    onOpenAssessmentLibrary = { navController.navigate(AppDestination.AssessmentLibrary.route) },
+                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
                     onResumeAssessment = { navController.navigate(AppDestination.Assessment.route) },
                     onOpenLatestResults = { navController.navigate(AppDestination.Results.createRoute()) },
                     onOpenHistory = { navController.navigate(AppDestination.History.route) },
@@ -112,13 +116,7 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.AssessmentLibrary.route) {
-            AppShell(
-                navController = navController,
-                titleOverride = stringResource(R.string.screen_assessment_library),
-                showBottomBar = false,
-                useDetailHeader = true,
-                onBack = { navController.navigateUp() }
-            ) { paddingValues ->
+            AppShell(navController = navController) { paddingValues ->
                 AssessmentLibraryRoute(
                     paddingValues = paddingValues,
                     onOpenAssessment = { navController.navigate(AppDestination.Assessment.route) }
@@ -213,7 +211,7 @@ fun MainNavGraph(
                     onOpenAssessment = { sessionId ->
                         navController.navigate(AppDestination.Results.createRoute(sessionId))
                     },
-                    onStartAssessment = { navController.navigate(AppDestination.AssessmentLibrary.route) }
+                    onOpenAssessments = { navController.navigate(AppDestination.AssessmentLibrary.route) }
                 )
             }
         }
@@ -359,7 +357,9 @@ private fun AppShell(
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
     val currentTitle = titleOverride ?: destinationTitle(currentRoute)
-    var showExitAssessmentDialog by remember { mutableStateOf(false) }
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+    var exitAssessmentDestination by remember { mutableStateOf<AppDestination?>(null) }
+    val showExitAssessmentDialog = exitAssessmentDestination != null
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -384,22 +384,20 @@ private fun AppShell(
                     topLevelDestinations.forEach { topLevelDestination ->
                         val selected = currentDestination?.hierarchy?.any {
                             it.route == topLevelDestination.destination.route
-                        } == true
+                        } == true || (
+                            currentRoute == AppDestination.Assessment.route &&
+                                topLevelDestination.destination == AppDestination.AssessmentLibrary
+                            )
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
-                                if (currentRoute == AppDestination.Assessment.route &&
-                                    topLevelDestination.destination.route == AppDestination.Home.route
-                                ) {
-                                    showExitAssessmentDialog = true
+                                if (currentRoute == AppDestination.Assessment.route) {
+                                    exitAssessmentDestination = topLevelDestination.destination
                                 } else {
-                                    navController.navigate(topLevelDestination.destination.route) {
-                                        popUpTo(AppDestination.Home.route) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    navigateToTopLevelDestination(
+                                        navController = navController,
+                                        destination = topLevelDestination.destination
+                                    )
                                 }
                             },
                             icon = {
@@ -409,7 +407,17 @@ private fun AppShell(
                                 )
                             },
                             label = {
-                                Text(text = stringResource(topLevelDestination.destination.titleRes))
+                                val label = stringResource(topLevelDestination.navLabelRes)
+                                Text(
+                                    text = label,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = navigationLabelTextStyle(
+                                        screenWidthDp = screenWidthDp,
+                                        labelLength = label.length
+                                    )
+                                )
                             }
                         )
                     }
@@ -427,37 +435,97 @@ private fun AppShell(
 
     if (showExitAssessmentDialog) {
         AlertDialog(
-            onDismissRequest = { showExitAssessmentDialog = false },
+            onDismissRequest = { exitAssessmentDestination = null },
             title = {
                 Text(text = stringResource(R.string.assessment_exit_dialog_title))
             },
             text = {
-                Text(text = stringResource(R.string.assessment_exit_dialog_body))
+                Text(
+                    text = stringResource(
+                        R.string.assessment_exit_dialog_body_to,
+                        stringResource(destinationTitleRes(exitAssessmentDestination))
+                    )
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showExitAssessmentDialog = false
-                        navController.navigate(AppDestination.Home.route) {
-                            popUpTo(AppDestination.Home.route) {
-                                inclusive = true
-                                saveState = false
-                            }
-                            launchSingleTop = true
-                            restoreState = false
-                        }
+                        val destination = exitAssessmentDestination ?: return@TextButton
+                        exitAssessmentDestination = null
+                        leaveAssessmentAndNavigate(
+                            navController = navController,
+                            destination = destination
+                        )
                     }
                 ) {
-                    Text(text = stringResource(R.string.assessment_exit_dialog_confirm))
+                    Text(
+                        text = stringResource(
+                            R.string.assessment_exit_dialog_confirm_to,
+                            stringResource(destinationTitleRes(exitAssessmentDestination))
+                        )
+                    )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showExitAssessmentDialog = false }) {
+                TextButton(onClick = { exitAssessmentDestination = null }) {
                     Text(text = stringResource(R.string.assessment_exit_dialog_cancel))
                 }
             }
         )
     }
+}
+
+@Composable
+private fun navigationLabelTextStyle(
+    screenWidthDp: Int,
+    labelLength: Int
+): TextStyle {
+    val fontSize = when {
+        screenWidthDp <= 360 && labelLength >= 10 -> 8.sp
+        screenWidthDp <= 360 -> 9.sp
+        screenWidthDp <= 420 && labelLength >= 10 -> 9.sp
+        screenWidthDp <= 420 -> 10.sp
+        labelLength >= 10 -> 10.sp
+        else -> 11.sp
+    }
+
+    return MaterialTheme.typography.labelSmall.copy(
+        fontSize = fontSize,
+        lineHeight = fontSize,
+        letterSpacing = 0.sp
+    )
+}
+
+private fun navigateToTopLevelDestination(
+    navController: NavHostController,
+    destination: AppDestination
+) {
+    navController.navigate(destination.route) {
+        popUpTo(AppDestination.Home.route) {
+            saveState = true
+            inclusive = false
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+private fun leaveAssessmentAndNavigate(
+    navController: NavHostController,
+    destination: AppDestination
+) {
+    if (destination == AppDestination.Home && navController.popBackStack(AppDestination.Home.route, false)) {
+        return
+    }
+
+    navigateToTopLevelDestination(
+        navController = navController,
+        destination = destination
+    )
+}
+
+private fun destinationTitleRes(destination: AppDestination?): Int {
+    return destination?.titleRes ?: AppDestination.Home.titleRes
 }
 
 @Composable

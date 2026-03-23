@@ -40,6 +40,7 @@ The app should launch with bilingual support for English and Spanish.
   - starting a new assessment
   - resuming an in-progress assessment
   - opening the latest completed reflection
+- If a user leaves an in-progress assessment for Home, the shell should return them to the existing Home surface when possible instead of rebuilding a new navigation stack unnecessarily.
 - Retake assessment from the results screen.
 - Review previous completed assessments from history.
 - Open a sephira detail screen directly from a saved assessment.
@@ -74,6 +75,9 @@ Locked history standard:
   - `Home` for fast entry, resume, and latest reflection value
   - `Assessments` for browsing the growing library
   - `History` for completed reflections and future trend graphs
+- In the five-tab bottom shell, labels should remain readable on smaller phones. Prefer adaptive single-line label sizing and, when necessary, a shorter nav-only label rather than multi-line wrapping of the tab text.
+- The visible screen title may stay fuller than the bottom-nav label. A tab can use a shortened nav label while the destination header keeps the full product-facing name.
+- When a user tries to leave an in-progress assessment through the shell, the exit dialog should name the actual destination in both its body and confirm action.
 - Refactored Compose screens should keep resource lookup and visual tokens close to the UI section that uses them, so extracted sub-composables remain self-contained and easier to maintain.
 - Shared dimension tokens should be grouped by semantic role, not just by matching numeric value.
 - Local execution workflow should stay explicit: Android Studio runs, Gradle builds, emulator checks, and manual testing are performed by the user, while implementation changes should include targeted verification steps for the user to run.
@@ -295,6 +299,7 @@ User-facing copy rules:
 
 - Prefer direct user-oriented language such as "you will reflect on" or "your results may show" rather than builder-oriented language such as "the app will later include."
 - Avoid copy that references implementation state, roadmap progress, or development placeholders in production-facing flows.
+- Footer and supporting copy on production browsing surfaces should describe what the user can do there, not how the team is structuring or staging the feature internally.
 - Keep onboarding understandable to a first-time user without requiring product or technical context.
 - Production-grade screens should externalize stable strings and dimension values early so localized copy, polish passes, and layout tuning remain low-risk.
 - When result confidence is low, use softened interpretation such as "leans toward balance" or "current tendency" rather than definitive labels.

@@ -2,6 +2,7 @@
     <string name="app_name">Numyah Mind</string>
     <string name="progress_indicator_desccription">Loading, please wait</string>
     <string name="nav_home">Home</string>
+    <string name="nav_assessments">Assessments</string>
     <string name="nav_history">History</string>
     <string name="nav_learn">Learn</string>
     <string name="nav_settings">Settings</string>
@@ -23,7 +24,6 @@
     <string name="home_subtitle">A calm, local-first space for psychological self-reflection through the ten sephirot.</string>
     <string name="home_primary_cta">Start assessment</string>
     <string name="home_resume_cta">Resume assessment</string>
-    <string name="home_library_cta">Assessment library</string>
     <string name="home_secondary_cta">View latest results</string>
     <string name="home_active_eyebrow">In progress</string>
     <string name="home_active_title">Resume your current reflection</string>
@@ -95,7 +95,7 @@
     <string name="assessment_library_resume_question_body">Your current in-progress session is in %1$s at question %2$d of %3$d. %4$d of %5$d sephirot already have saved results.</string>
     <string name="assessment_library_start_action">Start reflection</string>
     <string name="assessment_library_resume_action">Resume reflection</string>
-    <string name="assessment_library_footer">The library is intentionally small for now so the assessment flow can stay calm while future assessments are added behind the same entry point.</string>
+    <string name="assessment_library_footer">More reflections may be added here over time. For now, this space begins with the Tree of Life reflection and keeps the experience calm and focused.</string>
     <string name="assessment_honesty_title">A small note before you begin</string>
     <string name="assessment_honesty_card_title">This reflection works best with honesty</string>
     <string name="assessment_honesty_body">This reflection is most useful when your answers are honest about how things feel today.\n\nThere are no right answers here. You do not need to present your best self, only your real current experience.</string>
@@ -156,7 +156,9 @@
     <string name="assessment_error_back">The previous question could not be restored right now. Please try again.</string>
     <string name="assessment_exit_dialog_title">Leave this reflection?</string>
     <string name="assessment_exit_dialog_body">Your progress is saved as you go. If you return home now, you can continue this reflection later.</string>
+    <string name="assessment_exit_dialog_body_to">Your progress is saved as you go. If you go to %1$s now, you can continue this reflection later.</string>
     <string name="assessment_exit_dialog_confirm">Go to Home</string>
+    <string name="assessment_exit_dialog_confirm_to">Go to %1$s</string>
     <string name="assessment_exit_dialog_cancel">Stay here</string>
     <string name="placeholder_results_title">Results overview</string>
     <string name="placeholder_results_body">This area will gradually grow into your full Tree of Life profile as more sephirot are completed and interpreted.</string>
@@ -200,10 +202,10 @@
     <string name="history_loading_body">Gathering completed assessments from your device so you can revisit them calmly.</string>
     <string name="history_empty_title">No saved reflections yet</string>
     <string name="history_empty_body">When you complete an assessment, it will appear here so you can revisit that reflection later.</string>
-    <string name="history_empty_action">Start a reflection</string>
+    <string name="history_empty_action">Browse assessments</string>
     <string name="history_error_title">History is not available right now</string>
     <string name="history_error_body">Your saved assessments could not be loaded right now. You can return to the assessment and try again later.</string>
-    <string name="history_error_action">Start a reflection</string>
+    <string name="history_error_action">Browse assessments</string>
     <string name="history_overview_eyebrow">Saved reflections</string>
     <string name="history_overview_title">Your reflection history</string>
     <string name="history_overview_body">%1$d saved sessions are available from %2$s. Each one opens the full overview that was saved at that moment.</string>

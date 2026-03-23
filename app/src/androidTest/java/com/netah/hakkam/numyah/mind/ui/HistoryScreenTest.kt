@@ -34,7 +34,7 @@ class HistoryScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = HistoryUiState.Empty,
                     onOpenAssessment = {},
-                    onStartAssessment = { startedAssessment = true }
+                    onOpenAssessments = { startedAssessment = true }
                 )
             }
         }
@@ -74,7 +74,7 @@ class HistoryScreenTest {
                         )
                     ),
                     onOpenAssessment = { openedSessionId = it },
-                    onStartAssessment = {}
+                    onOpenAssessments = {}
                 )
             }
         }

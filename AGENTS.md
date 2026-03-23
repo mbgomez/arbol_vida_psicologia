@@ -195,6 +195,11 @@ UX guidance:
   - viewing the latest completed reflection
 - `Assessments` is now a justified top-level tab because the product intends to grow into a multi-assessment surface, including future user-authored assessments.
 - Home should keep the current flow of starting or resuming an assessment, while `Assessments` becomes the dedicated browsing surface for the expanding assessment library.
+- In a five-tab bottom navigation shell, tab labels should stay readable on narrower phones. Prefer adaptive single-line label sizing or a dedicated shorter nav label resource over awkward wrapping.
+- The bottom-nav label may be shorter than the destination header/title when needed for fit, but the destination itself should keep the fuller product-facing name.
+- Assessment exit confirmation should be destination-aware. The dialog body and confirm action should name the actual tab being opened, not always Home.
+- Leaving an in-progress assessment for Home should preserve the fast-entry route behavior. Prefer popping back to an existing Home destination when possible before falling back to generic top-level navigation.
+- Footer/supporting copy on production surfaces such as Assessments, Learn, and History should speak to the user's experience, not to internal product structure or developer intent.
 
 Compose screen construction guidance:
 - Keep each screen file centered on orchestration and state mapping, not one large block of inline UI.
@@ -236,3 +241,5 @@ Refactor lessons to preserve:
 - Keep onboarding-specific visual tokens scoped to onboarding unless they are truly app-wide.
 - Use documentation updates in the same pass whenever a refactor decision becomes a project standard.
 - Treat manual smoke testing as part of refactor verification for navigation, shell, and visual regressions.
+- Five-tab bottom bars need explicit fit decisions early. Letting long labels wrap produces low-quality navigation quickly, especially on smaller phones.
+- Shell confirmation copy should be derived from the tapped destination so the dialog and resulting navigation stay trustworthy.

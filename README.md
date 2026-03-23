@@ -243,6 +243,8 @@ Locked assessment entry direction:
 - Home should still keep direct actions for starting a new assessment and resuming the current one.
 - `Assessments` should own the expanding library and future multi-assessment browsing, including future user-authored assessments when that capability enters scope.
 - `History` remains the completed-results surface and is the planned home for graph-based trends across saved sessions.
+- In the five-tab bottom shell, nav labels should remain single-line and readable on smaller phones. It is acceptable to use a shorter nav-only label resource while keeping the fuller screen title unchanged.
+- Assessment-exit confirmation from the questionnaire should be destination-aware in both button text and body copy, and returning to Home should preserve the Home-first navigation path when possible.
 
 ## Delivery Standard
 
@@ -310,6 +312,8 @@ Refactor lessons learned:
 - keep onboarding-specific tokens scoped to onboarding unless they truly become app-wide
 - update docs in the same pass whenever a refactor decision becomes a standard
 - rely on manual smoke testing to catch navigation and visual regressions during refactor-heavy passes
+- treat bottom-nav label fit as a real UX requirement once the shell reaches five top-level tabs
+- keep footer and supporting copy user-facing; avoid explaining product architecture or roadmap inside production cards
 
 Refactor rule:
 

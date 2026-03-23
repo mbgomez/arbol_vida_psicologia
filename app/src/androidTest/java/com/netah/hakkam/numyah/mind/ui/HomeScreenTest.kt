@@ -34,7 +34,7 @@ class HomeScreenTest {
                 HomeScreen(
                     paddingValues = PaddingValues(),
                     uiState = HomeUiState.Empty,
-                    onOpenAssessmentLibrary = {},
+                    onStartAssessment = {},
                     onResumeAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
@@ -79,7 +79,7 @@ class HomeScreenTest {
                             )
                         )
                     ),
-                    onOpenAssessmentLibrary = { startedAssessment = true },
+                    onStartAssessment = { startedAssessment = true },
                     onResumeAssessment = {},
                     onOpenLatestResults = { openedResults = true },
                     onOpenHistory = {},
@@ -119,7 +119,7 @@ class HomeScreenTest {
                             )
                         )
                     ),
-                    onOpenAssessmentLibrary = {},
+                    onStartAssessment = {},
                     onResumeAssessment = {},
                     onOpenLatestResults = {},
                     onOpenHistory = {},
@@ -163,7 +163,7 @@ class HomeScreenTest {
                             latestReflection = null
                         )
                     ),
-                    onOpenAssessmentLibrary = {},
+                    onStartAssessment = {},
                     onResumeAssessment = { resumedAssessment = true },
                     onOpenLatestResults = {},
                     onOpenHistory = {},
