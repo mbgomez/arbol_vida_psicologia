@@ -95,9 +95,12 @@ Assessment content standard:
 - The standard section shape is:
   - `shortMeaning`
   - `introText`
+  - `completionContent`
   - `detailContent`
   - `pages`
   - `questions`
+- `completionContent` should hold the section-complete reflection content for that sephira so the completed assessment screen stays driven by authored content rather than hardcoded screen copy.
+- This contract should stay generic enough to support future assessments or added energy views without teaching the UI about one specific sephira's interpretation structure.
 - `detailContent` should keep:
   - `healthyExpression`
   - `deficiencyPattern`
@@ -194,6 +197,7 @@ Learnings from the Malkuth slice:
   - paged questions
   - scored interpretation
 - Shared UI surfaces should stay generic. The active sephira name, intro meaning, and interpretive language should come from authored content rather than hardcoded shared strings.
+- Section-complete reflection follows that same rule. If the completed-state interpretation depends on screen resources instead of per-sephira content, later sephirot will inherit accidental Malkuth assumptions.
 - Content seeding for future sephirot should stay author-driven. The engine is generic, but questionnaire content should be added intentionally rather than inferred.
 - Saved data should distinguish between:
   - per-sephira scores

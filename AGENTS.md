@@ -138,9 +138,12 @@ Data and content rules:
 - The default seeded sephira shape should include:
   - `shortMeaning`
   - `introText`
+  - `completionContent`
   - `detailContent`
   - `pages`
   - `questions`
+- `completionContent` should be treated as part of the same authored content contract as intros and detail screens so the section-complete assessment reflection does not depend on screen-level or Malkuth-shaped fallback copy.
+- `completionContent` should stay assessment-agnostic enough that future assessments or additional energy views for a sephira can reuse the same model instead of inventing UI-specific interpretation text.
 - `detailContent` should include:
   - `healthyExpression`
   - `deficiencyPattern`
@@ -275,3 +278,4 @@ Refactor lessons to preserve:
 - For dynamic graph screens, prefer filtering chart-ready UI models in the screen layer for temporary visibility controls rather than pushing transient chip-selection state into data or repository contracts.
 - Replacing an unfinished assessment is a trust-sensitive action. Keep the confirmation copy explicit about what will be replaced and what will remain saved.
 - Fresh-start behavior is stronger when it is implemented in the session/repository contract rather than as screen-local reset logic, so every entry surface shares the same rule.
+- Section-complete assessment interpretation belongs to the authored content contract. If it is still expressed through shared screen strings or one sephira's copy pattern, treat that as a Phase 1 correction before layering more UX polish on top.

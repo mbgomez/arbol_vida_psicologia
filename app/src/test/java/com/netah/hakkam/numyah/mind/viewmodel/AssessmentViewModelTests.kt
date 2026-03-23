@@ -264,6 +264,9 @@ class AssessmentViewModelTests {
 
         val state = viewModel.uiState.value as AssessmentUiState.Completed
         assertEquals(Pole.BALANCE, state.model.dominantPole)
+        assertEquals("Meaning", state.model.shortMeaning)
+        assertEquals("Healthy", state.model.healthyExpression)
+        assertEquals(listOf("Practice"), state.model.suggestedPractices)
         assertTrue(state.model.isLowConfidence)
         assertEquals(ConfidenceLevel.LOW, state.model.confidence)
         assertFalse(state.model.hasNextSephira)
@@ -318,6 +321,9 @@ class AssessmentViewModelTests {
 
         val state = viewModel.uiState.value as AssessmentUiState.Completed
         assertEquals("Malkuth", state.model.sephiraName)
+        assertEquals("Meaning", state.model.shortMeaning)
+        assertEquals("Excess", state.model.excessPattern)
+        assertEquals(listOf("Practice"), state.model.suggestedPractices)
         assertTrue(state.model.hasNextSephira)
         assertEquals("Yesod", state.model.nextSephiraName)
         verify(exactly = 1) { saveAssessmentScoreUseCase.run(1L to savedScore) }

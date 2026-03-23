@@ -163,7 +163,8 @@ items = [
   "Trend visuals feel calmer when latest context, previous context, and readable point details stay visible together instead of asking the user to infer too much from the chart alone.",
   "For chart screens, y-axis labels such as 100, 50, and 0 should visually belong to the graph area rather than sit as detached text above or below it.",
   "Small support-list bullets on multiline cards need manual visual review; simple top or center alignment often looks wrong once the text wraps.",
-  "Compose Canvas draw lambdas should receive plain values from composable scope. Looking up theme colors directly inside draw blocks can break compilation."
+  "Compose Canvas draw lambdas should receive plain values from composable scope. Looking up theme colors directly inside draw blocks can break compilation.",
+  "When a section-complete reflection bug appears in one sephira, assume the content contract may be incomplete rather than treating it as an isolated copy fix. Lock the JSON/content shape before resuming broader UX polish."
 ]
 
 [verification]

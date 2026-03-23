@@ -299,16 +299,14 @@ private fun AssessmentCompletedState(
                 isLowConfidence = model.isLowConfidence
             ),
             body = assessmentResultSummaryText(
+                sephiraName = model.sephiraName,
                 dominantPole = model.dominantPole,
                 isLowConfidence = model.isLowConfidence
             )
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_what_it_means_title),
-            body = assessmentResultMeaningText(
-                dominantPole = model.dominantPole,
-                isLowConfidence = model.isLowConfidence
-            )
+            body = assessmentResultMeaningText(model.shortMeaning)
         )
         AssessmentInfoCard(
             title = assessmentConfidenceLabel(model.confidence),
@@ -330,11 +328,16 @@ private fun AssessmentCompletedState(
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_daily_life_title),
-            body = assessmentDailyLifeText(model.dominantPole)
+            body = assessmentDailyLifeText(
+                dominantPole = model.dominantPole,
+                healthyExpression = model.healthyExpression,
+                deficiencyPattern = model.deficiencyPattern,
+                excessPattern = model.excessPattern
+            )
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_next_step_title),
-            body = assessmentNextStepText(model.dominantPole)
+            body = assessmentNextStepText(model.suggestedPractices)
         )
         Button(
             onClick = {

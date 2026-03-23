@@ -8,26 +8,36 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.netah.hakkam.numyah.mind.ui.components.AppCard
+import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 
 @Composable
 fun PlaceholderScreen(
     paddingValues: PaddingValues,
+    eyebrow: String? = null,
     title: String,
     body: String,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null
 ) {
     AppScreenColumn(paddingValues = paddingValues) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        AppCard(
-            title = title,
-            body = body
-        )
+        if (eyebrow != null) {
+            AppHeroCard(
+                eyebrow = eyebrow,
+                title = title,
+                body = body
+            )
+        } else {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            AppCard(
+                title = title,
+                body = body
+            )
+        }
         if (actionLabel != null && onAction != null) {
             Button(
                 onClick = onAction,

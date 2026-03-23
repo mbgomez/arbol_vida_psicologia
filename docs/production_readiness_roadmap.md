@@ -43,10 +43,15 @@ Focus:
 - close remaining production-surface placeholders
 - ensure the app feels complete even where some authored sephira content still uses approved fallback copy
 - treat trust-sensitive continuation and replacement moments as product work, not only navigation work, so users always understand when an unfinished session will be replaced and when completed history will remain untouched
+- keep section-complete assessment interpretation on the same authored content pipeline as sephira intros and detail screens, so later sephirot do not inherit Malkuth-shaped or screen-level fallback copy by accident
 
 Release gate:
 
 - every production surface should feel intentional, trustworthy, and usable end-to-end
+
+Current return-to-Phase-1 note:
+
+- Phase 2 polish is still unfinished, but if a thread discovers that section-complete assessment interpretation is still relying on screen-level hardcoded or Malkuth-specific copy, pause further polish and return briefly to Phase 1 to lock and implement a JSON-backed per-sephira completion-content contract first.
 
 ### Phase 1.5: Tester Distribution And Observability
 
@@ -230,6 +235,10 @@ The default near-term order is:
 8. `Phase 7: Final QA And Submission Prep`
 
 The `Sephira content side mission` continues throughout all of those phases.
+
+Temporary sequencing note:
+
+- If section-complete interpretation content is not yet fully driven by the authored JSON content contract, it is acceptable and recommended to insert a short Phase 1 correction thread before resuming the remaining Phase 2 polish slices.
 
 ## Release-Blocking Vs Non-Blocking
 

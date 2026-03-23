@@ -1,10 +1,8 @@
 package com.netah.hakkam.numyah.mind.ui
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -188,7 +186,8 @@ class LearnScreenTest {
             }
         }
 
-        composeTestRule.onAllNodesWithText(context.getString(R.string.learn_locked_title)).assertCountEquals(2)
+        composeTestRule.onNodeWithText(context.getString(R.string.screen_learn)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.learn_locked_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.learn_locked_body)).assertIsDisplayed()
     }
 

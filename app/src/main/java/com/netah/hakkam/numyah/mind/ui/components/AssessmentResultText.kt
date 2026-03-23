@@ -23,50 +23,57 @@ fun assessmentDominantLabel(
 
 @Composable
 fun assessmentResultSummaryText(
+    sephiraName: String,
     dominantPole: Pole,
     isLowConfidence: Boolean
 ): String {
     return when {
-        isLowConfidence && dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_summary_leans_balance)
-        isLowConfidence && dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_summary_leans_deficiency)
-        isLowConfidence && dominantPole == Pole.EXCESS -> stringResource(R.string.assessment_result_summary_leans_excess)
-        dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_summary_balance)
-        dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_summary_deficiency)
-        else -> stringResource(R.string.assessment_result_summary_excess)
+        isLowConfidence && dominantPole == Pole.BALANCE -> stringResource(
+            R.string.assessment_result_summary_leans_balance_generic,
+            sephiraName
+        )
+        isLowConfidence && dominantPole == Pole.DEFICIENCY -> stringResource(
+            R.string.assessment_result_summary_leans_deficiency_generic,
+            sephiraName
+        )
+        isLowConfidence && dominantPole == Pole.EXCESS -> stringResource(
+            R.string.assessment_result_summary_leans_excess_generic,
+            sephiraName
+        )
+        dominantPole == Pole.BALANCE -> stringResource(
+            R.string.assessment_result_summary_balance_generic,
+            sephiraName
+        )
+        dominantPole == Pole.DEFICIENCY -> stringResource(
+            R.string.assessment_result_summary_deficiency_generic,
+            sephiraName
+        )
+        else -> stringResource(
+            R.string.assessment_result_summary_excess_generic,
+            sephiraName
+        )
     }
 }
 
-@Composable
-fun assessmentResultMeaningText(
+fun assessmentResultMeaningText(shortMeaning: String): String = shortMeaning
+
+fun assessmentDailyLifeText(
     dominantPole: Pole,
-    isLowConfidence: Boolean
+    healthyExpression: String,
+    deficiencyPattern: String,
+    excessPattern: String
 ): String {
-    return when {
-        isLowConfidence && dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_meaning_leans_balance)
-        isLowConfidence && dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_meaning_leans_deficiency)
-        isLowConfidence && dominantPole == Pole.EXCESS -> stringResource(R.string.assessment_result_meaning_leans_excess)
-        dominantPole == Pole.BALANCE -> stringResource(R.string.assessment_result_meaning_balance)
-        dominantPole == Pole.DEFICIENCY -> stringResource(R.string.assessment_result_meaning_deficiency)
-        else -> stringResource(R.string.assessment_result_meaning_excess)
+    return when (dominantPole) {
+        Pole.BALANCE -> healthyExpression
+        Pole.DEFICIENCY -> deficiencyPattern
+        Pole.EXCESS -> excessPattern
     }
 }
 
 @Composable
-fun assessmentDailyLifeText(dominantPole: Pole): String {
-    return when (dominantPole) {
-        Pole.BALANCE -> stringResource(R.string.assessment_result_daily_life_balance)
-        Pole.DEFICIENCY -> stringResource(R.string.assessment_result_daily_life_deficiency)
-        Pole.EXCESS -> stringResource(R.string.assessment_result_daily_life_excess)
-    }
-}
-
-@Composable
-fun assessmentNextStepText(dominantPole: Pole): String {
-    return when (dominantPole) {
-        Pole.BALANCE -> stringResource(R.string.assessment_result_next_step_balance)
-        Pole.DEFICIENCY -> stringResource(R.string.assessment_result_next_step_deficiency)
-        Pole.EXCESS -> stringResource(R.string.assessment_result_next_step_excess)
-    }
+fun assessmentNextStepText(suggestedPractices: List<String>): String {
+    return suggestedPractices.firstOrNull()
+        ?: stringResource(R.string.assessment_result_next_step_fallback)
 }
 
 @Composable

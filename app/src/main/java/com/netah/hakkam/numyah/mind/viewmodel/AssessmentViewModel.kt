@@ -105,6 +105,11 @@ data class AssessmentQuestionUiModel(
 data class AssessmentCompletedUiModel(
     val sephiraId: SephiraId,
     val sephiraName: String,
+    val shortMeaning: String,
+    val healthyExpression: String,
+    val deficiencyPattern: String,
+    val excessPattern: String,
+    val suggestedPractices: List<String>,
     val dominantPole: Pole,
     val confidence: ConfidenceLevel,
     val balanceScore: Double,
@@ -484,6 +489,11 @@ class AssessmentViewModel @Inject constructor(
             AssessmentCompletedUiModel(
                 sephiraId = section.sephiraId,
                 sephiraName = section.displayName,
+                shortMeaning = section.shortMeaning,
+                healthyExpression = section.detailContent.healthyExpression,
+                deficiencyPattern = section.detailContent.deficiencyPattern,
+                excessPattern = section.detailContent.excessPattern,
+                suggestedPractices = section.detailContent.suggestedPractices,
                 dominantPole = score.dominantPole,
                 confidence = score.confidence,
                 balanceScore = score.balanceScore,

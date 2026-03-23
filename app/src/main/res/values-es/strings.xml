@@ -70,9 +70,9 @@
     <string name="onboarding_page_3_title">Balance, carencia y exceso</string>
     <string name="onboarding_page_3_body">Tus resultados se describen a traves de tres tendencias: balance, carencia y exceso.\n\nEl balance apunta a una expresion mas integrada. La carencia sugiere que un area podria estar menos sostenida o ser mas dificil de acceder en este momento. El exceso sugiere que un area podria estar sobreextendida o cargando mas fuerza de la que ayuda. Estas son tendencias actuales, no afirmaciones fijas sobre tu identidad.</string>
     <string name="onboarding_page_4_title">Que ocurre con tus resultados</string>
-    <string name="onboarding_page_4_body">Cuando termines, recibiras un perfil completo del Arbol de la Vida a traves de las diez sefirot.\n\nPodras abrir cada area para una interpretacion mas amplia, con expresion saludable, patrones de carencia, patrones de exceso y practicas sugeridas. Cuando un resultado sea mixto, el lenguaje se mantendra suave y reflexivo en lugar de forzar una etiqueta rigida.</string>
+    <string name="onboarding_page_4_body">Cuando termines, recibiras un perfil completo del Arbol de la Vida a traves de las diez sefirot.\n\nPodras abrir cada area para una interpretacion mas amplia, con expresion saludable, patrones de carencia, patrones de exceso y practicas sugeridas. Cuando un resultado sea mixto, el lenguaje se mantiene suave y reflexivo en lugar de forzar una etiqueta rigida.</string>
     <string name="onboarding_page_5_title">Privada, local y lista para un aprendizaje mas profundo</string>
-    <string name="onboarding_page_5_body">Tu experiencia principal es local en tu dispositivo. El progreso se guarda de forma privada y el flujo principal de evaluacion esta pensado para funcionar sin conexion.\n\nEsta introduccion mantiene las cosas simples. Si despues quieres mas contexto, podras explorarlo en Aprender y en los resultados de cada sefira.</string>
+    <string name="onboarding_page_5_body">Tu experiencia principal es local en tu dispositivo. El progreso se guarda de forma privada y el flujo principal de evaluacion esta pensado para funcionar sin conexion.\n\nEsta introduccion mantiene las cosas simples. Si despues quieres mas contexto, puedes explorarlo en Aprender y en los resultados de cada sefira.</string>
     <string name="onboarding_footer">Una introduccion serena antes de comenzar.</string>
     <string name="onboarding_supporting_caption">Reflexion, no diagnostico</string>
     <string name="onboarding_primary_visual_title">El Arbol de la Vida traducido a la experiencia vivida</string>
@@ -83,7 +83,7 @@
     <string name="assessment_intro_title">Introduccion a la reflexion</string>
     <string name="assessment_intro_image_description">Ilustracion para la introduccion de la evaluacion de la sefira actual</string>
     <string name="assessment_library_title">Elige una reflexion</string>
-    <string name="assessment_library_subtitle">Esta biblioteca es donde podran crecer nuevas evaluaciones con el tiempo. Por ahora contiene la reflexion central del Arbol de la Vida.</string>
+    <string name="assessment_library_subtitle">Elige la reflexion a la que quieres entrar. Esta biblioteca se abre por ahora con el recorrido central del Arbol de la Vida.</string>
     <string name="assessment_library_eyebrow">Biblioteca de evaluaciones</string>
     <string name="assessment_library_loading_title">Cargando reflexiones disponibles</string>
     <string name="assessment_library_loading_body">Preparando el catalogo actual de evaluaciones desde el contenido local.</string>
@@ -98,7 +98,7 @@
     <string name="assessment_library_start_action">Comenzar reflexion</string>
     <string name="assessment_library_resume_action">Retomar reflexion</string>
     <string name="assessment_library_start_fresh_action">Iniciar nueva reflexion</string>
-    <string name="assessment_library_footer">Con el tiempo podran sumarse mas reflexiones aqui. Por ahora, este espacio comienza con la reflexion del Arbol de la Vida y mantiene la experiencia serena y enfocada.</string>
+    <string name="assessment_library_footer">Este espacio comienza con la reflexion del Arbol de la Vida y mantiene tus caminos disponibles serenos, claros y faciles de retomar.</string>
     <string name="assessment_honesty_title">Una nota breve antes de comenzar</string>
     <string name="assessment_honesty_card_title">Esta reflexion funciona mejor con honestidad</string>
     <string name="assessment_honesty_body">Esta reflexion es mas util cuando tus respuestas son honestas sobre como te sientes hoy.\n\nNo hay respuestas correctas aqui. No necesitas mostrar tu mejor version, solo tu experiencia real en este momento.</string>
@@ -127,6 +127,12 @@
     <string name="assessment_result_summary_leans_balance">Tus respuestas se inclinan hacia una relacion enraizada con la vida material.</string>
     <string name="assessment_result_summary_leans_deficiency">Tus respuestas se inclinan hacia una menor base o sosten en la vida material.</string>
     <string name="assessment_result_summary_leans_excess">Tus respuestas se inclinan hacia una sobreextension en la vida material.</string>
+    <string name="assessment_result_summary_balance_generic">%1$s se siente relativamente estable en este momento.</string>
+    <string name="assessment_result_summary_deficiency_generic">Tus respuestas sugieren que %1$s podria necesitar mas apoyo en este momento.</string>
+    <string name="assessment_result_summary_excess_generic">Tus respuestas sugieren que %1$s podria estar cargando demasiada fuerza en este momento.</string>
+    <string name="assessment_result_summary_leans_balance_generic">Tus respuestas se inclinan hacia una estabilidad relativa en %1$s.</string>
+    <string name="assessment_result_summary_leans_deficiency_generic">Tus respuestas se inclinan hacia una menor base o sosten en %1$s.</string>
+    <string name="assessment_result_summary_leans_excess_generic">Tus respuestas se inclinan hacia una sobreextension en %1$s.</string>
     <string name="assessment_result_what_it_means_title">Que significa esto</string>
     <string name="assessment_result_meaning_balance">En terminos practicos, esto apunta a una conexion mas estable con el cuerpo, las posesiones y la realidad cotidiana. Puede que seas capaz de cuidar la vida material sin quedar dominado por ella.</string>
     <string name="assessment_result_meaning_deficiency">En terminos practicos, esto puede significar que el cuerpo, los recursos o la estructura cotidiana estan recibiendo menos atencion de la que necesitan. No significa fracaso. Sugiere que esta area podria necesitar mas cuidado, constancia y presencia.</string>
@@ -151,6 +157,7 @@
     <string name="assessment_result_next_step_balance">Sigue observando lo que te ayuda a mantenerte enraizado sin volverte rigido. Los habitos pequenos y repetibles son mas utiles aqui que perseguir la perfeccion.</string>
     <string name="assessment_result_next_step_deficiency">Un siguiente paso amable es fortalecer un acto basico de cuidado: comida, descanso, movimiento, consciencia del dinero o atencion al entorno. La meta no es la intensidad. Es la constancia.</string>
     <string name="assessment_result_next_step_excess">Un siguiente paso amable es aflojar una zona de sobrecontrol y preguntar que se sentiria de apoyo en vez de exigente. La meta no es abandonar la estructura, sino volverla mas humana.</string>
+    <string name="assessment_result_next_step_fallback">Elige una practica pequena y constante que te ayude a mantener relacion con esta parte del arbol durante la semana.</string>
     <string name="assessment_result_continue_action">Continuar a %1$s</string>
     <string name="assessment_result_home_action">Abrir vista general de resultados</string>
     <string name="assessment_error_load">La evaluacion no pudo cargarse en este momento.</string>
@@ -305,8 +312,8 @@
     <string name="placeholder_learn_title">Aprender y Acerca de</string>
     <string name="placeholder_learn_body">Esta area seguira creciendo como el acompanamiento educativo mas profundo de la evaluacion, con contexto ampliado adaptado del material fuente.</string>
     <string name="learn_title">Aprender mediante cursos</string>
-    <string name="learn_subtitle">Explora lecturas mas amplias construidas desde el mismo material fuente del Arbol de la Vida, manteniendose mucho mas cerca de su voz de ensenanza cabalistica.</string>
-    <string name="learn_footer">Se iran agregando mas cursos con el tiempo. El catalogo actual comienza con el panorama del Arbol de la Vida y esta pensado para crecer poco a poco.</string>
+    <string name="learn_subtitle">Explora lecturas mas amplias construidas desde el mismo material fuente del Arbol de la Vida, manteniendose mas cerca de su voz de ensenanza cabalistica.</string>
+    <string name="learn_footer">El catalogo actual comienza con el panorama del Arbol de la Vida y mantiene el recorrido de lectura sereno y facil de retomar.</string>
     <string name="learn_loading_title">Preparando tus cursos</string>
     <string name="learn_loading_body">Cargando el catalogo actual de cursos desde el contenido local.</string>
     <string name="learn_error_title">Los cursos no estan disponibles ahora</string>
@@ -319,12 +326,12 @@
     <string name="learn_open_course_action">Abrir curso</string>
     <string name="learn_open_section_action">Abrir seccion</string>
     <string name="learn_sections_title">Secciones disponibles</string>
-    <string name="learn_sections_subtitle">%1$d de %2$d secciones planificadas ya estan listas para leer en este curso.</string>
+    <string name="learn_sections_subtitle">%1$d de %2$d secciones ya estan disponibles para leer en este curso.</string>
     <string name="learn_sections_progress">%1$d/%2$d</string>
     <string name="learn_course_sections_badge">Secciones ahora</string>
     <string name="learn_course_time_badge">Tiempo estimado</string>
     <string name="learn_course_eyebrow">Curso</string>
-    <string name="learn_course_footer">Se iran agregando mas secciones a este curso con el tiempo. El flujo de lectura actual esta pensado para mantenerse estable cuando lleguen nuevas sefirot.</string>
+    <string name="learn_course_footer">Este curso esta organizado para sentirse sereno y facil de retomar, tanto si lees seguido como si vuelves seccion por seccion.</string>
     <string name="learn_minutes_short">%1$d min</string>
     <string name="learn_section_title_with_number">%1$d. %2$s</string>
     <string name="learn_section_position">Seccion %1$d de %2$d disponibles actualmente</string>
@@ -346,7 +353,7 @@
     <string name="settings_body">Ajusta como se siente Numyah Mind en tu dispositivo. Este espacio cubre idioma, apariencia, preferencias de la evaluacion, guia de privacidad y apoyo para el onboarding.</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_language_body">Elige si Numyah Mind sigue el idioma de tu dispositivo o se mantiene en ingles o espanol en toda la app.</string>
-    <string name="settings_language_supporting">Los cambios de idioma deben aplicarse en toda la app para que la lectura, la evaluacion y los resultados se mantengan alineados.</string>
+    <string name="settings_language_supporting">Los cambios de idioma se aplican en toda la app para que la lectura, la evaluacion y los resultados se mantengan alineados.</string>
     <string name="settings_language_system_title">Usar idioma del dispositivo</string>
     <string name="settings_language_system_body">Sigue automaticamente el idioma de tu dispositivo.</string>
     <string name="settings_language_english_title">Ingles</string>
@@ -409,7 +416,7 @@
     <string name="settings_privacy_tester_telemetry_body">Cuando la observabilidad para testers esta activada en pruebas internas o cerradas, Numyah Mind puede enviar informes de fallos, informes de errores recuperables y un conjunto pequeno de senales de flujo, como la finalizacion del onboarding, la entrada a la evaluacion, la finalizacion de la evaluacion, la apertura del detalle de resultados, el reingreso desde Historial, la lectura en Aprender y cambios clave de ajustes. Las respuestas de reflexion, el contenido interpretativo escrito y los detalles guardados de puntajes no forman parte de esta taxonomia analitica.</string>
     <string name="settings_privacy_boundary_title">Limite del producto</string>
     <string name="settings_privacy_boundary_body">Numyah Mind es una herramienta de autorreflexion. No esta pensada como un producto diagnostico, psiquiatrico o clinico de salud mental, y sus datos guardados deben leerse dentro de ese mismo espiritu reflexivo.</string>
-    <string name="settings_privacy_footer">El diseno local sigue siendo parte del modelo de confianza de esta app, por eso las explicaciones de privacidad y los limites de telemetria para testers deben seguir siendo claros, serenos y faciles de revisar.</string>
+    <string name="settings_privacy_footer">El diseno local sigue siendo parte del modelo de confianza de esta app, por eso las explicaciones de privacidad y los limites de telemetria para testers siguen siendo claros, serenos y faciles de revisar.</string>
     <string name="settings_about_eyebrow">Acerca de Numyah Mind</string>
     <string name="settings_about_screen_title">Una herramienta reflexiva, no una etiqueta fija</string>
     <string name="settings_about_screen_body">Numyah Mind traduce el Arbol de la Vida en una reflexion psicologica con los pies en la tierra. La app busca ayudarte a notar tendencias actuales, no a definir quien eres de una vez y para siempre.</string>

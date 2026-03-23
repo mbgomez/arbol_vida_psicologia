@@ -59,16 +59,19 @@ fun SephiraDetailScreen(
         when (uiState) {
             SephiraDetailUiState.Loading -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results_detail),
                 title = stringResource(R.string.sephira_detail_loading_title),
                 body = stringResource(R.string.sephira_detail_loading_body)
             )
             SephiraDetailUiState.NotFound -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results_detail),
                 title = stringResource(R.string.sephira_detail_not_found_title),
                 body = stringResource(R.string.sephira_detail_not_found_body)
             )
             SephiraDetailUiState.Error -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results_detail),
                 title = stringResource(R.string.sephira_detail_error_title),
                 body = stringResource(R.string.sephira_detail_error_body)
             )

@@ -209,9 +209,12 @@ The current content shape remains:
 - `sections`
 - `shortMeaning`
 - `introText`
+- `completionContent`
 - `detailContent`
 - `pages`
 - `questions`
+
+`completionContent` is now part of the preferred seeded content direction. Section-complete interpretation should come through the same authored content pipeline as intros and detail screens rather than through screen-level hardcoded strings.
 
 `detailContent` should now travel with each seeded sephira section and include:
 
@@ -407,6 +410,7 @@ A refactor pass is considered complete only when:
 - Chart readability improves when axis labels visually belong to the plotted area; detached labels above or below the graph make trend screens feel less intentional.
 - For multiline support lists, bullet markers need manual visual alignment review. A small offset tied to the first text line can read better than plain top or center alignment.
 - In Compose chart and drawing code, resolve theme-dependent colors or resources in composable scope before entering `Canvas` draw lambdas to avoid compilation and maintenance issues.
+- When a completed-state screen still depends on hardcoded interpretation strings, treat that as a content-contract refactor target instead of polishing the screen around the mismatch. Shared UI can stay generic only if authored sephira content owns the interpretation.
 
 ## Immediate Next Step
 

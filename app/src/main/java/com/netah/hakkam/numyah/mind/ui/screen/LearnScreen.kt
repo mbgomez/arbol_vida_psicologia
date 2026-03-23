@@ -108,11 +108,13 @@ fun LearnScreen(
     when (uiState) {
         LearnUiState.Loading -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_loading_title),
             body = stringResource(R.string.learn_loading_body)
         )
         LearnUiState.Error -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_error_title),
             body = stringResource(R.string.learn_error_body),
             actionLabel = stringResource(R.string.learn_retry),
@@ -136,16 +138,19 @@ fun LearnCourseScreen(
     when (uiState) {
         LearnCourseUiState.Loading -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.learn_course_eyebrow),
             title = stringResource(R.string.learn_loading_title),
             body = stringResource(R.string.learn_loading_body)
         )
         LearnCourseUiState.NotFound -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.learn_course_eyebrow),
             title = stringResource(R.string.learn_not_found_title),
             body = stringResource(R.string.learn_not_found_body)
         )
         LearnCourseUiState.Error -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.learn_course_eyebrow),
             title = stringResource(R.string.learn_error_title),
             body = stringResource(R.string.learn_error_body),
             actionLabel = stringResource(R.string.learn_retry),
@@ -171,21 +176,25 @@ fun LearnSectionScreen(
     when (uiState) {
         LearnSectionUiState.Loading -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_loading_title),
             body = stringResource(R.string.learn_loading_body)
         )
         LearnSectionUiState.Locked -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_locked_title),
             body = stringResource(R.string.learn_locked_body)
         )
         LearnSectionUiState.NotFound -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_not_found_title),
             body = stringResource(R.string.learn_not_found_body)
         )
         LearnSectionUiState.Error -> PlaceholderScreen(
             paddingValues = paddingValues,
+            eyebrow = stringResource(R.string.screen_learn),
             title = stringResource(R.string.learn_error_title),
             body = stringResource(R.string.learn_error_body),
             actionLabel = stringResource(R.string.learn_retry),

@@ -83,12 +83,14 @@ fun ResultsScreen(
         when (uiState) {
             ResultsUiState.Loading -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results),
                 title = stringResource(R.string.screen_results),
                 body = stringResource(R.string.progress_indicator_desccription)
             )
 
             ResultsUiState.Empty -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results),
                 title = stringResource(R.string.results_empty_title),
                 body = stringResource(R.string.results_empty_body),
                 actionLabel = primaryActionLabel,
@@ -97,6 +99,7 @@ fun ResultsScreen(
 
             ResultsUiState.Error -> PlaceholderScreen(
                 paddingValues = PaddingValues(),
+                eyebrow = stringResource(R.string.screen_results),
                 title = stringResource(R.string.results_error_title),
                 body = stringResource(R.string.results_error_body),
                 actionLabel = primaryActionLabel,

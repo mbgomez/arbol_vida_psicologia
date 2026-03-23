@@ -318,6 +318,11 @@ class AssessmentScreenTest {
                         AssessmentCompletedUiModel(
                             sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
+                            shortMeaning = "Grounded contact with practical life.",
+                            healthyExpression = "Healthy grounding in daily life.",
+                            deficiencyPattern = "Material life may be asking for more support.",
+                            excessPattern = "Material life may be carrying too much force.",
+                            suggestedPractices = listOf("Choose one steady act of care this week."),
                             dominantPole = Pole.DEFICIENCY,
                             confidence = ConfidenceLevel.LOW,
                             balanceScore = 0.22,
@@ -346,6 +351,9 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_leans_deficiency)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Grounded contact with practical life.").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Material life may be asking for more support.").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Choose one steady act of care this week.").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("22%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("51%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("27%", substring = true).assertIsDisplayed()
@@ -399,6 +407,11 @@ class AssessmentScreenTest {
                         AssessmentCompletedUiModel(
                             sephiraId = SephiraId.MALKUTH,
                             sephiraName = "Malkuth",
+                            shortMeaning = "Grounded contact with practical life.",
+                            healthyExpression = "Healthy grounding in daily life.",
+                            deficiencyPattern = "Material life may be asking for more support.",
+                            excessPattern = "Material life may be carrying too much force.",
+                            suggestedPractices = listOf("Choose one steady act of care this week."),
                             dominantPole = Pole.BALANCE,
                             confidence = ConfidenceLevel.MEDIUM,
                             balanceScore = 0.55,

@@ -340,6 +340,7 @@ Locked workflow learning:
 - Starting a fresh reflection while another one is still in progress should be treated as a user-trust moment: require confirmation, replace only the unfinished session, and leave completed History entries intact.
 - When that behavior changes, cover it across repository, use case/ViewModel, and the user-facing entry screens rather than testing only one layer.
 - Production readiness should advance on a mainline release track even while authored sephira enrichment continues gradually in parallel.
+- If section-complete interpretation is discovered to be hardcoded in UI resources or shaped around one sephira, pause new polish work long enough to correct the content contract first. That is a product-foundation issue, not a minor copy tweak.
 
 ### Locked Content Structure Standard
 
@@ -350,9 +351,12 @@ Each sephira questionnaire definition should include:
 - versioned bilingual content
 - `shortMeaning`
 - `introText`
+- `completionContent`
 - `detailContent`
 - `pages`
 - `questions`
+
+`completionContent` should carry the authored section-complete interpretation for that sephira instead of relying on screen-level copy. The exact schema can evolve, but it should support completed-state summary plus pole-specific reflection in a way that stays assessment-agnostic and endpoint-friendly.
 
 `detailContent` should include:
 
