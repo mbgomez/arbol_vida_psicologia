@@ -60,6 +60,12 @@ Locked history standard:
   - `highest tension`, defined as the highest saved `deficiency + excess` score in a completed session
   - `most settled`, defined as the saved sephira in that session with the lowest imbalance and strongest balance
 - These first trend metrics should be modeled in a chart-ready way and presented as a lightweight extension above the completed-session list.
+- The lightweight trend section inside History should remain the entry point into trend exploration.
+- Deeper trend exploration should open from History on a dedicated secondary screen rather than replacing the saved-session list.
+- The first dedicated deeper-trends screen should support two explicit graph modes:
+  - `By sephira`, where one selected sephira shows `balance`, `deficiency`, and `excess` across saved completed sessions
+  - `By score type`, where one selected score type shows all saved sephirot across completed sessions
+- In `By score type`, the user may temporarily enable or disable individual sephirot lines. That visibility state should update the graph and saved-point detail list immediately without changing the underlying saved-history data contract.
 - If the product adds mock or demo support for faster QA on History-related surfaces, that support should be debug-only and implemented as a completed-history source switch. It must not overwrite, delete, or reseed the user's real local history.
 
 ### UX Principles
@@ -81,6 +87,8 @@ Locked history standard:
   - `Assessments` for browsing the growing library
   - `History` for completed reflections and future trend graphs
 - History trend UI should feel reflective and restrained. The saved-session list remains the primary surface, while charts add gentle context rather than turning History into an analytics dashboard.
+- Dedicated deeper-trends navigation should still feel like a calm continuation of History, with explicit mode switching and readable saved-point details rather than dense analytics treatment.
+- Temporary chart filtering controls such as score-type sephira toggles should remain screen-local interaction state unless a later slice explicitly locks persistence or cross-screen reuse for them.
 - In the five-tab bottom shell, labels should remain readable on smaller phones. Prefer adaptive single-line label sizing and, when necessary, a shorter nav-only label rather than multi-line wrapping of the tab text.
 - The visible screen title may stay fuller than the bottom-nav label. A tab can use a shortened nav label while the destination header keeps the full product-facing name.
 - When a user tries to leave an in-progress assessment through the shell, the exit dialog should name the actual destination in both its body and confirm action.

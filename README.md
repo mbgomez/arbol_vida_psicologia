@@ -155,6 +155,12 @@ Locked history standard:
   - highest tension by saved session, using the session's top imbalance score
   - most settled by saved session, using the session's lowest-imbalance strongest-balance score
 - Trend UI should stay as a calm extension above the saved-session list, not a dashboard replacement for the list itself.
+- The lightweight trend section inside History is the entry point into trend exploration.
+- Deeper trend exploration should open from History on a dedicated secondary screen instead of replacing the saved-session list.
+- The first deeper-trends screen should support:
+  - by sephira exploration, with balance, deficiency, and excess over time for one selected sephira
+  - by score type exploration, with all sephirot over time for one selected score type
+- In the score-type exploration mode, temporary per-sephira visibility filters should stay in the screen layer so graph interactions can remain fast without changing the underlying trend data contract.
 - Debug/demo tools for History and related completed-result surfaces should be implemented as debug-only source switches. They must not overwrite or clear the user's real saved Room history.
 
 Scoring standard:

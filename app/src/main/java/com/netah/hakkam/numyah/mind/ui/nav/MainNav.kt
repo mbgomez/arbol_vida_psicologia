@@ -63,6 +63,7 @@ import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentLibraryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryRoute
+import com.netah.hakkam.numyah.mind.ui.screen.HistoryTrendsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HomeRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnRoute
@@ -211,6 +212,20 @@ fun MainNavGraph(
                     onOpenAssessment = { sessionId ->
                         navController.navigate(AppDestination.Results.createRoute(sessionId))
                     },
+                    onOpenAssessments = { navController.navigate(AppDestination.AssessmentLibrary.route) },
+                    onOpenTrends = { navController.navigate(AppDestination.HistoryTrends.route) }
+                )
+            }
+        }
+        composable(AppDestination.HistoryTrends.route) {
+            AppShell(
+                navController = navController,
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
+            ) { paddingValues ->
+                HistoryTrendsRoute(
+                    paddingValues = paddingValues,
                     onOpenAssessments = { navController.navigate(AppDestination.AssessmentLibrary.route) }
                 )
             }

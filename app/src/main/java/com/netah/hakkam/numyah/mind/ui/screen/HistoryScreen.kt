@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
+import com.netah.hakkam.numyah.mind.ui.components.AppActionCard
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
@@ -54,6 +55,7 @@ fun HistoryRoute(
     paddingValues: PaddingValues,
     onOpenAssessment: (Long) -> Unit,
     onOpenAssessments: () -> Unit,
+    onOpenTrends: () -> Unit,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -61,7 +63,8 @@ fun HistoryRoute(
         paddingValues = paddingValues,
         uiState = uiState,
         onOpenAssessment = onOpenAssessment,
-        onOpenAssessments = onOpenAssessments
+        onOpenAssessments = onOpenAssessments,
+        onOpenTrends = onOpenTrends
     )
 }
 
@@ -70,7 +73,8 @@ fun HistoryScreen(
     paddingValues: PaddingValues,
     uiState: HistoryUiState,
     onOpenAssessment: (Long) -> Unit,
-    onOpenAssessments: () -> Unit
+    onOpenAssessments: () -> Unit,
+    onOpenTrends: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         when (uiState) {
@@ -99,7 +103,8 @@ fun HistoryScreen(
             is HistoryUiState.Loaded -> HistoryLoadedState(
                 paddingValues = paddingValues,
                 model = uiState.model,
-                onOpenAssessment = onOpenAssessment
+                onOpenAssessment = onOpenAssessment,
+                onOpenTrends = onOpenTrends
             )
         }
     }
@@ -109,7 +114,8 @@ fun HistoryScreen(
 private fun HistoryLoadedState(
     paddingValues: PaddingValues,
     model: HistoryUiModel,
-    onOpenAssessment: (Long) -> Unit
+    onOpenAssessment: (Long) -> Unit,
+    onOpenTrends: () -> Unit
 ) {
     AppScreenColumn(
         paddingValues = paddingValues,
@@ -125,7 +131,10 @@ private fun HistoryLoadedState(
             )
         )
 
-        HistoryTrendSection(model = model.trends)
+        HistoryTrendSection(
+            model = model.trends,
+            onOpenTrends = onOpenTrends
+        )
 
         Text(
             text = stringResource(R.string.history_list_title),
@@ -148,7 +157,10 @@ private fun HistoryLoadedState(
 }
 
 @Composable
-private fun HistoryTrendSection(model: HistoryTrendsUiModel) {
+private fun HistoryTrendSection(
+    model: HistoryTrendsUiModel,
+    onOpenTrends: () -> Unit
+) {
     val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
 
     Column(
@@ -191,6 +203,14 @@ private fun HistoryTrendSection(model: HistoryTrendsUiModel) {
         model.charts.forEach { chart ->
             HistoryTrendCard(model = chart)
         }
+
+        AppActionCard(
+            title = stringResource(R.string.history_trends_open_title),
+            body = stringResource(R.string.history_trends_open_body),
+            actionLabel = stringResource(R.string.history_trends_open_action),
+            modifier = Modifier.testTag("history_open_trends"),
+            onClick = onOpenTrends
+        )
     }
 }
 

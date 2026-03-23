@@ -30,6 +30,7 @@ data class HistoryUiModel(
     val questionnaireTitle: String,
     val totalSessions: Int,
     val trends: HistoryTrendsUiModel,
+    val deeperTrends: HistoryDeepTrendsUiModel,
     val sessions: List<HistorySessionUiModel>
 )
 
@@ -37,6 +38,51 @@ data class HistoryTrendsUiModel(
     val sessionCount: Int,
     val hasComparisonData: Boolean,
     val charts: List<HistoryTrendChartUiModel>
+)
+
+data class HistoryDeepTrendsUiModel(
+    val sessionCount: Int,
+    val hasComparisonData: Boolean,
+    val sephiraOptions: List<HistoryTrendSephiraOptionUiModel>,
+    val defaultSephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId?,
+    val defaultScoreType: HistoryTrendScoreType,
+    val bySephiraCharts: Map<com.netah.hakkam.numyah.mind.domain.model.SephiraId, HistoryTimeSeriesChartUiModel>,
+    val byScoreTypeCharts: Map<HistoryTrendScoreType, HistoryTimeSeriesChartUiModel>
+)
+
+enum class HistoryTrendExploreMode {
+    BY_SEPHIRA,
+    BY_SCORE_TYPE
+}
+
+enum class HistoryTrendScoreType {
+    BALANCE,
+    DEFICIENCY,
+    EXCESS
+}
+
+data class HistoryTrendSephiraOptionUiModel(
+    val sephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId,
+    val displayName: String
+)
+
+data class HistoryTimeSeriesChartUiModel(
+    val sessionCount: Int,
+    val lines: List<HistoryTimeSeriesLineUiModel>
+)
+
+data class HistoryTimeSeriesLineUiModel(
+    val id: String,
+    val scoreType: HistoryTrendScoreType? = null,
+    val sephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId? = null,
+    val displayName: String? = null,
+    val points: List<HistoryTimeSeriesPointUiModel>
+)
+
+data class HistoryTimeSeriesPointUiModel(
+    val sessionId: Long,
+    val completedAt: Long,
+    val value: Int?
 )
 
 enum class HistoryTrendMetricType {
@@ -138,6 +184,10 @@ class HistoryViewModel @Inject constructor(
             questionnaireTitle = questionnaire.title,
             totalSessions = sessions.size,
             trends = buildTrendModel(history, highlightsBySessionId),
+            deeperTrends = buildDeepTrendModel(
+                questionnaire = questionnaire,
+                history = history
+            ),
             sessions = sessions
         )
     }
@@ -214,10 +264,106 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
+    private fun buildDeepTrendModel(
+        questionnaire: QuestionnaireContent,
+        history: List<AssessmentSessionSnapshot>
+    ): HistoryDeepTrendsUiModel {
+        val chronologicalSessions = history.sortedBy { it.completedAt ?: it.startedAt }
+        val sephiraOptions = questionnaire.sections.map { section ->
+            HistoryTrendSephiraOptionUiModel(
+                sephiraId = section.sephiraId,
+                displayName = section.displayName
+            )
+        }
+
+        return HistoryDeepTrendsUiModel(
+            sessionCount = chronologicalSessions.size,
+            hasComparisonData = chronologicalSessions.size > 1,
+            sephiraOptions = sephiraOptions,
+            defaultSephiraId = sephiraOptions.firstOrNull()?.sephiraId,
+            defaultScoreType = HistoryTrendScoreType.BALANCE,
+            bySephiraCharts = sephiraOptions.associate { option ->
+                option.sephiraId to buildBySephiraChart(
+                    sessions = chronologicalSessions,
+                    option = option
+                )
+            },
+            byScoreTypeCharts = HistoryTrendScoreType.values().associateWith { scoreType ->
+                buildByScoreTypeChart(
+                    sessions = chronologicalSessions,
+                    scoreType = scoreType,
+                    sephiraOptions = sephiraOptions
+                )
+            }
+        )
+    }
+
+    private fun buildBySephiraChart(
+        sessions: List<AssessmentSessionSnapshot>,
+        option: HistoryTrendSephiraOptionUiModel
+    ): HistoryTimeSeriesChartUiModel {
+        return HistoryTimeSeriesChartUiModel(
+            sessionCount = sessions.size,
+            lines = HistoryTrendScoreType.values().map { scoreType ->
+                HistoryTimeSeriesLineUiModel(
+                    id = "${option.sephiraId.name}_${scoreType.name}",
+                    scoreType = scoreType,
+                    points = sessions.map { session ->
+                        val score = session.scoreFor(option.sephiraId)
+                        HistoryTimeSeriesPointUiModel(
+                            sessionId = session.sessionId,
+                            completedAt = session.completedAt ?: session.startedAt,
+                            value = score?.let { scorePercent(score.valueFor(scoreType)) }
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    private fun buildByScoreTypeChart(
+        sessions: List<AssessmentSessionSnapshot>,
+        scoreType: HistoryTrendScoreType,
+        sephiraOptions: List<HistoryTrendSephiraOptionUiModel>
+    ): HistoryTimeSeriesChartUiModel {
+        return HistoryTimeSeriesChartUiModel(
+            sessionCount = sessions.size,
+            lines = sephiraOptions.map { option ->
+                HistoryTimeSeriesLineUiModel(
+                    id = "${scoreType.name}_${option.sephiraId.name}",
+                    sephiraId = option.sephiraId,
+                    displayName = option.displayName,
+                    points = sessions.map { session ->
+                        val score = session.scoreFor(option.sephiraId)
+                        HistoryTimeSeriesPointUiModel(
+                            sessionId = session.sessionId,
+                            completedAt = session.completedAt ?: session.startedAt,
+                            value = score?.let { scorePercent(score.valueFor(scoreType)) }
+                        )
+                    }
+                )
+            }
+        )
+    }
+
     private fun scorePercent(value: Double): Int = (value * 100).roundToInt()
 
     companion object {
         private const val TREND_STEADY_THRESHOLD = 3
+    }
+}
+
+private fun AssessmentSessionSnapshot.scoreFor(
+    sephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId
+) = scores.firstOrNull { it.sephiraId == sephiraId }
+
+private fun com.netah.hakkam.numyah.mind.domain.model.SephiraScore.valueFor(
+    scoreType: HistoryTrendScoreType
+): Double {
+    return when (scoreType) {
+        HistoryTrendScoreType.BALANCE -> balanceScore
+        HistoryTrendScoreType.DEFICIENCY -> deficiencyScore
+        HistoryTrendScoreType.EXCESS -> excessScore
     }
 }
 

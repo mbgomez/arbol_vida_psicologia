@@ -182,6 +182,14 @@ Locked history standard:
   - highest tension by saved session, using the session's highest imbalance score
   - most settled by saved session, using the session's lowest-imbalance strongest-balance score
 - Trend visuals in History should stay lightweight, calm, and chart-ready while preserving the saved-session list as the clearly primary surface.
+- The lightweight trend section in History remains the entry point for trend exploration.
+- Deeper graph exploration should open on a dedicated secondary screen from History rather than replacing the main History surface.
+- The first dedicated deeper-trends screen should support two explicit exploration modes:
+  - by sephira, showing balance, deficiency, and excess across saved completed sessions for one selected sephira
+  - by score type, showing all sephirot across saved completed sessions for one selected score type
+- Deeper trend state and models should stay chart-ready and stable so later visual upgrades do not require repository-contract churn.
+- In the deeper `by score type` view, per-sephira visibility toggles are allowed as screen-local UI state so the graph can update immediately without changing repository or ViewModel contracts.
+- Dynamic graph surfaces should expose stable test tags for chart controls and saved-point rows when visibility/filtering can change what is rendered.
 
 UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
@@ -251,3 +259,4 @@ Refactor lessons to preserve:
 - Shell confirmation copy should be derived from the tapped destination so the dialog and resulting navigation stay trustworthy.
 - Debug-only QA tools are safer when they switch the read source for completed-history surfaces instead of seeding or overwriting real saved history.
 - Compose tests for polished, scrollable screens should be written to survive legitimate section growth without treating below-the-fold content as a regression.
+- For dynamic graph screens, prefer filtering chart-ready UI models in the screen layer for temporary visibility controls rather than pushing transient chip-selection state into data or repository contracts.

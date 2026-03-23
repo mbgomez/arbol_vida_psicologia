@@ -32,6 +32,7 @@ sealed class AppDestination(
         }
     }
     data object History : AppDestination("history", R.string.screen_history)
+    data object HistoryTrends : AppDestination("history/trends", R.string.screen_history_trends)
     data object ResultsDetail :
         AppDestination("results/detail/{sephiraId}?sessionId={sessionId}", R.string.screen_results_detail) {
         const val sephiraIdArg = "sephiraId"
@@ -92,6 +93,7 @@ fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Results.route,
     AppDestination.Results.routePattern -> AppDestination.Results
     AppDestination.History.route -> AppDestination.History
+    AppDestination.HistoryTrends.route -> AppDestination.HistoryTrends
     AppDestination.ResultsDetail.route,
     AppDestination.ResultsDetail.routePattern -> AppDestination.ResultsDetail
     AppDestination.Learn.route -> AppDestination.Learn

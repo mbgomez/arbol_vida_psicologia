@@ -84,6 +84,15 @@ class HistoryViewModelTests {
         assertEquals(2, state.model.trends.charts.size)
         assertEquals(false, state.model.trends.hasComparisonData)
         assertEquals(75, state.model.trends.charts.first().latestValue)
+        assertEquals(SephiraId.MALKUTH, state.model.deeperTrends.defaultSephiraId)
+        assertEquals(2, state.model.deeperTrends.sephiraOptions.size)
+        assertEquals(
+            listOf(60, 20, 20),
+            state.model.deeperTrends.bySephiraCharts
+                .getValue(SephiraId.MALKUTH)
+                .lines
+                .map { it.points.first().value }
+        )
     }
 
     @Test
@@ -124,6 +133,33 @@ class HistoryViewModelTests {
         assertEquals(62, settledTrend.latestValue)
         assertEquals(60, settledTrend.previousValue)
         assertEquals(HistoryTrendDirection.STEADY, settledTrend.direction)
+        assertEquals(
+            listOf(10L, 20L),
+            state.model.deeperTrends.byScoreTypeCharts
+                .getValue(HistoryTrendScoreType.DEFICIENCY)
+                .lines
+                .first { it.sephiraId == SephiraId.YESOD }
+                .points
+                .map { it.sessionId }
+        )
+        assertEquals(
+            listOf(45, 18),
+            state.model.deeperTrends.byScoreTypeCharts
+                .getValue(HistoryTrendScoreType.DEFICIENCY)
+                .lines
+                .first { it.sephiraId == SephiraId.YESOD }
+                .points
+                .map { it.value }
+        )
+        assertEquals(
+            listOf(20, 25),
+            state.model.deeperTrends.bySephiraCharts
+                .getValue(SephiraId.MALKUTH)
+                .lines
+                .first { it.scoreType == HistoryTrendScoreType.EXCESS }
+                .points
+                .map { it.value }
+        )
     }
 
     private fun createViewModel() = HistoryViewModel(

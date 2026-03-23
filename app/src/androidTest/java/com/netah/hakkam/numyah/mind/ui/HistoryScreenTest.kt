@@ -12,13 +12,20 @@ import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.HistorySessionUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryDeepTrendsUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTimeSeriesChartUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTimeSeriesLineUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTimeSeriesPointUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendChartUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendDirection
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendScoreType
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendSephiraOptionUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendMetricType
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendPointUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendsUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryUiState
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -40,7 +47,8 @@ class HistoryScreenTest {
                     paddingValues = PaddingValues(),
                     uiState = HistoryUiState.Empty,
                     onOpenAssessment = {},
-                    onOpenAssessments = { startedAssessment = true }
+                    onOpenAssessments = { startedAssessment = true },
+                    onOpenTrends = {}
                 )
             }
         }
@@ -55,6 +63,7 @@ class HistoryScreenTest {
     fun historyScreen_loadedState_showsSavedSessionAndOpensIt() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var openedSessionId: Long? = null
+        var openedTrends = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -100,6 +109,55 @@ class HistoryScreenTest {
                                     )
                                 )
                             ),
+                            deeperTrends = HistoryDeepTrendsUiModel(
+                                sessionCount = 1,
+                                hasComparisonData = false,
+                                sephiraOptions = listOf(
+                                    HistoryTrendSephiraOptionUiModel(
+                                        sephiraId = SephiraId.MALKUTH,
+                                        displayName = "Malkuth"
+                                    )
+                                ),
+                                defaultSephiraId = SephiraId.MALKUTH,
+                                defaultScoreType = HistoryTrendScoreType.BALANCE,
+                                bySephiraCharts = mapOf(
+                                    SephiraId.MALKUTH to HistoryTimeSeriesChartUiModel(
+                                        sessionCount = 1,
+                                        lines = HistoryTrendScoreType.values().map { scoreType ->
+                                            HistoryTimeSeriesLineUiModel(
+                                                id = scoreType.name,
+                                                scoreType = scoreType,
+                                                points = listOf(
+                                                    HistoryTimeSeriesPointUiModel(
+                                                        sessionId = 7L,
+                                                        completedAt = 200L,
+                                                        value = 61
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    )
+                                ),
+                                byScoreTypeCharts = HistoryTrendScoreType.values().associateWith { scoreType ->
+                                    HistoryTimeSeriesChartUiModel(
+                                        sessionCount = 1,
+                                        lines = listOf(
+                                            HistoryTimeSeriesLineUiModel(
+                                                id = "MALKUTH_${scoreType.name}",
+                                                sephiraId = SephiraId.MALKUTH,
+                                                displayName = "Malkuth",
+                                                points = listOf(
+                                                    HistoryTimeSeriesPointUiModel(
+                                                        sessionId = 7L,
+                                                        completedAt = 200L,
+                                                        value = 61
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                }
+                            ),
                             sessions = listOf(
                                 HistorySessionUiModel(
                                     sessionId = 7L,
@@ -116,7 +174,8 @@ class HistoryScreenTest {
                         )
                     ),
                     onOpenAssessment = { openedSessionId = it },
-                    onOpenAssessments = {}
+                    onOpenAssessments = {},
+                    onOpenTrends = { openedTrends = true }
                 )
             }
         }
@@ -124,10 +183,12 @@ class HistoryScreenTest {
         composeTestRule.onNodeWithTag("history_list").assertIsDisplayed()
         composeTestRule.onNodeWithTag("history_trend_section").assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.history_list_title)).performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.history_trends_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.history_trends_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.history_needs_attention_summary, "Hod")).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithTag("history_open_trends").performScrollTo().performClick()
         composeTestRule.onNodeWithText(context.getString(R.string.history_open_action)).performClick()
 
+        assertTrue(openedTrends)
         assertEquals(7L, openedSessionId)
     }
 }

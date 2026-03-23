@@ -4,7 +4,7 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the five-tab shell now has destination-aware exit messaging plus adaptive single-line nav labeling."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the five-tab shell now has destination-aware exit messaging plus adaptive single-line nav labeling."
 status = "stable_after_tests_and_manual_checks"
 
 [recent_work]
@@ -23,6 +23,10 @@ completed = [
   "Extended seeded assessment content shape with detailContent",
   "Added safe JSON fallbacks so unfinished seeded sections still load",
   "Locked the first History trend metrics and chart-ready state models while keeping the completed-session list primary",
+  "Added a dedicated deeper-trends History screen reached from the lightweight History trend section",
+  "Added explicit deeper-trends exploration modes for by sephira and by score type",
+  "Kept deeper-trends chart state chart-ready and stable without adding repository-contract churn",
+  "Added per-sephira visibility toggles in the score-type trends mode with immediate graph and detail-row updates",
   "Updated tests for Home, shell route ordering, the assessment library, Results detail, repository content mapping, and viewmodels"
 ]
 
@@ -34,6 +38,9 @@ result_detail_content_shape = ["healthyExpression", "deficiencyPattern", "excess
 result_detail_content_fallbacks = "If seeded sections omit detail fields, repository falls back to shortMeaning/introText/empty practices so the app remains stable while content is authored gradually."
 history_behavior = "History remains the surface for completed sessions, opens the saved results overview for that exact session, and is the approved future home for graph-based trends."
 history_trend_metrics = ["highest tension by saved session", "most settled by saved session"]
+history_trend_navigation = "The lightweight History trend section remains the entry point, while deeper trend exploration now opens on a dedicated secondary History screen."
+history_trend_modes = ["by sephira", "by score type"]
+history_trend_filtering = "Score-type trend exploration can temporarily enable or disable individual sephirot in screen-local UI state without changing the saved-history trend contract."
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
@@ -56,7 +63,7 @@ description = "Done in this slice."
 assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Add retake assessment and stronger bridges from Home summary into Results and detail."
-history_graphs = "Add calm, readable trend graphs inside History after the first chart metrics and empty states are locked."
+history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
 [lessons_learned]
@@ -69,6 +76,10 @@ items = [
   "The moment the product wants to signal a real multi-assessment future, including user-authored assessments, a top-level Assessments tab becomes a product statement rather than unnecessary shell noise.",
   "History is the right long-term home for graphs because it already owns completed-session re-entry and time-based reflection.",
   "The first History graph slice is stronger when it locks a small chart-ready metric contract instead of overreaching into dashboard behavior.",
+  "The lightweight History trend section works best as the entry point, with deeper chart exploration moved onto a secondary screen instead of crowding the main saved-session surface.",
+  "Explicit by-sephira and by-score-type modes keep the deeper trends experience easier to read than one overloaded graph control.",
+  "Per-sephira visibility toggles in score-type trend mode are a UI concern, so filtering the chart-ready screen model locally is cleaner than pushing transient selection state into repository contracts.",
+  "Dynamic graph screens are easier to keep stable when test tags target specific controls and saved-point rows instead of relying on repeated sephira names in visible text.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
   "Assessment exit confirmation has to name the actual destination in both the body and the confirm action or the shell feels untrustworthy.",
   "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure.",

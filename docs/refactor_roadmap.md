@@ -311,6 +311,10 @@ Additional guidance:
   - highest tension by session, based on the session's top imbalance score
   - most settled by session, based on the session's lowest-imbalance strongest-balance score
 - New graph UI should consume chart-ready state models for those metrics so later visual refinement does not require changing repository contracts or replacing the saved-session list.
+- The lightweight trend section inside `History` remains the entry point for trend exploration.
+- Deeper trend exploration should open from `History` on a dedicated secondary screen instead of expanding the main `History` surface into a dashboard.
+- Dedicated deeper-trends controls should use explicit modes and stable semantics/test tags so graph refinement can continue without brittle screen contracts.
+- Temporary graph-filter selections such as per-sephira visibility chips in deeper trends should stay in screen-local state when they do not affect saved data or cross-screen behavior.
 - Any QA/demo support for completed-history surfaces should be implemented as a debug-only source switch that leaves the real Room history untouched.
 
 ## Prioritized Refactor Phases
@@ -392,6 +396,7 @@ A refactor pass is considered complete only when:
 - Persistence and content hardening should be timed intentionally. Not every long-term standard needs to be implemented immediately if the delivery milestone is different.
 - Debug/testing shortcuts that mutate user data create avoidable risk. For product review flows, switching read sources is often the safer architecture.
 - Compose tests on polished screens need to tolerate legitimate growth in above-the-fold content or they turn refactors into false regressions.
+- Dynamic chart screens are safer to test when detail rows and filter chips expose explicit test tags instead of relying on repeated visible text that may also appear in legends, chips, or headings.
 
 ## Immediate Next Step
 

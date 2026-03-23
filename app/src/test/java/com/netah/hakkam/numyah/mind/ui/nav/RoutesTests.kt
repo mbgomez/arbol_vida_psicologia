@@ -1,8 +1,10 @@
 package com.netah.hakkam.numyah.mind.ui.nav
 
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
+import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Test
 
 class RoutesTests {
@@ -18,6 +20,14 @@ class RoutesTests {
                 AppDestination.Settings
             ),
             topLevelDestinations.map { it.destination }
+        )
+    }
+
+    @Test
+    fun destinationForRoute_mapsDedicatedHistoryTrendsRoute() {
+        assertSame(
+            AppDestination.HistoryTrends,
+            destinationForRoute(AppDestination.HistoryTrends.route)
         )
     }
 }
