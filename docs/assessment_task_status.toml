@@ -4,8 +4,8 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a gated tester-observability foundation plus Firebase and Play testing setup guidance."
-status = "phase_1_5_slice_implemented_manual_verification_pending"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a gated tester-observability foundation plus Firebase configuration, signed release-bundle readiness, and Play testing setup guidance."
+status = "phase_1_5_observability_partially_verified_play_identity_pending"
 
 [recent_work]
 completed = [
@@ -38,7 +38,10 @@ completed = [
   "Added non-fatal reporting hooks for assessment, results, history, learn, and sephira-detail recoverable failures",
   "Added Gradle flags so tester observability and Firebase can be enabled only for tester builds",
   "Updated privacy-facing copy to explain limited tester telemetry and preserve the local-first trust boundary",
-  "Added a dedicated tester-distribution and observability setup guide for Firebase and Google Play testing"
+  "Added a dedicated tester-distribution and observability setup guide for Firebase and Google Play testing",
+  "Updated telemetry-related Compose tests and confirmed that the broad `No compose hierarchies found` androidTest failure was caused by device state rather than production-code regressions",
+  "Verified that Firebase backend initialization and local telemetry logging are active in a tester-enabled build",
+  "Created a release upload keystore and produced a signed release app bundle for Play internal testing"
 ]
 
 [locked_decisions]
@@ -55,8 +58,8 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_1_5_manual_firebase_and_play_verification"
-why = "The app now has a gated observability foundation, so the next slice is the manual Firebase enablement, Play tester rollout, and verification pass that validates the approved telemetry boundary with real tester builds."
+name = "phase_1_5_finish_firebase_delivery_and_play_rollout"
+why = "Firebase is configured and a signed tester bundle exists, but Analytics and Crashlytics delivery still need end-to-end confirmation and Play internal testing is blocked on account identity verification."
 
 [[recommended_next_slice.goals]]
 id = "assessments_tab_shell"
@@ -93,7 +96,7 @@ assessment_library_screen = "Now lives in the top-level Assessments tab while Ho
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
-tester_distribution_and_observability = "A gated observability foundation is now in place. The next step is manual Firebase wiring, Play internal or closed testing setup, and tester verification against the approved event taxonomy."
+tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
@@ -115,6 +118,10 @@ items = [
   "Tester analytics are most useful when they stay narrowly focused on the core journey and key recoverable failures instead of trying to measure everything at once.",
   "Crash and telemetry instrumentation should respect the product's privacy posture and be explained clearly once tester-distribution work begins.",
   "A small app-owned telemetry layer keeps the event contract stable and lets Firebase be enabled only for tester builds instead of becoming a hidden requirement for every local build.",
+  "When connected Compose tests all fail with `No compose hierarchies found`, check the device or emulator state first. In this thread, Android test-device settings were the cause rather than the new feature code.",
+  "Firebase backend initialization logs and local Timber telemetry are not the same as end-to-end Analytics DebugView or Crashlytics console confirmation. Treat those as separate verification checkpoints.",
+  "Play internal testing rollout can be blocked by account identity verification even after a signed release bundle is ready, so the release artifact and the console-compliance step should be tracked separately.",
+  "For local Windows setup, invoking adb, keytool, and Gradle by absolute path can be faster than assuming PATH or JAVA_HOME are already configured.",
   "Per-sephira visibility toggles in score-type trend mode are a UI concern, so filtering the chart-ready screen model locally is cleaner than pushing transient selection state into repository contracts.",
   "Dynamic graph screens are easier to keep stable when test tags target specific controls and saved-point rows instead of relying on repeated sephira names in visible text.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
@@ -125,14 +132,18 @@ items = [
 ]
 
 [verification]
-status = "manual_verification_pending_for_phase_1_5"
+status = "partially_verified_manual_follow_up_pending"
 notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
   "Manual checks passed for Home summary and Results detail navigation.",
   "User verified the new top-level Assessments tab and assessment-exit shell behavior.",
   "User verified the destination-aware exit dialog copy and the footer-copy cleanup.",
   "User reported that all tests passed for the explicit fresh-start and retake flow.",
-  "Phase 1.5 observability wiring, updated UI tests, and new telemetry-related unit tests still need the user's requested local Gradle, Firebase, emulator, and Play verification pass."
+  "User reported that connected Compose tests passed after correcting the Android test-device state that was causing broad `No compose hierarchies found` failures.",
+  "Firebase backend initialization was observed in Logcat and local telemetry events plus tester non-fatal logging were observed in a tester-enabled build.",
+  "Analytics DebugView and Crashlytics console delivery were not yet confirmed end-to-end at the stopping point.",
+  "A release upload keystore was created at `C:\\Users\\Miguel\\keys\\numyah-mind-upload.jks` and a signed release bundle was produced for Play internal testing.",
+  "The Play upload path is prepared, but account identity verification still needs to be completed before fully finishing the internal testing rollout."
 ]
 
 [files_to_read_first]

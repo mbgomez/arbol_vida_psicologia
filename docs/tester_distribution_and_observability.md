@@ -98,6 +98,13 @@ The approved telemetry boundary for this slice is:
 4. Publish the testing release.
 5. Verify that the Play listing or tester notes mention limited crash and product-flow telemetry for tester builds.
 
+Current stopping-point note from this thread:
+
+- Firebase has been configured and the app has initialized the Firebase-backed telemetry path in a tester-enabled build.
+- A signed release upload keystore and signed release bundle have been created.
+- End-to-end Analytics DebugView and Crashlytics console confirmation are still pending.
+- Play rollout may remain blocked until the Play account identity-verification steps are completed.
+
 ## Verification Checklist
 
 Manual verification should confirm:
@@ -111,3 +118,8 @@ Manual verification should confirm:
 - a forced recoverable failure appears as a non-fatal record when Firebase is enabled
 - Firebase DebugView shows the approved event names only
 - Crashlytics receives a test crash and a recoverable non-fatal report
+
+## Verification Notes
+
+- Local Timber telemetry logs and Firebase backend initialization logs are useful early signals, but they do not replace DebugView or Crashlytics console confirmation.
+- If you are working on Windows, using absolute paths for `adb`, `keytool`, and `gradlew.bat` can be faster than relying on existing shell environment setup.

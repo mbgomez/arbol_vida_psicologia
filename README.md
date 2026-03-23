@@ -86,6 +86,7 @@ Testing standard:
 - Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
 - Local builds, Gradle test runs, emulator checks, and manual verification are run by the user. Implementation work should include clear run instructions and focused checks for the user to execute.
 - For long scrollable screens, prefer Compose assertions that explicitly scroll to the target content or use stable test tags so layout growth does not create false failures.
+- If connected Compose tests fail broadly with `No compose hierarchies found in the app`, check the device or emulator state first. In this project that failure can come from Android Developer Options such as `Don't keep activities` being enabled.
 
 Assessment content standard:
 

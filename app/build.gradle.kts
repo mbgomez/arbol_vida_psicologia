@@ -7,11 +7,11 @@ plugins {
 }
 
 val enableFirebase = providers.gradleProperty("numyah.enableFirebase")
-    .orElse("false")
+    .orElse("true")
     .map { value -> value.equals("true", ignoreCase = true) }
     .get()
 val enableTesterObservability = providers.gradleProperty("numyah.enableTesterObservability")
-    .orElse("false")
+    .orElse("true")
     .map { value -> value.equals("true", ignoreCase = true) }
     .get()
 
@@ -30,8 +30,8 @@ android {
         applicationId = "com.netah.hakkam.numyah.mind"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField(

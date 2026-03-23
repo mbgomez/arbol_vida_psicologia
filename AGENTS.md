@@ -169,6 +169,7 @@ Testing priorities:
 - Compose UI tests should start with the stable, user-critical screens in the current slice.
 - Avoid spending test effort on placeholder screens unless they protect behavior we explicitly want to keep stable.
 - For long scrollable Compose screens such as History and Settings, prefer assertions that scroll to the target content or rely on stable test tags rather than assuming later sections are immediately visible in the initial viewport.
+- When connected Compose tests fail broadly with `No compose hierarchies found in the app`, first check the Android test-device state before treating it as a feature regression. In this project that failure can come from Developer Options such as `Don't keep activities`.
 
 Locked history standard:
 - The History tab is a production user surface for completed assessments, not a placeholder destination.
@@ -268,6 +269,7 @@ Refactor lessons to preserve:
 - Shell confirmation copy should be derived from the tapped destination so the dialog and resulting navigation stay trustworthy.
 - Debug-only QA tools are safer when they switch the read source for completed-history surfaces instead of seeding or overwriting real saved history.
 - Compose tests for polished, scrollable screens should be written to survive legitimate section growth without treating below-the-fold content as a regression.
+- Broad `No compose hierarchies found` failures in androidTest can be caused by device settings like `Don't keep activities`, even when production code is fine. Check the test environment before rewriting app code.
 - For dynamic graph screens, prefer filtering chart-ready UI models in the screen layer for temporary visibility controls rather than pushing transient chip-selection state into data or repository contracts.
 - Replacing an unfinished assessment is a trust-sensitive action. Keep the confirmation copy explicit about what will be replaced and what will remain saved.
 - Fresh-start behavior is stronger when it is implemented in the session/repository contract rather than as screen-local reset logic, so every entry surface shares the same rule.

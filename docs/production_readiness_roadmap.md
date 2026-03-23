@@ -124,6 +124,7 @@ Focus:
 - continue repository/use case tests where behavior meaningfully grows
 - strengthen History, Results, resume, and assessment progression coverage
 - keep tests stable by relying on scroll-aware assertions and explicit test tags on dynamic surfaces
+- keep androidTest verification grounded in a known-good device setup so environment issues like `Don't keep activities` do not masquerade as broad Compose regressions
 
 Release gate:
 
