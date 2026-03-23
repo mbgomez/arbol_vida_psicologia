@@ -7,11 +7,11 @@ plugins {
 }
 
 val enableFirebase = providers.gradleProperty("numyah.enableFirebase")
-    .orElse("true")
+    .orElse("false")
     .map { value -> value.equals("true", ignoreCase = true) }
     .get()
 val enableTesterObservability = providers.gradleProperty("numyah.enableTesterObservability")
-    .orElse("true")
+    .orElse("false")
     .map { value -> value.equals("true", ignoreCase = true) }
     .get()
 

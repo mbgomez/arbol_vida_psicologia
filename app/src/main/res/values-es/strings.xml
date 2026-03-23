@@ -305,7 +305,7 @@
     <string name="learn_back_to_course_action">Terminar y volver al curso</string>
     <string name="learn_course_overview_action">Volver a la vista del curso</string>
     <string name="learn_section_status_available">Disponible para leer</string>
-    <string name="learn_section_status_locked">Bloqueada hasta terminar la seccion anterior</string>
+    <string name="learn_section_status_locked">Bloqueada</string>
     <string name="learn_section_status_completed">Terminada</string>
     <string name="learn_section_status_in_progress">Seccion actual</string>
     <string name="learn_reader_status_ready">Lista para leer</string>

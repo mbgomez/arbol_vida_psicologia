@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -345,25 +346,10 @@ private fun LearnSectionCard(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            AppMetricBadge(
-                label = stringResource(R.string.learn_course_time_badge),
-                value = stringResource(R.string.learn_minutes_short, section.readingTimeMinutes),
-                modifier = Modifier.weight(1f)
-            )
-            StatusChip(
-                label = when {
-                    section.isCompleted -> stringResource(R.string.learn_section_status_completed)
-                    section.isLocked -> stringResource(R.string.learn_section_status_locked)
-                    else -> stringResource(R.string.learn_section_status_available)
-                }
-            )
-        }
+        LearnSectionCardMetadata(
+            section = section,
+            modifier = Modifier.padding(top = 16.dp)
+        )
         if (!section.isLocked) {
             Text(
                 text = stringResource(R.string.learn_open_section_action),
@@ -372,6 +358,45 @@ private fun LearnSectionCard(
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.SemiBold
             )
+        }
+    }
+}
+
+@Composable
+private fun LearnSectionCardMetadata(
+    section: LearnSectionListItemUiModel,
+    modifier: Modifier = Modifier
+) {
+    BoxWithConstraints(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        val shouldStack = maxWidth < 360.dp
+        val statusLabel = when {
+            section.isCompleted -> stringResource(R.string.learn_section_status_completed)
+            section.isLocked -> stringResource(R.string.learn_section_status_locked)
+            else -> stringResource(R.string.learn_section_status_available)
+        }
+
+        if (shouldStack) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                AppMetricBadge(
+                    label = stringResource(R.string.learn_course_time_badge),
+                    value = stringResource(R.string.learn_minutes_short, section.readingTimeMinutes)
+                )
+                StatusChip(label = statusLabel)
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                AppMetricBadge(
+                    label = stringResource(R.string.learn_course_time_badge),
+                    value = stringResource(R.string.learn_minutes_short, section.readingTimeMinutes),
+                    modifier = Modifier.weight(1f)
+                )
+                StatusChip(label = statusLabel)
+            }
         }
     }
 }
