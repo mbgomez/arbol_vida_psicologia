@@ -403,6 +403,10 @@ A refactor pass is considered complete only when:
 - Dynamic chart screens are safer to test when detail rows and filter chips expose explicit test tags instead of relying on repeated visible text that may also appear in legends, chips, or headings.
 - Refactor work should support the mainline release track from the production roadmap rather than delaying product completion for cleanup that is not yet release-relevant.
 - Trust-sensitive actions such as replacing an unfinished assessment should be implemented once in the data/session contract and reused upward through navigation and UI, rather than reset separately at each screen.
+- Recovery states on polished product surfaces are stronger when they can retry in place first, instead of always forcing the user out to another destination.
+- Chart readability improves when axis labels visually belong to the plotted area; detached labels above or below the graph make trend screens feel less intentional.
+- For multiline support lists, bullet markers need manual visual alignment review. A small offset tied to the first text line can read better than plain top or center alignment.
+- In Compose chart and drawing code, resolve theme-dependent colors or resources in composable scope before entering `Canvas` draw lambdas to avoid compilation and maintenance issues.
 
 ## Immediate Next Step
 
