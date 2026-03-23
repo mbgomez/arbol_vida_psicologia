@@ -4,7 +4,7 @@ updated_utc = "2026-03-23"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the five-tab shell now has destination-aware exit messaging plus adaptive single-line nav labeling."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, and the project now has a locked production-readiness roadmap with a parallel sephira-content side mission."
 status = "stable_after_tests_and_manual_checks"
 
 [recent_work]
@@ -44,8 +44,8 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "assessments_tab_and_history_trend_foundation"
-why = "The shell direction is now implemented, so the next slice can stop revisiting entry-surface debates and focus on History trend foundations plus stronger completed-results polish."
+name = "phase_1_product_completion_mainline"
+why = "The project now has a locked production-readiness roadmap, so the next slice should advance the mainline release track while allowing sephira authored content to continue arriving in parallel."
 
 [[recommended_next_slice.goals]]
 id = "assessments_tab_shell"
@@ -58,6 +58,23 @@ description = "Done in this slice."
 [[recommended_next_slice.goals]]
 id = "history_graph_foundation"
 description = "Done in this slice."
+
+[[recommended_next_slice.goals]]
+id = "production_roadmap_alignment"
+description = "Done in this slice."
+
+[production_roadmap]
+file = "docs/production_readiness_roadmap.md"
+mainline_track = [
+  "Phase 1: Product Completion",
+  "Phase 2: UX And Enjoyment Polish",
+  "Phase 3: Refactor And Architecture Hardening",
+  "Phase 4: Reliability And Coverage Expansion",
+  "Phase 5: Accessibility And Localization Hardening",
+  "Phase 6: Release Hardening",
+  "Phase 7: Final QA And Submission Prep"
+]
+side_mission = "Sephira content enrichment can continue in parallel and be added one sephira at a time without blocking the mainline release track unless a feature explicitly depends on finalized content."
 
 [future_options]
 assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."

@@ -2,6 +2,8 @@
 
 This document locks the current refactor direction for `Numyah Mind`.
 
+For overall release-phase ordering, also follow [production_readiness_roadmap.md](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md).
+
 It exists to keep future implementation work aligned with one product-grade standard instead of letting the codebase drift between:
 
 - starter-template residue
@@ -397,6 +399,7 @@ A refactor pass is considered complete only when:
 - Debug/testing shortcuts that mutate user data create avoidable risk. For product review flows, switching read sources is often the safer architecture.
 - Compose tests on polished screens need to tolerate legitimate growth in above-the-fold content or they turn refactors into false regressions.
 - Dynamic chart screens are safer to test when detail rows and filter chips expose explicit test tags instead of relying on repeated visible text that may also appear in legends, chips, or headings.
+- Refactor work should support the mainline release track from the production roadmap rather than delaying product completion for cleanup that is not yet release-relevant.
 
 ## Immediate Next Step
 

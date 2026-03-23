@@ -40,6 +40,7 @@ All user-facing content should be planned for English and Spanish from the begin
 The full product plan is documented here:
 
 - [Product spec](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\product_spec.md)
+- [Production readiness roadmap](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md)
 
 ## Scope For First Build
 
@@ -245,6 +246,12 @@ Learnings from the Settings slice:
   - focused Compose tests for stable user-critical controls
 - Manual verification remains part of the release standard for language, theme, and nested Settings navigation even when automated tests exist, because those areas depend on app-shell behavior as well as local screen behavior.
 - Debug-only product review tools in Settings should explain their purpose clearly and should prefer switching data sources over mutating persisted user data.
+
+Production roadmap standard:
+
+- Use `docs/production_readiness_roadmap.md` as the current phase guide toward a production-ready release.
+- Keep the mainline release track moving even while deeper authored sephira content is still arriving.
+- Treat finalized sephira-content enrichment as an ongoing side mission that can be added one sephira at a time during the main roadmap.
 
 Locked assessment entry direction:
 

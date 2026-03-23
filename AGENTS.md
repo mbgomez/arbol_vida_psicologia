@@ -7,6 +7,7 @@ Primary source of truth:
 - Product spec: `docs/product_spec.md`
 - README summary: `README.md`
 - Content source document: `docs/Tree of life - overview - psychology.docx`
+- Production roadmap: `docs/production_readiness_roadmap.md`
 
 Product framing:
 - This is a self-reflection and personal growth app.
@@ -240,6 +241,8 @@ Working-together protocol:
 - Be explicit about whether a choice is a temporary experiment or a new project standard.
 - When a standard changes, update both the implementation and the requirement files in the same pass.
 - Prefer reducing assumption churn over rushing a larger implementation on unstable foundations.
+- Follow `docs/production_readiness_roadmap.md` for the current phase order toward a production-ready release.
+- Treat finalized sephira-content enrichment as an approved side mission that can be added one sephira at a time during the main roadmap, unless a thread explicitly locks a feature that depends on all related sephirot being finalized first.
 
 Locked refactor direction:
 - Follow `docs/refactor_roadmap.md` as the source of truth for refactor standards and cleanup order.

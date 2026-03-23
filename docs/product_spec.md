@@ -12,6 +12,8 @@ The app's educational content should be grounded in the project's own Kabbalah r
 
 The app should launch with bilingual support for English and Spanish.
 
+The current phase roadmap toward a production-ready release is documented in [production_readiness_roadmap.md](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md).
+
 ## 2. User Flow
 
 ### Primary Flow
@@ -323,6 +325,7 @@ Locked workflow learning:
 
 - Future sephira content should be seeded manually from the authored question set rather than generated from prior slices by default.
 - Manual verification and project execution are user-owned. The implementation workflow should assume the user runs builds, tests, and interactive checks locally and reports the first failure or mismatch back into the collaboration loop.
+- Production readiness should advance on a mainline release track even while authored sephira enrichment continues gradually in parallel.
 
 ### Locked Content Structure Standard
 
