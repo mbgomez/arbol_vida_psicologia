@@ -149,6 +149,7 @@ Locked history standard:
   - the most tense saved sephira
   - the most settled saved sephira
 - Opening a history item should route to the saved results overview for that specific completed session rather than always redirecting to the latest result.
+- History is also the planned surface for future trend graphs across saved assessments.
 
 Scoring standard:
 
@@ -187,6 +188,7 @@ Learnings from the Malkuth slice:
   - save a result after each sephira
   - show a short section-complete reflection
   - reserve the larger synthesis for the end of the assessment
+  - let Home remain the fast entry point while `Assessments` becomes the dedicated library surface as the catalog expands
 - For each new sephira batch, lock these before implementation:
   - sephira order
   - question count
@@ -230,6 +232,17 @@ Learnings from the Settings slice:
   - ViewModel state tests
   - focused Compose tests for stable user-critical controls
 - Manual verification remains part of the release standard for language, theme, and nested Settings navigation even when automated tests exist, because those areas depend on app-shell behavior as well as local screen behavior.
+
+Locked assessment entry direction:
+
+- Home should clearly separate:
+  - starting a new assessment
+  - resuming an in-progress assessment
+  - viewing the latest completed reflection
+- `Assessments` is now a top-level product surface.
+- Home should still keep direct actions for starting a new assessment and resuming the current one.
+- `Assessments` should own the expanding library and future multi-assessment browsing, including future user-authored assessments when that capability enters scope.
+- `History` remains the completed-results surface and is the planned home for graph-based trends across saved sessions.
 
 ## Delivery Standard
 

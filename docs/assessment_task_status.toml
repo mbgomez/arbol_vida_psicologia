@@ -4,7 +4,7 @@ updated_utc = "2026-03-22"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Home now shows latest reflection value, Results has per-sephira detail, History opens saved result overviews, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set."
+summary = "Home now separates start/resume/latest-reflection responsibilities more clearly, an assessment library exists, Results has per-sephira detail, History opens saved result overviews, Learn is present, Settings is present, and assessment supports multi-sephira progression across the seeded set."
 status = "stable_after_tests_and_manual_checks"
 
 [recent_work]
@@ -12,48 +12,53 @@ completed = [
   "Removed builder-style value-less home progress card",
   "Added Home summary driven by latest completed assessment",
   "Added last assessment date and relative days-since text on Home",
+  "Separated Home resume state from latest-completed reflection state",
+  "Introduced an assessment library screen behind Home while keeping the top-level tabs unchanged",
   "Added per-sephira results detail screen and navigation",
   "Extended seeded assessment content shape with detailContent",
   "Added safe JSON fallbacks so unfinished seeded sections still load",
-  "Updated tests for Home, Results detail, repository content mapping, and viewmodels"
+  "Updated tests for Home, the assessment library, Results detail, repository content mapping, and viewmodels"
 ]
 
 [locked_decisions]
-home_top_level_tabs = ["Home", "History", "Learn", "Settings"]
-assessment_library_top_level_tab = false
-assessment_library_direction = "Do not add a top-level Assessments tab yet. When multiple assessments exist, introduce an assessment library screen behind the current Start assessment entry."
+home_top_level_tabs = ["Home", "Assessments", "History", "Learn", "Settings"]
+assessment_library_top_level_tab = true
+assessment_library_direction = "Assessments is now the dedicated top-level library surface. Home should still keep direct start/resume actions that route into the same assessment flow."
 result_detail_content_shape = ["healthyExpression", "deficiencyPattern", "excessPattern", "suggestedPractices"]
 result_detail_content_fallbacks = "If seeded sections omit detail fields, repository falls back to shortMeaning/introText/empty practices so the app remains stable while content is authored gradually."
-history_behavior = "History remains the surface for completed sessions and opens the saved results overview for that exact session."
+history_behavior = "History remains the surface for completed sessions, opens the saved results overview for that exact session, and is the approved future home for graph-based trends."
 
 [recommended_next_slice]
-name = "assessment_resume_and_library_entry_polish"
-why = "The strongest next value is making Home distinguish between resuming an in-progress assessment and reopening the latest completed reflection, while keeping the future path open for multiple assessments."
+name = "assessments_tab_and_history_trend_foundation"
+why = "The product direction is now explicit: add a top-level Assessments tab while preserving Home's fast-entry flow, then prepare History to grow into trends and graphs."
 
 [[recommended_next_slice.goals]]
-id = "resume_state_on_home"
-description = "If an assessment is in progress, Home should prioritize resume context over latest-completed summary."
+id = "assessments_tab_shell"
+description = "Add a top-level Assessments tab that routes to the library while keeping Home start/resume actions intact."
 
 [[recommended_next_slice.goals]]
-id = "separate_resume_vs_latest"
-description = "Keep Resume assessment and View latest results as clearly distinct actions."
+id = "home_and_assessments_balance"
+description = "Rebalance Home and Assessments so Home keeps fast actions and value summary while Assessments owns browsing."
 
 [[recommended_next_slice.goals]]
-id = "future_assessment_library_path"
-description = "Shape Start assessment so it can later route to an assessment library screen without redesigning the shell."
+id = "history_graph_foundation"
+description = "Lock the first History trend metrics and chart-ready state models so a later thread can build graph UI cleanly."
 
 [future_options]
-assessment_library_screen = "Good future candidate once there is more than one assessment source or API-driven assessment catalog support."
+assessment_library_screen = "Should move into the top-level Assessments tab while Home keeps direct start/resume entry points."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Add retake assessment and stronger bridges from Home summary into Results and detail."
+history_graphs = "Add calm, readable trend graphs inside History after the first chart metrics and empty states are locked."
 
 [lessons_learned]
 items = [
   "Do not tighten local JSON contracts without providing backward-safe defaults when seeded sections are still arriving gradually.",
   "Home should communicate user value, not repository or product-progress status.",
+  "Home works better when in-progress continuation and latest-completed reflection are treated as separate surfaces rather than one blended summary card.",
   "A dedicated per-sephira detail route adds real product value and makes Results feel less like a terminal dashboard.",
   "Keeping result-detail content in the same seeded questionnaire pipeline is simpler than inventing a second local content system.",
-  "For future API-driven assessments, a library screen behind Start assessment is a better scaling path than adding a thin top-level tab too early."
+  "The moment the product wants to signal a real multi-assessment future, including user-authored assessments, a top-level Assessments tab becomes a product statement rather than unnecessary shell noise.",
+  "History is the right long-term home for graphs because it already owns completed-session re-entry and time-based reflection."
 ]
 
 [verification]

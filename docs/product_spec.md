@@ -19,6 +19,9 @@ The app should launch with bilingual support for English and Spanish.
 1. User opens the app.
 2. User sees short onboarding that explains the Tree of Life framework, reflection-focused positioning, privacy, and time commitment.
 3. User starts a new assessment.
+   - Home can still offer a direct start action.
+   - `Assessments` is the dedicated top-level browsing surface for the growing assessment library.
+   - The library should be shaped to support multiple future assessments, including later user-authored assessments, even if v1 still starts with the Tree of Life assessment.
 4. Before the first questionnaire intro, the user sees a brief honesty notice that frames the reflection and can be dismissed permanently with a local preference.
 5. Before each sephira section, the user sees a short intro that explains the sephira in practical psychological language.
 6. User answers questionnaire sections for each sephira in sequence.
@@ -33,10 +36,15 @@ The app should launch with bilingual support for English and Spanish.
 ### Secondary Flows
 
 - Resume interrupted assessment from the last unanswered question.
+- Distinguish on Home between:
+  - starting a new assessment
+  - resuming an in-progress assessment
+  - opening the latest completed reflection
 - Retake assessment from the results screen.
 - Review previous completed assessments from history.
 - Open a sephira detail screen directly from a saved assessment.
 - Open a Learn/About section without starting the assessment.
+- Review graph-based trends across completed assessments in History in a future slice.
 
 Locked history standard:
 
@@ -62,6 +70,10 @@ Locked history standard:
 - Deeper educational material should appear in context, especially before and after each sephira assessment.
 - All core user-facing flows should be available in English and Spanish.
 - The first-run experience should feel polished and product-grade, with intentional layout, strong hierarchy, and a professional visual treatment.
+- The top-level shell should stay calm and uncluttered while still reflecting the product's real direction:
+  - `Home` for fast entry, resume, and latest reflection value
+  - `Assessments` for browsing the growing library
+  - `History` for completed reflections and future trend graphs
 - Refactored Compose screens should keep resource lookup and visual tokens close to the UI section that uses them, so extracted sub-composables remain self-contained and easier to maintain.
 - Shared dimension tokens should be grouped by semantic role, not just by matching numeric value.
 - Local execution workflow should stay explicit: Android Studio runs, Gradle builds, emulator checks, and manual testing are performed by the user, while implementation changes should include targeted verification steps for the user to run.
@@ -76,7 +88,8 @@ Locked history standard:
 
 ### Assessment
 
-- Assessment home screen
+- Assessment library screen
+- Assessment catalog tab destination
 - Sephira intro screen for the current section
 - Question screen
 - Section completion micro-summary screen
@@ -88,6 +101,7 @@ Locked history standard:
 - Sephira detail screen
 - Suggested practices screen or practices section inside detail
 - Assessment history screen
+- History graphs and trend summaries in a future slice
 
 ### Support Screens
 

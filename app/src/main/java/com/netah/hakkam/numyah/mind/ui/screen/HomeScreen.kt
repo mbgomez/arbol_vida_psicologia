@@ -18,6 +18,8 @@ import com.netah.hakkam.numyah.mind.ui.components.AppCard
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
+import com.netah.hakkam.numyah.mind.viewmodel.HomeActiveAssessmentUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HomeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeSummaryUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeUiState
 import com.netah.hakkam.numyah.mind.viewmodel.HomeViewModel
@@ -25,8 +27,9 @@ import com.netah.hakkam.numyah.mind.viewmodel.HomeViewModel
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
-    onStartAssessment: () -> Unit,
-    onOpenResults: () -> Unit,
+    onOpenAssessmentLibrary: () -> Unit,
+    onResumeAssessment: () -> Unit,
+    onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenLearn: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -36,8 +39,9 @@ fun HomeRoute(
     HomeScreen(
         paddingValues = paddingValues,
         uiState = uiState,
-        onStartAssessment = onStartAssessment,
-        onOpenResults = onOpenResults,
+        onOpenAssessmentLibrary = onOpenAssessmentLibrary,
+        onResumeAssessment = onResumeAssessment,
+        onOpenLatestResults = onOpenLatestResults,
         onOpenHistory = onOpenHistory,
         onOpenLearn = onOpenLearn,
         onOpenSettings = onOpenSettings
@@ -48,12 +52,17 @@ fun HomeRoute(
 fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
-    onStartAssessment: () -> Unit,
-    onOpenResults: () -> Unit,
+    onOpenAssessmentLibrary: () -> Unit,
+    onResumeAssessment: () -> Unit,
+    onOpenLatestResults: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenLearn: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+    val loadedModel = (uiState as? HomeUiState.Loaded)?.model
+    val activeAssessment = loadedModel?.activeAssessment
+    val hasLatestReflection = loadedModel?.latestReflection != null
+
     AppScreenColumn(paddingValues = paddingValues) {
         Text(
             text = stringResource(R.string.home_title),
@@ -65,17 +74,41 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Button(
-            onClick = onStartAssessment,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = stringResource(R.string.home_primary_cta))
+
+        if (activeAssessment != null) {
+            ActiveAssessmentSection(model = activeAssessment)
         }
-        OutlinedButton(
-            onClick = onOpenResults,
+
+        Button(
+            onClick = if (activeAssessment != null) onResumeAssessment else onOpenAssessmentLibrary,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.home_secondary_cta))
+            Text(
+                text = stringResource(
+                    if (activeAssessment != null) {
+                        R.string.home_resume_cta
+                    } else {
+                        R.string.home_primary_cta
+                    }
+                )
+            )
+        }
+
+        if (hasLatestReflection || activeAssessment != null) {
+            OutlinedButton(
+                onClick = if (hasLatestReflection) onOpenLatestResults else onOpenAssessmentLibrary,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(
+                        if (hasLatestReflection) {
+                            R.string.home_secondary_cta
+                        } else {
+                            R.string.home_library_cta
+                        }
+                    )
+                )
+            }
         }
 
         when (uiState) {
@@ -94,7 +127,7 @@ fun HomeScreen(
                 title = stringResource(R.string.home_summary_error_title),
                 body = stringResource(R.string.home_summary_error_body)
             )
-            is HomeUiState.Loaded -> HomeSummarySection(model = uiState.model)
+            is HomeUiState.Loaded -> HomeLoadedState(model = uiState.model)
         }
 
         AppCard(
@@ -113,6 +146,42 @@ fun HomeScreen(
             onClick = onOpenSettings
         )
     }
+}
+
+@Composable
+private fun HomeLoadedState(model: HomeUiModel) {
+    model.latestReflection?.let { latestReflection ->
+        HomeSummarySection(model = latestReflection)
+    } ?: AppHeroCard(
+        eyebrow = stringResource(R.string.home_summary_eyebrow),
+        title = stringResource(R.string.home_summary_empty_title),
+        body = stringResource(R.string.home_summary_empty_body)
+    )
+}
+
+@Composable
+private fun ActiveAssessmentSection(model: HomeActiveAssessmentUiModel) {
+    AppHeroCard(
+        eyebrow = stringResource(R.string.home_active_eyebrow),
+        title = stringResource(R.string.home_active_title),
+        body = if (model.isAtSectionStart) {
+            stringResource(
+                R.string.home_active_intro_body,
+                model.sephiraName,
+                model.completedSephirotCount,
+                model.totalSephirotCount
+            )
+        } else {
+            stringResource(
+                R.string.home_active_question_body,
+                model.sephiraName,
+                model.currentQuestionNumber,
+                model.totalQuestions,
+                model.completedSephirotCount,
+                model.totalSephirotCount
+            )
+        }
+    )
 }
 
 @Composable

@@ -16,6 +16,7 @@ sealed class AppDestination(
 ) {
     data object Onboarding : AppDestination("onboarding", R.string.screen_onboarding)
     data object Home : AppDestination("home", R.string.nav_home)
+    data object AssessmentLibrary : AppDestination("assessment-library", R.string.screen_assessment_library)
     data object Assessment : AppDestination("assessment", R.string.screen_assessment)
     data object Results : AppDestination("results", R.string.screen_results) {
         const val sessionIdArg = "sessionId"
@@ -79,6 +80,7 @@ val topLevelDestinations = listOf(
 fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Onboarding.route -> AppDestination.Onboarding
     AppDestination.Home.route -> AppDestination.Home
+    AppDestination.AssessmentLibrary.route -> AppDestination.AssessmentLibrary
     AppDestination.Assessment.route -> AppDestination.Assessment
     AppDestination.Results.route,
     AppDestination.Results.routePattern -> AppDestination.Results

@@ -57,6 +57,7 @@ import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentRoute
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentLibraryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HomeRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
@@ -101,11 +102,26 @@ fun MainNavGraph(
             AppShell(navController = navController) { paddingValues ->
                 HomeRoute(
                     paddingValues = paddingValues,
-                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) },
-                    onOpenResults = { navController.navigate(AppDestination.Results.createRoute()) },
+                    onOpenAssessmentLibrary = { navController.navigate(AppDestination.AssessmentLibrary.route) },
+                    onResumeAssessment = { navController.navigate(AppDestination.Assessment.route) },
+                    onOpenLatestResults = { navController.navigate(AppDestination.Results.createRoute()) },
                     onOpenHistory = { navController.navigate(AppDestination.History.route) },
                     onOpenLearn = { navController.navigate(AppDestination.Learn.route) },
                     onOpenSettings = { navController.navigate(AppDestination.Settings.route) }
+                )
+            }
+        }
+        composable(AppDestination.AssessmentLibrary.route) {
+            AppShell(
+                navController = navController,
+                titleOverride = stringResource(R.string.screen_assessment_library),
+                showBottomBar = false,
+                useDetailHeader = true,
+                onBack = { navController.navigateUp() }
+            ) { paddingValues ->
+                AssessmentLibraryRoute(
+                    paddingValues = paddingValues,
+                    onOpenAssessment = { navController.navigate(AppDestination.Assessment.route) }
                 )
             }
         }
@@ -197,7 +213,7 @@ fun MainNavGraph(
                     onOpenAssessment = { sessionId ->
                         navController.navigate(AppDestination.Results.createRoute(sessionId))
                     },
-                    onStartAssessment = { navController.navigate(AppDestination.Assessment.route) }
+                    onStartAssessment = { navController.navigate(AppDestination.AssessmentLibrary.route) }
                 )
             }
         }

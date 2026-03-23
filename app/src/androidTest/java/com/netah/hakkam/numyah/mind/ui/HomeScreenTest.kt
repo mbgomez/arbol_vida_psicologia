@@ -11,6 +11,8 @@ import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.ui.screen.HomeScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
+import com.netah.hakkam.numyah.mind.viewmodel.HomeActiveAssessmentUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HomeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeFocusUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeSummaryUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeUiState
@@ -32,8 +34,9 @@ class HomeScreenTest {
                 HomeScreen(
                     paddingValues = PaddingValues(),
                     uiState = HomeUiState.Empty,
-                    onStartAssessment = {},
-                    onOpenResults = {},
+                    onOpenAssessmentLibrary = {},
+                    onResumeAssessment = {},
+                    onOpenLatestResults = {},
                     onOpenHistory = {},
                     onOpenLearn = {},
                     onOpenSettings = {}
@@ -43,9 +46,6 @@ class HomeScreenTest {
 
         composeTestRule.onNodeWithText(context.getString(R.string.home_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.home_primary_cta))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeTestRule.onNodeWithText(context.getString(R.string.home_secondary_cta))
             .assertIsDisplayed()
             .assertHasClickAction()
         composeTestRule.onNodeWithText(context.getString(R.string.home_summary_empty_title)).assertIsDisplayed()
@@ -64,9 +64,24 @@ class HomeScreenTest {
             AppTheme {
                 HomeScreen(
                     paddingValues = PaddingValues(),
-                    uiState = HomeUiState.Empty,
-                    onStartAssessment = { startedAssessment = true },
-                    onOpenResults = { openedResults = true },
+                    uiState = HomeUiState.Loaded(
+                        HomeUiModel(
+                            activeAssessment = null,
+                            latestReflection = HomeSummaryUiModel(
+                                lastAssessmentDate = "Mar 22, 2026",
+                                daysSinceLastAssessment = 2,
+                                needsAttentionSephiraName = "Yesod",
+                                mostBalancedSephiraName = "Malkuth",
+                                currentFocus = HomeFocusUiModel(
+                                    sephiraName = "Yesod",
+                                    dominantPole = Pole.DEFICIENCY
+                                )
+                            )
+                        )
+                    ),
+                    onOpenAssessmentLibrary = { startedAssessment = true },
+                    onResumeAssessment = {},
+                    onOpenLatestResults = { openedResults = true },
                     onOpenHistory = {},
                     onOpenLearn = {},
                     onOpenSettings = {}
@@ -90,19 +105,23 @@ class HomeScreenTest {
                 HomeScreen(
                     paddingValues = PaddingValues(),
                     uiState = HomeUiState.Loaded(
-                        HomeSummaryUiModel(
-                            lastAssessmentDate = "Mar 22, 2026",
-                            daysSinceLastAssessment = 2,
-                            needsAttentionSephiraName = "Yesod",
-                            mostBalancedSephiraName = "Malkuth",
-                            currentFocus = HomeFocusUiModel(
-                                sephiraName = "Yesod",
-                                dominantPole = Pole.DEFICIENCY
+                        HomeUiModel(
+                            activeAssessment = null,
+                            latestReflection = HomeSummaryUiModel(
+                                lastAssessmentDate = "Mar 22, 2026",
+                                daysSinceLastAssessment = 2,
+                                needsAttentionSephiraName = "Yesod",
+                                mostBalancedSephiraName = "Malkuth",
+                                currentFocus = HomeFocusUiModel(
+                                    sephiraName = "Yesod",
+                                    dominantPole = Pole.DEFICIENCY
+                                )
                             )
                         )
                     ),
-                    onStartAssessment = {},
-                    onOpenResults = {},
+                    onOpenAssessmentLibrary = {},
+                    onResumeAssessment = {},
+                    onOpenLatestResults = {},
                     onOpenHistory = {},
                     onOpenLearn = {},
                     onOpenSettings = {}
@@ -120,5 +139,46 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText(
             context.getString(R.string.home_focus_deficiency, "Yesod")
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun homeScreen_activeAssessment_showsResumeContentAndAction() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var resumedAssessment = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                HomeScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = HomeUiState.Loaded(
+                        HomeUiModel(
+                            activeAssessment = HomeActiveAssessmentUiModel(
+                                sephiraName = "Yesod",
+                                completedSephirotCount = 1,
+                                totalSephirotCount = 10,
+                                currentQuestionNumber = 2,
+                                totalQuestions = 6,
+                                isAtSectionStart = false
+                            ),
+                            latestReflection = null
+                        )
+                    ),
+                    onOpenAssessmentLibrary = {},
+                    onResumeAssessment = { resumedAssessment = true },
+                    onOpenLatestResults = {},
+                    onOpenHistory = {},
+                    onOpenLearn = {},
+                    onOpenSettings = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(context.getString(R.string.home_active_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.home_active_question_body, "Yesod", 2, 6, 1, 10)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_resume_cta)).performClick()
+
+        assertTrue(resumedAssessment)
     }
 }

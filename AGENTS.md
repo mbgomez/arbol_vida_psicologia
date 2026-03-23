@@ -122,6 +122,12 @@ Current repo note:
 - Existing starter-template code such as posts, generic detail screens, and login scaffolding should not define the product architecture.
 - Reuse the technical foundation where useful, but prioritize the Tree of Life assessment flow over preserving template concepts.
 - Do not split active UI across competing schemas like `feature/*`, `core/designsystem`, and `ui/*` at the same time. Prefer one consistent UI home under `ui/*`.
+- The top-level shell is now intended to grow to:
+  - `Home`
+  - `Assessments`
+  - `History`
+  - `Learn`
+  - `Settings`
 
 Data and content rules:
 - The app should work offline for the core v1 experience.
@@ -169,6 +175,7 @@ Locked history standard:
   - the most tense saved sephira
   - the most settled saved sephira
 - Opening a history item should route to that saved session's results overview rather than always defaulting to the latest completed result.
+- History is also the future home for graph-based trend views across saved sessions. Graphs should extend the saved-results surface rather than replace the session list.
 
 UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
@@ -182,6 +189,12 @@ UX guidance:
   - deficiency pattern
   - excess pattern
   - suggested practices
+- Home should clearly distinguish between:
+  - starting a new assessment
+  - resuming an in-progress assessment
+  - viewing the latest completed reflection
+- `Assessments` is now a justified top-level tab because the product intends to grow into a multi-assessment surface, including future user-authored assessments.
+- Home should keep the current flow of starting or resuming an assessment, while `Assessments` becomes the dedicated browsing surface for the expanding assessment library.
 
 Compose screen construction guidance:
 - Keep each screen file centered on orchestration and state mapping, not one large block of inline UI.

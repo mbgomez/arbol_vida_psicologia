@@ -93,6 +93,8 @@ Screen decomposition thresholds:
 Current priority screen refactor targets:
 
 - `AssessmentScreen`
+- `AssessmentLibraryScreen`
+- `HistoryScreen`
 - `SettingsScreen`
 - `ResultsScreen`
 - `MainNav`
@@ -280,6 +282,22 @@ Avoid:
 
 - growing brittle end-to-end UI tests around unstable polished layouts
 - leaving reused logic duplicated across screens without a single testable source of truth
+
+### 15. Assessment Entry Standard
+
+- The top-level shell is now intended to include `Home`, `Assessments`, `History`, `Learn`, and `Settings`.
+- `Home` should keep fast actions for:
+  - start new assessment
+  - resume current assessment
+  - open latest completed reflection
+- `Assessments` should own the browsing surface for the growing assessment library.
+- The assessment library should be shaped to support both future first-party assessments and future user-authored assessments without reshaping the shell again.
+
+### 16. History Trend Standard
+
+- `History` remains the saved-results surface for completed sessions.
+- Future graph and trend work should live inside `History`, not in `Home` or `Assessments`.
+- Trend views should extend the calm session-history experience rather than turning History into a dashboard-first screen.
 
 ## Prioritized Refactor Phases
 

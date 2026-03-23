@@ -7,6 +7,7 @@ import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
+import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
@@ -15,6 +16,7 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
@@ -32,6 +34,7 @@ import org.junit.Test
 class HomeViewModelTests {
 
     private lateinit var getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase
+    private lateinit var observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase
     private lateinit var observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase
     private lateinit var currentLocaleProvider: CurrentLocaleProvider
 
@@ -41,6 +44,7 @@ class HomeViewModelTests {
     @Before
     fun setup() {
         getCurrentQuestionnaireUseCase = mockk(relaxed = true)
+        observeActiveAssessmentUseCase = mockk(relaxed = true)
         observeLatestCompletedAssessmentUseCase = mockk(relaxed = true)
         currentLocaleProvider = mockk(relaxed = true)
         every { currentLocaleProvider.current() } returns Locale.ENGLISH
@@ -49,10 +53,12 @@ class HomeViewModelTests {
     @Test
     fun init_withoutLatestAssessment_emitsEmpty() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
         every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(null)
 
         val viewModel = HomeViewModel(
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
             observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
             currentLocaleProvider = currentLocaleProvider
         )
@@ -63,21 +69,63 @@ class HomeViewModelTests {
     @Test
     fun init_withLatestAssessment_buildsReflectionSummary() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
         every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(testSnapshot())
 
         val viewModel = HomeViewModel(
             getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
             observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
             currentLocaleProvider = currentLocaleProvider
         )
 
         val state = viewModel.uiState.value as HomeUiState.Loaded
 
-        assertEquals("Yesod", state.model.needsAttentionSephiraName)
-        assertEquals("Malkuth", state.model.mostBalancedSephiraName)
-        assertEquals(Pole.DEFICIENCY, state.model.currentFocus.dominantPole)
-        assertEquals("Yesod", state.model.currentFocus.sephiraName)
-        assertTrue(state.model.daysSinceLastAssessment >= 0)
+        assertEquals("Yesod", state.model.latestReflection?.needsAttentionSephiraName)
+        assertEquals("Malkuth", state.model.latestReflection?.mostBalancedSephiraName)
+        assertEquals(Pole.DEFICIENCY, state.model.latestReflection?.currentFocus?.dominantPole)
+        assertEquals("Yesod", state.model.latestReflection?.currentFocus?.sephiraName)
+        assertTrue((state.model.latestReflection?.daysSinceLastAssessment ?: -1) >= 0)
+    }
+
+    @Test
+    fun init_withActiveAssessment_buildsResumeSummaryAlongsideLatestReflection() = coroutinesRule.runBlockingTest {
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every {
+            observeActiveAssessmentUseCase.run()
+        } returns flowOf(
+            testSnapshot(
+                currentSephiraId = SephiraId.YESOD,
+                currentQuestionIndex = 1,
+                scores = listOf(
+                    SephiraScore(
+                        sessionId = 9L,
+                        sephiraId = SephiraId.MALKUTH,
+                        balanceScore = 0.62,
+                        deficiencyScore = 0.18,
+                        excessScore = 0.20,
+                        dominantPole = Pole.BALANCE,
+                        confidence = ConfidenceLevel.HIGH,
+                        isLowConfidence = false
+                    )
+                )
+            )
+        )
+        every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(testSnapshot())
+
+        val viewModel = HomeViewModel(
+            getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
+            observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+
+        val state = viewModel.uiState.value as HomeUiState.Loaded
+
+        assertEquals("Yesod", state.model.activeAssessment?.sephiraName)
+        assertEquals(2, state.model.activeAssessment?.currentQuestionNumber)
+        assertEquals(1, state.model.activeAssessment?.completedSephirotCount)
+        assertEquals("Yesod", state.model.latestReflection?.needsAttentionSephiraName)
     }
 
     private fun testQuestionnaire(): QuestionnaireContent {
@@ -107,23 +155,20 @@ class HomeViewModelTests {
             suggestedPractices = listOf("Practice")
         ),
         pages = listOf(
-            QuestionPageContent("${sephiraId.name.lowercase()}_page", "Title", "Body", listOf("q1"))
+            QuestionPageContent("${sephiraId.name.lowercase()}_page", "Title", "Body", listOf("q1", "q2", "q3"))
         ),
-        questions = emptyList()
+        questions = listOf(
+            QuestionContent("q1", sephiraId, "${sephiraId.name.lowercase()}_page", "Q1", QuestionFormat.LIKERT_5, Pole.BALANCE),
+            QuestionContent("q2", sephiraId, "${sephiraId.name.lowercase()}_page", "Q2", QuestionFormat.LIKERT_5, Pole.BALANCE),
+            QuestionContent("q3", sephiraId, "${sephiraId.name.lowercase()}_page", "Q3", QuestionFormat.LIKERT_5, Pole.BALANCE)
+        )
     )
 
-    private fun testSnapshot() = AssessmentSessionSnapshot(
-        sessionId = 7L,
-        questionnaireVersion = "tree-v1",
-        status = AssessmentStatus.COMPLETED,
-        currentSephiraId = SephiraId.YESOD,
-        currentPageIndex = 0,
-        currentQuestionIndex = 0,
-        totalQuestions = 6,
-        startedAt = 1L,
-        completedAt = 2L,
-        responses = emptyList(),
-        scores = listOf(
+    private fun testSnapshot(
+        status: AssessmentStatus = AssessmentStatus.COMPLETED,
+        currentSephiraId: SephiraId = SephiraId.YESOD,
+        currentQuestionIndex: Int = 0,
+        scores: List<SephiraScore> = listOf(
             SephiraScore(
                 sessionId = 7L,
                 sephiraId = SephiraId.MALKUTH,
@@ -145,5 +190,17 @@ class HomeViewModelTests {
                 isLowConfidence = false
             )
         )
+    ) = AssessmentSessionSnapshot(
+        sessionId = 7L,
+        questionnaireVersion = "tree-v1",
+        status = status,
+        currentSephiraId = currentSephiraId,
+        currentPageIndex = 0,
+        currentQuestionIndex = currentQuestionIndex,
+        totalQuestions = 6,
+        startedAt = 1L,
+        completedAt = if (status == AssessmentStatus.COMPLETED) 2L else null,
+        responses = emptyList(),
+        scores = scores
     )
 }

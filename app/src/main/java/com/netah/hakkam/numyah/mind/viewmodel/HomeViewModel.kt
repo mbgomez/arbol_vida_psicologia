@@ -7,6 +7,7 @@ import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Instant
@@ -21,15 +22,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 sealed interface HomeUiState {
     data object Loading : HomeUiState
     data object Empty : HomeUiState
-    data class Loaded(val model: HomeSummaryUiModel) : HomeUiState
+    data class Loaded(val model: HomeUiModel) : HomeUiState
     data object Error : HomeUiState
 }
+
+data class HomeUiModel(
+    val activeAssessment: HomeActiveAssessmentUiModel?,
+    val latestReflection: HomeSummaryUiModel?
+)
+
+data class HomeActiveAssessmentUiModel(
+    val sephiraName: String,
+    val completedSephirotCount: Int,
+    val totalSephirotCount: Int,
+    val currentQuestionNumber: Int,
+    val totalQuestions: Int,
+    val isAtSectionStart: Boolean
+)
 
 data class HomeSummaryUiModel(
     val lastAssessmentDate: String,
@@ -47,6 +61,7 @@ data class HomeFocusUiModel(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getCurrentQuestionnaireUseCase: GetCurrentQuestionnaireUseCase,
+    private val observeActiveAssessmentUseCase: ObserveActiveAssessmentUseCase,
     private val observeLatestCompletedAssessmentUseCase: ObserveLatestCompletedAssessmentUseCase,
     private val currentLocaleProvider: CurrentLocaleProvider
 ) : ViewModel() {
@@ -63,13 +78,28 @@ class HomeViewModel @Inject constructor(
             try {
                 combine(
                     getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
+                    observeActiveAssessmentUseCase.run(),
                     observeLatestCompletedAssessmentUseCase.run()
-                ) { questionnaire, latestAssessment ->
-                    questionnaire to latestAssessment
-                }.collect { (questionnaire, latestAssessment) ->
-                    _uiState.value = latestAssessment?.let {
-                        buildModel(questionnaire, it)?.let(HomeUiState::Loaded) ?: HomeUiState.Empty
-                    } ?: HomeUiState.Empty
+                ) { questionnaire, activeAssessment, latestAssessment ->
+                    Triple(questionnaire, activeAssessment, latestAssessment)
+                }.collect { (questionnaire, activeAssessment, latestAssessment) ->
+                    val activeModel = activeAssessment?.let {
+                        buildActiveModel(questionnaire, it)
+                    }
+                    val latestModel = latestAssessment?.let {
+                        buildLatestReflectionModel(questionnaire, it)
+                    }
+
+                    _uiState.value = if (activeModel == null && latestModel == null) {
+                        HomeUiState.Empty
+                    } else {
+                        HomeUiState.Loaded(
+                            HomeUiModel(
+                                activeAssessment = activeModel,
+                                latestReflection = latestModel
+                            )
+                        )
+                    }
                 }
             } catch (_: Throwable) {
                 _uiState.value = HomeUiState.Error
@@ -77,7 +107,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun buildModel(
+    private fun buildActiveModel(
+        questionnaire: QuestionnaireContent,
+        snapshot: AssessmentSessionSnapshot
+    ): HomeActiveAssessmentUiModel? {
+        return buildActiveAssessmentUiModel(questionnaire, snapshot)?.let { model ->
+            HomeActiveAssessmentUiModel(
+                sephiraName = model.sephiraName,
+                completedSephirotCount = model.completedSephirotCount,
+                totalSephirotCount = model.totalSephirotCount,
+                currentQuestionNumber = model.currentQuestionNumber,
+                totalQuestions = model.totalQuestions,
+                isAtSectionStart = model.isAtSectionStart
+            )
+        }
+    }
+
+    private fun buildLatestReflectionModel(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
     ): HomeSummaryUiModel? {
