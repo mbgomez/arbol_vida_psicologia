@@ -284,6 +284,10 @@ Avoid:
 - growing brittle end-to-end UI tests around unstable polished layouts
 - leaving reused logic duplicated across screens without a single testable source of truth
 
+Additional guidance:
+
+- For long scrollable production screens, prefer stable semantics and explicit `performScrollTo()`-style assertions over viewport-dependent visibility checks.
+
 ### 15. Assessment Entry Standard
 
 - The top-level shell is now intended to include `Home`, `Assessments`, `History`, `Learn`, and `Settings`.
@@ -303,6 +307,11 @@ Avoid:
 - `History` remains the saved-results surface for completed sessions.
 - Future graph and trend work should live inside `History`, not in `Home` or `Assessments`.
 - Trend views should extend the calm session-history experience rather than turning History into a dashboard-first screen.
+- The first locked trend metrics are:
+  - highest tension by session, based on the session's top imbalance score
+  - most settled by session, based on the session's lowest-imbalance strongest-balance score
+- New graph UI should consume chart-ready state models for those metrics so later visual refinement does not require changing repository contracts or replacing the saved-session list.
+- Any QA/demo support for completed-history surfaces should be implemented as a debug-only source switch that leaves the real Room history untouched.
 
 ## Prioritized Refactor Phases
 
@@ -381,6 +390,8 @@ A refactor pass is considered complete only when:
 - When a refactor changes a project standard, updating the docs in the same pass prevents the next thread from rebuilding old patterns.
 - Manual smoke testing remains the fastest way to catch UI regressions during refactor work, especially for shell behavior, nested navigation, and visual elevation issues.
 - Persistence and content hardening should be timed intentionally. Not every long-term standard needs to be implemented immediately if the delivery milestone is different.
+- Debug/testing shortcuts that mutate user data create avoidable risk. For product review flows, switching read sources is often the safer architecture.
+- Compose tests on polished screens need to tolerate legitimate growth in above-the-fold content or they turn refactors into false regressions.
 
 ## Immediate Next Step
 

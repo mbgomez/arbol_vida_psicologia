@@ -23,6 +23,8 @@ class AppPreferencesUseCaseTests {
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var getMockHistoryModeUseCase: GetMockHistoryModeUseCase
+    private lateinit var setMockHistoryModeUseCase: SetMockHistoryModeUseCase
     private lateinit var getLanguageModeUseCase: GetLanguageModeUseCase
     private lateinit var setLanguageModeUseCase: SetLanguageModeUseCase
     private lateinit var getThemeModeUseCase: GetThemeModeUseCase
@@ -42,6 +44,8 @@ class AppPreferencesUseCaseTests {
             GetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
         setAssessmentHonestyNoticeVisibilityUseCase =
             SetAssessmentHonestyNoticeVisibilityUseCase(appPreferencesRepository)
+        getMockHistoryModeUseCase = GetMockHistoryModeUseCase(appPreferencesRepository)
+        setMockHistoryModeUseCase = SetMockHistoryModeUseCase(appPreferencesRepository)
         getLanguageModeUseCase = GetLanguageModeUseCase(appPreferencesRepository)
         setLanguageModeUseCase = SetLanguageModeUseCase(appPreferencesRepository)
         getThemeModeUseCase = GetThemeModeUseCase(appPreferencesRepository)
@@ -88,6 +92,26 @@ class AppPreferencesUseCaseTests {
 
         verify(exactly = 1) { appPreferencesRepository.setAssessmentHonestyNoticeVisible(false) }
         assertEquals(listOf(false), result)
+    }
+
+    @Test
+    fun getMockHistoryModeUseCase_emitsRepositoryValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.shouldUseMockHistory() } returns flowOf(true)
+
+        val result = getMockHistoryModeUseCase.run().toList()
+
+        verify(exactly = 1) { appPreferencesRepository.shouldUseMockHistory() }
+        assertEquals(listOf(true), result)
+    }
+
+    @Test
+    fun setMockHistoryModeUseCase_emitsSavedValue() = coroutinesRule.runBlockingTest {
+        every { appPreferencesRepository.setUseMockHistory(true) } returns flowOf(true)
+
+        val result = setMockHistoryModeUseCase.run(true).toList()
+
+        verify(exactly = 1) { appPreferencesRepository.setUseMockHistory(true) }
+        assertEquals(listOf(true), result)
     }
 
     @Test

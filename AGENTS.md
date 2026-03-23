@@ -153,6 +153,7 @@ Data and content rules:
 - Learn course sections should also be allowed to arrive little by little as authored content is finalized. Do not assume the full course body is ready in one pass.
 - Deeper questionnaire/content version hardening should be treated as a later expansion task when new sephirot batches are ready to enter implementation.
 - Full Room hardening work such as schema export, explicit migrations, and migration tests should be treated as a release-preparation task for the first Google Play version rather than an immediate refactor requirement.
+- Debug/demo data tools should prefer source switching over database mutation. If the app needs mock completed-history data for QA or product review, keep the real saved Room history untouched and switch eligible completed-history consumers to a debug-only mock source instead.
 
 Testing priorities:
 - scoring engine correctness
@@ -166,6 +167,7 @@ Testing priorities:
 - ViewModel tests should verify state transitions, progression logic, and callback/completion behavior.
 - Compose UI tests should start with the stable, user-critical screens in the current slice.
 - Avoid spending test effort on placeholder screens unless they protect behavior we explicitly want to keep stable.
+- For long scrollable Compose screens such as History and Settings, prefer assertions that scroll to the target content or rely on stable test tags rather than assuming later sections are immediately visible in the initial viewport.
 
 Locked history standard:
 - The History tab is a production user surface for completed assessments, not a placeholder destination.
@@ -176,6 +178,10 @@ Locked history standard:
   - the most settled saved sephira
 - Opening a history item should route to that saved session's results overview rather than always defaulting to the latest completed result.
 - History is also the future home for graph-based trend views across saved sessions. Graphs should extend the saved-results surface rather than replace the session list.
+- The first locked trend metrics for History are:
+  - highest tension by saved session, using the session's highest imbalance score
+  - most settled by saved session, using the session's lowest-imbalance strongest-balance score
+- Trend visuals in History should stay lightweight, calm, and chart-ready while preserving the saved-session list as the clearly primary surface.
 
 UX guidance:
 - Keep the assessment calm, clear, and mobile-friendly.
@@ -243,3 +249,5 @@ Refactor lessons to preserve:
 - Treat manual smoke testing as part of refactor verification for navigation, shell, and visual regressions.
 - Five-tab bottom bars need explicit fit decisions early. Letting long labels wrap produces low-quality navigation quickly, especially on smaller phones.
 - Shell confirmation copy should be derived from the tapped destination so the dialog and resulting navigation stay trustworthy.
+- Debug-only QA tools are safer when they switch the read source for completed-history surfaces instead of seeding or overwriting real saved history.
+- Compose tests for polished, scrollable screens should be written to survive legitimate section growth without treating below-the-fold content as a regression.

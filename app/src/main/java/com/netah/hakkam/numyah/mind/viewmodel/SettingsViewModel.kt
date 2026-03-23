@@ -2,14 +2,17 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.netah.hakkam.numyah.mind.BuildConfig
 import com.netah.hakkam.numyah.mind.app.AppLanguageManager
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLanguageModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetLanguageModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetThemeModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +32,9 @@ sealed interface SettingsUiState {
 data class SettingsUiModel(
     val languageMode: AppLanguageMode,
     val themeMode: AppThemeMode,
-    val shouldShowAssessmentHonestyNotice: Boolean
+    val shouldShowAssessmentHonestyNotice: Boolean,
+    val showMockHistoryTools: Boolean,
+    val isMockHistoryEnabled: Boolean
 )
 
 @HiltViewModel
@@ -41,6 +46,8 @@ class SettingsViewModel @Inject constructor(
     private val setThemeModeUseCase: SetThemeModeUseCase,
     private val getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase,
     private val setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase,
+    private val getMockHistoryModeUseCase: GetMockHistoryModeUseCase,
+    private val setMockHistoryModeUseCase: SetMockHistoryModeUseCase,
     private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
 ) : ViewModel() {
 
@@ -52,13 +59,16 @@ class SettingsViewModel @Inject constructor(
             combine(
                 getLanguageModeUseCase.run(),
                 getThemeModeUseCase.run(),
-                getAssessmentHonestyNoticeVisibilityUseCase.run()
-            ) { languageMode, themeMode, shouldShowAssessmentHonestyNotice ->
+                getAssessmentHonestyNoticeVisibilityUseCase.run(),
+                getMockHistoryModeUseCase.run()
+            ) { languageMode, themeMode, shouldShowAssessmentHonestyNotice, isMockHistoryEnabled ->
                 SettingsUiState.Ready(
                     SettingsUiModel(
                         languageMode = languageMode,
                         themeMode = themeMode,
-                        shouldShowAssessmentHonestyNotice = shouldShowAssessmentHonestyNotice
+                        shouldShowAssessmentHonestyNotice = shouldShowAssessmentHonestyNotice,
+                        showMockHistoryTools = BuildConfig.DEBUG,
+                        isMockHistoryEnabled = BuildConfig.DEBUG && isMockHistoryEnabled
                     )
                 )
             }.collect { settingsState ->
@@ -83,6 +93,13 @@ class SettingsViewModel @Inject constructor(
     fun onAssessmentHonestyNoticeChanged(visible: Boolean) {
         viewModelScope.launch {
             setAssessmentHonestyNoticeVisibilityUseCase.run(visible).collect { }
+        }
+    }
+
+    fun onMockHistoryEnabledChanged(enabled: Boolean) {
+        if (!BuildConfig.DEBUG) return
+        viewModelScope.launch {
+            setMockHistoryModeUseCase.run(enabled).collect { }
         }
     }
 

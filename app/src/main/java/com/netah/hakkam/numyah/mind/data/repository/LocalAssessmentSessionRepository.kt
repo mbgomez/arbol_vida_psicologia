@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
+import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
 import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionDao
 import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionTable
 import com.netah.hakkam.numyah.mind.data.local.database.ResponseTable
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlin.math.absoluteValue
 
 interface AssessmentSessionRepository {
     fun startOrResumeSession(
@@ -67,7 +69,9 @@ interface AssessmentSessionRepository {
 }
 
 class LocalAssessmentSessionRepository @Inject constructor(
-    private val assessmentSessionDao: AssessmentSessionDao
+    private val assessmentSessionDao: AssessmentSessionDao,
+    private val appPreferencesRepository: AppPreferencesRepository,
+    private val jsonAssessmentContentDataSource: JsonAssessmentContentDataSource
 ) : AssessmentSessionRepository {
 
     override fun startOrResumeSession(
@@ -119,30 +123,14 @@ class LocalAssessmentSessionRepository @Inject constructor(
     }
 
     override fun observeLatestCompletedSession(): Flow<AssessmentSessionSnapshot?> {
-        return assessmentSessionDao.observeLatestCompletedSession().flatMapLatest { session ->
-            if (session == null) {
-                flowOf(null)
+        return appPreferencesRepository.shouldUseMockHistory().flatMapLatest { useMockHistory ->
+            if (useMockHistory) {
+                flowOf(mockCompletedHistory().firstOrNull())
             } else {
-                combine(
-                    assessmentSessionDao.observeResponses(session.id),
-                    assessmentSessionDao.observeScores(session.id)
-                ) { responses, scores ->
-                    session.toSnapshot(
-                        responses = responses,
-                        scores = scores
-                    )
-                }
-            }
-        }
-    }
-
-    override fun observeCompletedSessions(): Flow<List<AssessmentSessionSnapshot>> {
-        return assessmentSessionDao.observeCompletedSessions().flatMapLatest { sessions ->
-            if (sessions.isEmpty()) {
-                flowOf(emptyList())
-            } else {
-                combine(
-                    sessions.map { session ->
+                assessmentSessionDao.observeLatestCompletedSession().flatMapLatest { session ->
+                    if (session == null) {
+                        flowOf(null)
+                    } else {
                         combine(
                             assessmentSessionDao.observeResponses(session.id),
                             assessmentSessionDao.observeScores(session.id)
@@ -153,26 +141,60 @@ class LocalAssessmentSessionRepository @Inject constructor(
                             )
                         }
                     }
-                ) { snapshots ->
-                    snapshots.toList()
+                }
+            }
+        }
+    }
+
+    override fun observeCompletedSessions(): Flow<List<AssessmentSessionSnapshot>> {
+        return appPreferencesRepository.shouldUseMockHistory().flatMapLatest { useMockHistory ->
+            if (useMockHistory) {
+                flowOf(mockCompletedHistory())
+            } else {
+                assessmentSessionDao.observeCompletedSessions().flatMapLatest { sessions ->
+                    if (sessions.isEmpty()) {
+                        flowOf(emptyList())
+                    } else {
+                        combine(
+                            sessions.map { session ->
+                                combine(
+                                    assessmentSessionDao.observeResponses(session.id),
+                                    assessmentSessionDao.observeScores(session.id)
+                                ) { responses, scores ->
+                                    session.toSnapshot(
+                                        responses = responses,
+                                        scores = scores
+                                    )
+                                }
+                            }
+                        ) { snapshots ->
+                            snapshots.toList()
+                        }
+                    }
                 }
             }
         }
     }
 
     override fun observeCompletedSession(sessionId: Long): Flow<AssessmentSessionSnapshot?> {
-        return assessmentSessionDao.observeCompletedSession(sessionId).flatMapLatest { session ->
-            if (session == null) {
-                flowOf(null)
+        return appPreferencesRepository.shouldUseMockHistory().flatMapLatest { useMockHistory ->
+            if (useMockHistory) {
+                flowOf(mockCompletedHistory().firstOrNull { it.sessionId == sessionId })
             } else {
-                combine(
-                    assessmentSessionDao.observeResponses(session.id),
-                    assessmentSessionDao.observeScores(session.id)
-                ) { responses, scores ->
-                    session.toSnapshot(
-                        responses = responses,
-                        scores = scores
-                    )
+                assessmentSessionDao.observeCompletedSession(sessionId).flatMapLatest { session ->
+                    if (session == null) {
+                        flowOf(null)
+                    } else {
+                        combine(
+                            assessmentSessionDao.observeResponses(session.id),
+                            assessmentSessionDao.observeScores(session.id)
+                        ) { responses, scores ->
+                            session.toSnapshot(
+                                responses = responses,
+                                scores = scores
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -272,6 +294,108 @@ class LocalAssessmentSessionRepository @Inject constructor(
         val responses = assessmentSessionDao.getResponsesForSession(sessionId)
         val scores = assessmentSessionDao.getScoresForSession(sessionId)
         emit(session.toSnapshot(responses = responses, scores = scores))
+    }
+
+    private fun mockCompletedHistory(): List<AssessmentSessionSnapshot> {
+        val questionnaire = jsonAssessmentContentDataSource.getCurrentQuestionnaire()
+        val totalQuestions = questionnaire.sections.sumOf { it.questions.size }
+        val lastSephira = questionnaire.sections.lastOrNull()?.sephiraId ?: SephiraId.MALKUTH
+        val now = System.currentTimeMillis()
+
+        return (0 until MOCK_HISTORY_COUNT).map { sessionIndex ->
+            val completedAt = now - (sessionIndex.toLong() * MOCK_SESSION_INTERVAL_MILLIS)
+            val startedAt = completedAt - MOCK_SESSION_DURATION_MILLIS
+            val sessionId = MOCK_SESSION_ID_BASE + sessionIndex
+
+            AssessmentSessionSnapshot(
+                sessionId = sessionId,
+                questionnaireVersion = questionnaire.version,
+                status = AssessmentStatus.COMPLETED,
+                currentSephiraId = lastSephira,
+                currentPageIndex = 0,
+                currentQuestionIndex = 0,
+                totalQuestions = totalQuestions,
+                startedAt = startedAt,
+                completedAt = completedAt,
+                responses = emptyList(),
+                scores = questionnaire.sections.mapIndexed { sephiraIndex, section ->
+                    buildMockScore(
+                        sessionId = sessionId,
+                        sessionIndex = sessionIndex,
+                        sephiraIndex = sephiraIndex,
+                        sephiraId = section.sephiraId
+                    )
+                }
+            )
+        }
+    }
+
+    private fun buildMockScore(
+        sessionId: Long,
+        sessionIndex: Int,
+        sephiraIndex: Int,
+        sephiraId: SephiraId
+    ): SephiraScore {
+        val baseBalance = 0.34 + (((sessionIndex * 7) + (sephiraIndex * 5)) % 32) / 100.0
+        val deficiency = 0.14 + (((sessionIndex * 11) + (sephiraIndex * 3)) % 36) / 100.0
+        val excess = 0.12 + (((sessionIndex * 5) + (sephiraIndex * 9)) % 34) / 100.0
+        val balance = (baseBalance - (deficiency + excess - 0.48) * 0.35).coerceIn(0.18, 0.78)
+        val dominantPole = dominantPole(
+            balance = balance,
+            deficiency = deficiency,
+            excess = excess
+        )
+        val confidence = confidenceLevel(
+            balance = balance,
+            deficiency = deficiency,
+            excess = excess
+        )
+        val highest = maxOf(balance, deficiency, excess)
+        val secondHighest = listOf(balance, deficiency, excess).sortedDescending()[1]
+
+        return SephiraScore(
+            sessionId = sessionId,
+            sephiraId = sephiraId,
+            balanceScore = balance,
+            deficiencyScore = deficiency,
+            excessScore = excess,
+            dominantPole = dominantPole,
+            confidence = confidence,
+            isLowConfidence = (highest - secondHighest).absoluteValue < 0.08
+        )
+    }
+
+    private fun dominantPole(
+        balance: Double,
+        deficiency: Double,
+        excess: Double
+    ): Pole {
+        return when (maxOf(balance, deficiency, excess)) {
+            balance -> Pole.BALANCE
+            deficiency -> Pole.DEFICIENCY
+            else -> Pole.EXCESS
+        }
+    }
+
+    private fun confidenceLevel(
+        balance: Double,
+        deficiency: Double,
+        excess: Double
+    ): ConfidenceLevel {
+        val sorted = listOf(balance, deficiency, excess).sortedDescending()
+        val gap = sorted[0] - sorted[1]
+        return when {
+            gap >= 0.18 -> ConfidenceLevel.HIGH
+            gap >= 0.08 -> ConfidenceLevel.MEDIUM
+            else -> ConfidenceLevel.LOW
+        }
+    }
+
+    private companion object {
+        const val MOCK_HISTORY_COUNT = 10
+        const val MOCK_SESSION_ID_BASE = 9_000_000L
+        const val MOCK_SESSION_INTERVAL_MILLIS = 3L * 24L * 60L * 60L * 1000L
+        const val MOCK_SESSION_DURATION_MILLIS = 28L * 60L * 1000L
     }
 }
 

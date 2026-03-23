@@ -1,11 +1,15 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,12 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
@@ -26,6 +35,11 @@ import com.netah.hakkam.numyah.mind.ui.components.AppMetricBadge
 import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.viewmodel.HistorySessionUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendChartUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendDirection
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendMetricType
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendPointUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HistoryTrendsUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryUiState
 import com.netah.hakkam.numyah.mind.viewmodel.HistoryViewModel
@@ -111,6 +125,8 @@ private fun HistoryLoadedState(
             )
         )
 
+        HistoryTrendSection(model = model.trends)
+
         Text(
             text = stringResource(R.string.history_list_title),
             style = MaterialTheme.typography.titleLarge,
@@ -126,6 +142,164 @@ private fun HistoryLoadedState(
             HistorySessionCard(
                 model = session,
                 onOpenAssessment = { onOpenAssessment(session.sessionId) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendSection(model: HistoryTrendsUiModel) {
+    val sectionSpacing = dimensionResource(R.dimen.screen_section_spacing)
+
+    Column(
+        modifier = Modifier.testTag("history_trend_section"),
+        verticalArrangement = Arrangement.spacedBy(sectionSpacing)
+    ) {
+        Text(
+            text = stringResource(R.string.history_trends_title),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = stringResource(R.string.history_trends_body),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        if (!model.hasComparisonData) {
+            AppSurfaceCard(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.32f),
+                elevation = 0.dp
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm))
+                ) {
+                    Text(
+                        text = stringResource(R.string.history_trends_empty_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = stringResource(R.string.history_trends_empty_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        model.charts.forEach { chart ->
+            HistoryTrendCard(model = chart)
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendCard(model: HistoryTrendChartUiModel) {
+    val contentSpacing = dimensionResource(R.dimen.screen_section_spacing)
+    val textSpacing = dimensionResource(R.dimen.spacing_sm)
+    val accentColor = trendAccentColor(model.metric)
+    val containerColor = trendContainerColor(model.metric)
+
+    AppSurfaceCard(
+        modifier = Modifier.testTag("history_trend_${model.metric.name.lowercase()}"),
+        containerColor = containerColor,
+        elevation = 0.dp
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(contentSpacing)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(textSpacing)
+            ) {
+                Text(
+                    text = trendTitle(model.metric),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = trendSummary(model),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = trendDirectionLabel(model),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = accentColor
+                )
+            }
+
+            HistoryTrendSparkline(
+                points = model.points,
+                accentColor = accentColor
+            )
+        }
+    }
+}
+
+@Composable
+private fun HistoryTrendSparkline(
+    points: List<HistoryTrendPointUiModel>,
+    accentColor: Color
+) {
+    val barWidth = dimensionResource(R.dimen.size_dot_md)
+    val barSpacing = dimensionResource(R.dimen.spacing_sm)
+    val chartHeight = 56.dp
+    val captionSpacing = dimensionResource(R.dimen.spacing_xs)
+    val maxValue = points.maxOfOrNull { it.value }?.coerceAtLeast(100) ?: 100
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(captionSpacing)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = chartHeight),
+            horizontalArrangement = Arrangement.spacedBy(barSpacing),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            points.forEach { point ->
+                val barProgress = point.value.toFloat() / maxValue.toFloat()
+                val barColor = if (point == points.last()) {
+                    accentColor
+                } else {
+                    accentColor.copy(alpha = 0.42f)
+                }
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Canvas(
+                        modifier = Modifier
+                            .height(chartHeight)
+                            .fillMaxWidth()
+                    ) {
+                        val height = (size.height * barProgress).coerceAtLeast(8.dp.toPx())
+                        val left = (size.width - barWidth.toPx()) / 2f
+                        drawRoundRect(
+                            color = barColor,
+                            topLeft = Offset(left, size.height - height),
+                            size = Size(barWidth.toPx(), height),
+                            cornerRadius = CornerRadius(barWidth.toPx(), barWidth.toPx())
+                        )
+                    }
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.history_trend_earlier_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(R.string.history_trend_now_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -226,6 +400,66 @@ private fun HistorySessionCard(
                 Text(text = stringResource(R.string.history_open_action))
             }
         }
+    }
+}
+
+@Composable
+private fun trendTitle(metric: HistoryTrendMetricType): String {
+    return stringResource(
+        when (metric) {
+            HistoryTrendMetricType.HIGHEST_TENSION -> R.string.history_trend_highest_tension_title
+            HistoryTrendMetricType.MOST_SETTLED -> R.string.history_trend_most_settled_title
+        }
+    )
+}
+
+@Composable
+private fun trendSummary(model: HistoryTrendChartUiModel): String {
+    val sephiraName = model.latestSephiraName ?: stringResource(R.string.history_trend_unknown_sephira)
+    return stringResource(
+        when (model.metric) {
+            HistoryTrendMetricType.HIGHEST_TENSION -> R.string.history_trend_highest_tension_summary
+            HistoryTrendMetricType.MOST_SETTLED -> R.string.history_trend_most_settled_summary
+        },
+        sephiraName,
+        model.latestValue
+    )
+}
+
+@Composable
+private fun trendDirectionLabel(model: HistoryTrendChartUiModel): String {
+    return stringResource(
+        when (model.metric) {
+            HistoryTrendMetricType.HIGHEST_TENSION -> when (model.direction) {
+                HistoryTrendDirection.UP -> R.string.history_trend_tension_up
+                HistoryTrendDirection.DOWN -> R.string.history_trend_tension_down
+                HistoryTrendDirection.STEADY -> R.string.history_trend_steady
+                HistoryTrendDirection.INSUFFICIENT_DATA -> R.string.history_trend_not_enough_data
+            }
+
+            HistoryTrendMetricType.MOST_SETTLED -> when (model.direction) {
+                HistoryTrendDirection.UP -> R.string.history_trend_settled_up
+                HistoryTrendDirection.DOWN -> R.string.history_trend_settled_down
+                HistoryTrendDirection.STEADY -> R.string.history_trend_steady
+                HistoryTrendDirection.INSUFFICIENT_DATA -> R.string.history_trend_not_enough_data
+            }
+        }
+    )
+}
+
+@Composable
+private fun trendAccentColor(metric: HistoryTrendMetricType): Color {
+    return when (metric) {
+        HistoryTrendMetricType.HIGHEST_TENSION -> MaterialTheme.colorScheme.tertiary
+        HistoryTrendMetricType.MOST_SETTLED -> MaterialTheme.colorScheme.primary
+    }
+}
+
+@Composable
+private fun trendContainerColor(metric: HistoryTrendMetricType): Color {
+    return when (metric) {
+        HistoryTrendMetricType.HIGHEST_TENSION -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.42f)
+        HistoryTrendMetricType.MOST_SETTLED -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.38f)
     }
 }
 

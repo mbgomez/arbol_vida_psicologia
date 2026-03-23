@@ -83,6 +83,7 @@ Testing standard:
 - Compose UI tests should focus first on stable, user-facing flows that define the current slice of work.
 - Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
 - Local builds, Gradle test runs, emulator checks, and manual verification are run by the user. Implementation work should include clear run instructions and focused checks for the user to execute.
+- For long scrollable screens, prefer Compose assertions that explicitly scroll to the target content or use stable test tags so layout growth does not create false failures.
 
 Assessment content standard:
 
@@ -150,6 +151,11 @@ Locked history standard:
   - the most settled saved sephira
 - Opening a history item should route to the saved results overview for that specific completed session rather than always redirecting to the latest result.
 - History is also the planned surface for future trend graphs across saved assessments.
+- The first locked History trend metrics are:
+  - highest tension by saved session, using the session's top imbalance score
+  - most settled by saved session, using the session's lowest-imbalance strongest-balance score
+- Trend UI should stay as a calm extension above the saved-session list, not a dashboard replacement for the list itself.
+- Debug/demo tools for History and related completed-result surfaces should be implemented as debug-only source switches. They must not overwrite or clear the user's real saved Room history.
 
 Scoring standard:
 
@@ -232,6 +238,7 @@ Learnings from the Settings slice:
   - ViewModel state tests
   - focused Compose tests for stable user-critical controls
 - Manual verification remains part of the release standard for language, theme, and nested Settings navigation even when automated tests exist, because those areas depend on app-shell behavior as well as local screen behavior.
+- Debug-only product review tools in Settings should explain their purpose clearly and should prefer switching data sources over mutating persisted user data.
 
 Locked assessment entry direction:
 

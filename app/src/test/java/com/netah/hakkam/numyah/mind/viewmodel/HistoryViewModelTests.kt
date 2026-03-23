@@ -81,6 +81,49 @@ class HistoryViewModelTests {
         assertEquals("Malkuth", state.model.sessions.first().mostBalancedSephiraName)
         assertEquals(75, state.model.sessions.first().needsAttentionImbalancePercent)
         assertEquals(60, state.model.sessions.first().mostBalancedBalancePercent)
+        assertEquals(2, state.model.trends.charts.size)
+        assertEquals(false, state.model.trends.hasComparisonData)
+        assertEquals(75, state.model.trends.charts.first().latestValue)
+    }
+
+    @Test
+    fun init_withMultipleSavedSessions_buildsTrendComparisonsInChronologicalOrder() = coroutinesRule.runBlockingTest {
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(testQuestionnaire())
+        every { observeAssessmentHistoryUseCase.run() } returns flowOf(
+            listOf(
+                testCompletedSnapshot(
+                    sessionId = 20L,
+                    completedAt = 300L,
+                    scores = listOf(
+                        testScore(20L, SephiraId.MALKUTH, 0.40, 0.45, 0.25),
+                        testScore(20L, SephiraId.YESOD, 0.62, 0.18, 0.20)
+                    )
+                ),
+                testCompletedSnapshot(
+                    sessionId = 10L,
+                    completedAt = 200L,
+                    scores = listOf(
+                        testScore(10L, SephiraId.MALKUTH, 0.60, 0.20, 0.20),
+                        testScore(10L, SephiraId.YESOD, 0.25, 0.45, 0.30)
+                    )
+                )
+            )
+        )
+
+        val viewModel = createViewModel()
+        val state = viewModel.uiState.value as HistoryUiState.Loaded
+        val tensionTrend = state.model.trends.charts.first { it.metric == HistoryTrendMetricType.HIGHEST_TENSION }
+        val settledTrend = state.model.trends.charts.first { it.metric == HistoryTrendMetricType.MOST_SETTLED }
+
+        assertEquals(true, state.model.trends.hasComparisonData)
+        assertEquals(listOf(10L, 20L), tensionTrend.points.map { it.sessionId })
+        assertEquals(70, tensionTrend.latestValue)
+        assertEquals(75, tensionTrend.previousValue)
+        assertEquals(HistoryTrendDirection.DOWN, tensionTrend.direction)
+        assertEquals("Yesod", settledTrend.latestSephiraName)
+        assertEquals(62, settledTrend.latestValue)
+        assertEquals(60, settledTrend.previousValue)
+        assertEquals(HistoryTrendDirection.STEADY, settledTrend.direction)
     }
 
     private fun createViewModel() = HistoryViewModel(

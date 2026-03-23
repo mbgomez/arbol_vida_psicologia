@@ -22,6 +22,7 @@ completed = [
   "Added per-sephira results detail screen and navigation",
   "Extended seeded assessment content shape with detailContent",
   "Added safe JSON fallbacks so unfinished seeded sections still load",
+  "Locked the first History trend metrics and chart-ready state models while keeping the completed-session list primary",
   "Updated tests for Home, shell route ordering, the assessment library, Results detail, repository content mapping, and viewmodels"
 ]
 
@@ -32,6 +33,8 @@ assessment_library_direction = "Assessments is now the dedicated top-level libra
 result_detail_content_shape = ["healthyExpression", "deficiencyPattern", "excessPattern", "suggestedPractices"]
 result_detail_content_fallbacks = "If seeded sections omit detail fields, repository falls back to shortMeaning/introText/empty practices so the app remains stable while content is authored gradually."
 history_behavior = "History remains the surface for completed sessions, opens the saved results overview for that exact session, and is the approved future home for graph-based trends."
+history_trend_metrics = ["highest tension by saved session", "most settled by saved session"]
+debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
 name = "assessments_tab_and_history_trend_foundation"
@@ -47,13 +50,14 @@ description = "Done in this slice."
 
 [[recommended_next_slice.goals]]
 id = "history_graph_foundation"
-description = "Lock the first History trend metrics and chart-ready state models so a later thread can build graph UI cleanly."
+description = "Done in this slice."
 
 [future_options]
 assessment_library_screen = "Now lives in the top-level Assessments tab while Home keeps direct start/resume/latest-results entry."
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Add retake assessment and stronger bridges from Home summary into Results and detail."
 history_graphs = "Add calm, readable trend graphs inside History after the first chart metrics and empty states are locked."
+debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
 [lessons_learned]
 items = [
@@ -64,9 +68,12 @@ items = [
   "Keeping result-detail content in the same seeded questionnaire pipeline is simpler than inventing a second local content system.",
   "The moment the product wants to signal a real multi-assessment future, including user-authored assessments, a top-level Assessments tab becomes a product statement rather than unnecessary shell noise.",
   "History is the right long-term home for graphs because it already owns completed-session re-entry and time-based reflection.",
+  "The first History graph slice is stronger when it locks a small chart-ready metric contract instead of overreaching into dashboard behavior.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",
   "Assessment exit confirmation has to name the actual destination in both the body and the confirm action or the shell feels untrustworthy.",
-  "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure."
+  "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure.",
+  "Debug/demo tools for completed-history review should switch sources instead of seeding or overwriting real saved data.",
+  "Compose tests for long polished screens like History and Settings should scroll to below-the-fold content or rely on stable semantics instead of assuming those sections stay immediately visible."
 ]
 
 [verification]

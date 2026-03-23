@@ -66,6 +66,21 @@ class LocalAppPreferencesRepositoryTests {
     }
 
     @Test
+    fun setUseMockHistory_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
+        val result = repository.setUseMockHistory(true).first()
+
+        assertEquals(true, result)
+        assertEquals(true, repository.shouldUseMockHistory().first())
+    }
+
+    @Test
+    fun shouldUseMockHistory_defaultsToFalse() = coroutinesRule.runBlockingTest {
+        val result = repository.shouldUseMockHistory().first()
+
+        assertEquals(false, result)
+    }
+
+    @Test
     fun setLanguageMode_savesValueAndEmitsIt() = coroutinesRule.runBlockingTest {
         val result = repository.setLanguageMode(AppLanguageMode.SPANISH).first()
 

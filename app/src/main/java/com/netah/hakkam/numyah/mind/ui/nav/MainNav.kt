@@ -304,6 +304,7 @@ fun MainNavGraph(
                     onLanguageModeSelected = settingsViewModel::onLanguageModeSelected,
                     onThemeModeSelected = settingsViewModel::onThemeModeSelected,
                     onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
+                    onMockHistoryEnabledChanged = settingsViewModel::onMockHistoryEnabledChanged,
                     onOpenPrivacy = { navController.navigate(AppDestination.SettingsPrivacy.route) },
                     onOpenAbout = { navController.navigate(AppDestination.SettingsAbout.route) },
                     onReplayOnboarding = {

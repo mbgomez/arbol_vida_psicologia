@@ -41,6 +41,7 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -63,6 +64,7 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -74,9 +76,10 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.settings_appearance_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_language_title)).assertIsDisplayed()
         composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_mock_history_title)).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -96,6 +99,7 @@ class SettingsScreenTest {
                         uiState = readyState(themeMode = it)
                     },
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -126,6 +130,7 @@ class SettingsScreenTest {
                     },
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -157,6 +162,7 @@ class SettingsScreenTest {
                         honestyNoticeEnabled = it
                         uiState = readyState(honestyNoticeVisible = it)
                     },
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = {}
@@ -164,8 +170,7 @@ class SettingsScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.onNodeWithTag("settings_honesty_row").performClick()
+        composeTestRule.onNodeWithTag("settings_honesty_row").performScrollTo().performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(!honestyNoticeEnabled)
@@ -184,6 +189,7 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
                     onReplayOnboarding = { replayedOnboarding = true }
@@ -191,8 +197,7 @@ class SettingsScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.onNodeWithTag("settings_replay_onboarding_button").performClick()
+        composeTestRule.onNodeWithTag("settings_replay_onboarding_button").performScrollTo().performClick()
         composeTestRule.onNodeWithText(
             context.getString(R.string.settings_replay_onboarding_confirm)
         ).performClick()
@@ -214,6 +219,7 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
                     onOpenPrivacy = { openedPrivacy = true },
                     onOpenAbout = { openedAbout = true },
                     onReplayOnboarding = {}
@@ -221,24 +227,60 @@ class SettingsScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performClick()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performScrollTo().performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performScrollTo().performClick()
 
         assertTrue(openedPrivacy)
         assertTrue(openedAbout)
     }
 
+    @Test
+    fun settingsScreen_mockHistoryConfirmation_invokesCallbackAfterConfirmation() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var mockHistoryEnabled = false
+
+        composeTestRule.setContent {
+            var uiState by remember { mutableStateOf(readyState()) }
+
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = uiState,
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {
+                        mockHistoryEnabled = it
+                        uiState = readyState(mockHistoryEnabled = it)
+                    },
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_mock_history_row").performScrollTo().performClick()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.settings_mock_history_dialog_confirm)
+        ).performClick()
+
+        assertTrue(mockHistoryEnabled)
+    }
+
     private fun readyState(
         languageMode: AppLanguageMode = AppLanguageMode.SYSTEM,
         themeMode: AppThemeMode = AppThemeMode.SYSTEM,
-        honestyNoticeVisible: Boolean = true
+        honestyNoticeVisible: Boolean = true,
+        mockHistoryEnabled: Boolean = false
     ): SettingsUiState {
         return SettingsUiState.Ready(
             SettingsUiModel(
                 languageMode = languageMode,
                 themeMode = themeMode,
-                shouldShowAssessmentHonestyNotice = honestyNoticeVisible
+                shouldShowAssessmentHonestyNotice = honestyNoticeVisible,
+                showMockHistoryTools = true,
+                isMockHistoryEnabled = mockHistoryEnabled
             )
         )
     }

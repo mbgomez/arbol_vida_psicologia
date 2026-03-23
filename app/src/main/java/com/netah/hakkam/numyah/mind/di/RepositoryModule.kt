@@ -6,6 +6,7 @@ import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentData
 import com.netah.hakkam.numyah.mind.data.local.content.JsonLearningContentDataSource
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentSessionRepository
+import com.netah.hakkam.numyah.mind.data.repository.AppPreferencesRepository
 import com.netah.hakkam.numyah.mind.data.repository.LearningContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.LocalAssessmentContentRepository
 import com.netah.hakkam.numyah.mind.data.repository.LocalAssessmentSessionRepository
@@ -33,9 +34,13 @@ class RepositoryModule {
     @Singleton
     @Provides
     fun provideAssessmentSessionRepository(
-        assessmentSessionDao: AssessmentSessionDao
+        assessmentSessionDao: AssessmentSessionDao,
+        appPreferencesRepository: AppPreferencesRepository,
+        jsonAssessmentContentDataSource: JsonAssessmentContentDataSource
     ): AssessmentSessionRepository = LocalAssessmentSessionRepository(
-        assessmentSessionDao = assessmentSessionDao
+        assessmentSessionDao = assessmentSessionDao,
+        appPreferencesRepository = appPreferencesRepository,
+        jsonAssessmentContentDataSource = jsonAssessmentContentDataSource
     )
 
     @Singleton

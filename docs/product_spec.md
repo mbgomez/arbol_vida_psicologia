@@ -56,6 +56,11 @@ Locked history standard:
   - which sephira carried the most tension
   - which sephira looked most settled
 - Selecting a history item should open the results overview for that exact saved session.
+- The first locked trend foundations in History are:
+  - `highest tension`, defined as the highest saved `deficiency + excess` score in a completed session
+  - `most settled`, defined as the saved sephira in that session with the lowest imbalance and strongest balance
+- These first trend metrics should be modeled in a chart-ready way and presented as a lightweight extension above the completed-session list.
+- If the product adds mock or demo support for faster QA on History-related surfaces, that support should be debug-only and implemented as a completed-history source switch. It must not overwrite, delete, or reseed the user's real local history.
 
 ### UX Principles
 
@@ -75,6 +80,7 @@ Locked history standard:
   - `Home` for fast entry, resume, and latest reflection value
   - `Assessments` for browsing the growing library
   - `History` for completed reflections and future trend graphs
+- History trend UI should feel reflective and restrained. The saved-session list remains the primary surface, while charts add gentle context rather than turning History into an analytics dashboard.
 - In the five-tab bottom shell, labels should remain readable on smaller phones. Prefer adaptive single-line label sizing and, when necessary, a shorter nav-only label rather than multi-line wrapping of the tab text.
 - The visible screen title may stay fuller than the bottom-nav label. A tab can use a shortened nav label while the destination header keeps the full product-facing name.
 - When a user tries to leave an in-progress assessment through the shell, the exit dialog should name the actual destination in both its body and confirm action.
@@ -364,6 +370,10 @@ When implementing the Settings slice:
 - Header state for nested settings pages should transition in sync with route changes so the user does not briefly see the wrong top bar during forward or backward navigation.
 - Settings entry surfaces should present one clear destination affordance per card. Avoid duplicate CTA labels within the same destination row.
 - For scrollable settings screens, prefer explicit test-friendly semantics on the real actionable controls and add smaller focused UI tests when full-screen Compose tests become brittle after layout polish.
+- Debug-only support tools exposed from Settings should:
+  - explain their purpose before enabling
+  - stay unavailable in production builds
+  - prefer temporary source selection over mutation of persisted user data
 
 Locked scaling learning:
 
@@ -697,6 +707,7 @@ UI test prioritization guidance:
 - For assessment flows, keep progression and persistence logic owned by the ViewModel/use case layer rather than duplicating that behavior in Compose UI code.
 - For assessment UI tests, prioritize stable user contracts such as intro visibility, question progression, answer interaction, completion rendering, and retry behavior before testing visual details.
 - For assessment result screens, test the presence of the interpretive sections and the primary completion action, not only the raw classification label.
+- For long, evolving scrollable screens such as History and Settings, prefer tests that scroll to target content or anchor on stable semantics/test tags rather than assuming specific sections remain in the initial viewport forever.
 
 ## 7. Implementation Phases
 

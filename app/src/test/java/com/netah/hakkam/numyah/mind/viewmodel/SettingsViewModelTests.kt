@@ -5,9 +5,11 @@ import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLanguageModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetLanguageModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
@@ -31,6 +33,8 @@ class SettingsViewModelTests {
     private lateinit var setThemeModeUseCase: SetThemeModeUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var getMockHistoryModeUseCase: GetMockHistoryModeUseCase
+    private lateinit var setMockHistoryModeUseCase: SetMockHistoryModeUseCase
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
 
     @get:Rule
@@ -45,11 +49,14 @@ class SettingsViewModelTests {
         setThemeModeUseCase = mockk(relaxed = true)
         getAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
         setAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
+        getMockHistoryModeUseCase = mockk(relaxed = true)
+        setMockHistoryModeUseCase = mockk(relaxed = true)
         setOnboardingCompletedUseCase = mockk(relaxed = true)
 
         every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SYSTEM)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.SYSTEM)
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
+        every { getMockHistoryModeUseCase.run() } returns flowOf(false)
     }
 
     @Test
@@ -66,6 +73,8 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
         )
 
@@ -88,6 +97,8 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
         )
 
@@ -109,6 +120,8 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
         )
 
@@ -129,12 +142,36 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
         )
 
         viewModel.onAssessmentHonestyNoticeChanged(false)
 
         verify(exactly = 1) { setAssessmentHonestyNoticeVisibilityUseCase.run(false) }
+    }
+
+    @Test
+    fun onMockHistoryEnabledChanged_savesPreference() = coroutinesRule.runBlockingTest {
+        every { setMockHistoryModeUseCase.run(true) } returns flowOf(true)
+
+        val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
+            getThemeModeUseCase = getThemeModeUseCase,
+            setThemeModeUseCase = setThemeModeUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
+        )
+
+        viewModel.onMockHistoryEnabledChanged(true)
+
+        verify(exactly = 1) { setMockHistoryModeUseCase.run(true) }
     }
 
     @Test
@@ -150,6 +187,8 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase
         )
 

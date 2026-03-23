@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 sealed interface HistoryUiState {
     data object Loading : HistoryUiState
@@ -28,7 +29,42 @@ sealed interface HistoryUiState {
 data class HistoryUiModel(
     val questionnaireTitle: String,
     val totalSessions: Int,
+    val trends: HistoryTrendsUiModel,
     val sessions: List<HistorySessionUiModel>
+)
+
+data class HistoryTrendsUiModel(
+    val sessionCount: Int,
+    val hasComparisonData: Boolean,
+    val charts: List<HistoryTrendChartUiModel>
+)
+
+enum class HistoryTrendMetricType {
+    HIGHEST_TENSION,
+    MOST_SETTLED
+}
+
+enum class HistoryTrendDirection {
+    UP,
+    DOWN,
+    STEADY,
+    INSUFFICIENT_DATA
+}
+
+data class HistoryTrendChartUiModel(
+    val metric: HistoryTrendMetricType,
+    val latestValue: Int,
+    val latestSephiraName: String?,
+    val previousValue: Int?,
+    val direction: HistoryTrendDirection,
+    val points: List<HistoryTrendPointUiModel>
+)
+
+data class HistoryTrendPointUiModel(
+    val sessionId: Long,
+    val completedAt: Long,
+    val value: Int,
+    val sephiraName: String?
 )
 
 data class HistorySessionUiModel(
@@ -79,28 +115,11 @@ class HistoryViewModel @Inject constructor(
         history: List<AssessmentSessionSnapshot>
     ): HistoryUiModel {
         val sectionNames = questionnaire.sections.associate { it.sephiraId to it.displayName }
+        val highlightsBySessionId = history.associate { snapshot ->
+            snapshot.sessionId to snapshot.highlights(sectionNames)
+        }
         val sessions = history.map { snapshot ->
-            val rankedScores = snapshot.scores.map { score ->
-                val balancePercent = scorePercent(score.balanceScore)
-                val deficiencyPercent = scorePercent(score.deficiencyScore)
-                val excessPercent = scorePercent(score.excessScore)
-                HistoryScoreSummary(
-                    sephiraName = sectionNames[score.sephiraId]
-                        ?: score.sephiraId.name.lowercase(Locale.getDefault())
-                            .replaceFirstChar { character -> character.titlecase(Locale.getDefault()) },
-                    balancePercent = balancePercent,
-                    imbalancePercent = deficiencyPercent + excessPercent
-                )
-            }
-
-            val needsAttention = rankedScores.maxWithOrNull(
-                compareBy<HistoryScoreSummary> { it.imbalancePercent }
-                    .thenBy { it.balancePercent }
-            )
-            val mostBalanced = rankedScores.minWithOrNull(
-                compareBy<HistoryScoreSummary> { it.imbalancePercent }
-                    .thenByDescending { it.balancePercent }
-            )
+            val highlights = highlightsBySessionId.getValue(snapshot.sessionId)
 
             HistorySessionUiModel(
                 sessionId = snapshot.sessionId,
@@ -108,25 +127,137 @@ class HistoryViewModel @Inject constructor(
                 completedAt = snapshot.completedAt ?: snapshot.startedAt,
                 completedCount = snapshot.scores.size,
                 totalCount = questionnaire.sections.size,
-                needsAttentionSephiraName = needsAttention?.sephiraName,
-                needsAttentionImbalancePercent = needsAttention?.imbalancePercent,
-                mostBalancedSephiraName = mostBalanced?.sephiraName,
-                mostBalancedBalancePercent = mostBalanced?.balancePercent
+                needsAttentionSephiraName = highlights.needsAttention?.sephiraName,
+                needsAttentionImbalancePercent = highlights.needsAttention?.imbalancePercent,
+                mostBalancedSephiraName = highlights.mostSettled?.sephiraName,
+                mostBalancedBalancePercent = highlights.mostSettled?.balancePercent
             )
         }
 
         return HistoryUiModel(
             questionnaireTitle = questionnaire.title,
             totalSessions = sessions.size,
+            trends = buildTrendModel(history, highlightsBySessionId),
             sessions = sessions
         )
     }
 
+    private fun buildTrendModel(
+        history: List<AssessmentSessionSnapshot>,
+        highlightsBySessionId: Map<Long, HistorySessionHighlights>
+    ): HistoryTrendsUiModel {
+        val chronologicalSessions = history.sortedBy { it.completedAt ?: it.startedAt }
+        val tensionPoints = chronologicalSessions.map { snapshot ->
+            val point = highlightsBySessionId[snapshot.sessionId]?.needsAttention
+            HistoryTrendPointUiModel(
+                sessionId = snapshot.sessionId,
+                completedAt = snapshot.completedAt ?: snapshot.startedAt,
+                value = point?.imbalancePercent ?: 0,
+                sephiraName = point?.sephiraName
+            )
+        }
+        val settledPoints = chronologicalSessions.map { snapshot ->
+            val point = highlightsBySessionId[snapshot.sessionId]?.mostSettled
+            HistoryTrendPointUiModel(
+                sessionId = snapshot.sessionId,
+                completedAt = snapshot.completedAt ?: snapshot.startedAt,
+                value = point?.balancePercent ?: 0,
+                sephiraName = point?.sephiraName
+            )
+        }
+
+        return HistoryTrendsUiModel(
+            sessionCount = chronologicalSessions.size,
+            hasComparisonData = chronologicalSessions.size > 1,
+            charts = listOf(
+                buildTrendChart(
+                    metric = HistoryTrendMetricType.HIGHEST_TENSION,
+                    points = tensionPoints
+                ),
+                buildTrendChart(
+                    metric = HistoryTrendMetricType.MOST_SETTLED,
+                    points = settledPoints
+                )
+            )
+        )
+    }
+
+    private fun buildTrendChart(
+        metric: HistoryTrendMetricType,
+        points: List<HistoryTrendPointUiModel>
+    ): HistoryTrendChartUiModel {
+        val latestPoint = points.last()
+        val previousPoint = points.dropLast(1).lastOrNull()
+        return HistoryTrendChartUiModel(
+            metric = metric,
+            latestValue = latestPoint.value,
+            latestSephiraName = latestPoint.sephiraName,
+            previousValue = previousPoint?.value,
+            direction = trendDirection(
+                latestValue = latestPoint.value,
+                previousValue = previousPoint?.value
+            ),
+            points = points
+        )
+    }
+
+    private fun trendDirection(
+        latestValue: Int,
+        previousValue: Int?
+    ): HistoryTrendDirection {
+        if (previousValue == null) return HistoryTrendDirection.INSUFFICIENT_DATA
+        val delta = latestValue - previousValue
+        return when {
+            abs(delta) < TREND_STEADY_THRESHOLD -> HistoryTrendDirection.STEADY
+            delta > 0 -> HistoryTrendDirection.UP
+            else -> HistoryTrendDirection.DOWN
+        }
+    }
+
     private fun scorePercent(value: Double): Int = (value * 100).roundToInt()
+
+    companion object {
+        private const val TREND_STEADY_THRESHOLD = 3
+    }
 }
+
+private fun AssessmentSessionSnapshot.highlights(
+    sectionNames: Map<com.netah.hakkam.numyah.mind.domain.model.SephiraId, String>
+): HistorySessionHighlights {
+    val rankedScores = scores.map { score ->
+        val balancePercent = scorePercent(score.balanceScore)
+        val deficiencyPercent = scorePercent(score.deficiencyScore)
+        val excessPercent = scorePercent(score.excessScore)
+        HistoryScoreSummary(
+            sephiraName = sectionNames[score.sephiraId]
+                ?: score.sephiraId.name.lowercase(Locale.getDefault())
+                    .replaceFirstChar { character -> character.titlecase(Locale.getDefault()) },
+            balancePercent = balancePercent,
+            imbalancePercent = deficiencyPercent + excessPercent
+        )
+    }
+
+    return HistorySessionHighlights(
+        needsAttention = rankedScores.maxWithOrNull(
+            compareBy<HistoryScoreSummary> { it.imbalancePercent }
+                .thenBy { it.balancePercent }
+        ),
+        mostSettled = rankedScores.minWithOrNull(
+            compareBy<HistoryScoreSummary> { it.imbalancePercent }
+                .thenByDescending { it.balancePercent }
+        )
+    )
+}
+
+private fun scorePercent(value: Double): Int = (value * 100).roundToInt()
 
 private data class HistoryScoreSummary(
     val sephiraName: String,
     val balancePercent: Int,
     val imbalancePercent: Int
+)
+
+private data class HistorySessionHighlights(
+    val needsAttention: HistoryScoreSummary?,
+    val mostSettled: HistoryScoreSummary?
 )

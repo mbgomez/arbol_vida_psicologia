@@ -18,6 +18,8 @@ interface AppPreferencesRepository {
     fun setOnboardingCompleted(completed: Boolean): Flow<Boolean>
     fun shouldShowAssessmentHonestyNotice(): Flow<Boolean>
     fun setAssessmentHonestyNoticeVisible(visible: Boolean): Flow<Boolean>
+    fun shouldUseMockHistory(): Flow<Boolean>
+    fun setUseMockHistory(enabled: Boolean): Flow<Boolean>
     fun getLanguageMode(): Flow<AppLanguageMode>
     fun setLanguageMode(languageMode: AppLanguageMode): Flow<AppLanguageMode>
     fun getThemeMode(): Flow<AppThemeMode>
@@ -45,6 +47,14 @@ class LocalAppPreferencesRepository @Inject constructor(
 
     override fun setAssessmentHonestyNoticeVisible(visible: Boolean): Flow<Boolean> =
         writePreference(KEY_SHOW_ASSESSMENT_HONESTY_NOTICE, visible)
+
+    override fun shouldUseMockHistory(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_USE_MOCK_HISTORY] ?: false
+        }.distinctUntilChanged()
+
+    override fun setUseMockHistory(enabled: Boolean): Flow<Boolean> =
+        writePreference(KEY_USE_MOCK_HISTORY, enabled)
 
     override fun getLanguageMode(): Flow<AppLanguageMode> =
         dataStore.data.map { preferences ->
@@ -108,6 +118,7 @@ class LocalAppPreferencesRepository @Inject constructor(
     private companion object {
         val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val KEY_SHOW_ASSESSMENT_HONESTY_NOTICE = booleanPreferencesKey("show_assessment_honesty_notice")
+        val KEY_USE_MOCK_HISTORY = booleanPreferencesKey("use_mock_history")
         val KEY_LANGUAGE_MODE = stringPreferencesKey("language_mode")
         val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
         val KEY_COMPLETED_LEARNING_SECTIONS = stringSetPreferencesKey("completed_learning_sections")

@@ -45,6 +45,7 @@ fun SettingsScreen(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onMockHistoryEnabledChanged: (Boolean) -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
@@ -57,6 +58,7 @@ fun SettingsScreen(
             onLanguageModeSelected = onLanguageModeSelected,
             onThemeModeSelected = onThemeModeSelected,
             onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged,
+            onMockHistoryEnabledChanged = onMockHistoryEnabledChanged,
             onOpenPrivacy = onOpenPrivacy,
             onOpenAbout = onOpenAbout,
             onReplayOnboarding = onReplayOnboarding
@@ -88,11 +90,13 @@ private fun SettingsContent(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onMockHistoryEnabledChanged: (Boolean) -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
+    var showMockHistoryDialog by remember { mutableStateOf(false) }
 
     AppScreenColumn(
         paddingValues = paddingValues,
@@ -111,6 +115,18 @@ private fun SettingsContent(
             shouldShowAssessmentHonestyNotice = model.shouldShowAssessmentHonestyNotice,
             onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged
         )
+        if (model.showMockHistoryTools) {
+            MockHistorySection(
+                isMockHistoryEnabled = model.isMockHistoryEnabled,
+                onMockHistoryEnabledChanged = { enabled ->
+                    if (enabled) {
+                        showMockHistoryDialog = true
+                    } else {
+                        onMockHistoryEnabledChanged(false)
+                    }
+                }
+            )
+        }
         OnboardingSection(
             onReplayOnboarding = { showReplayOnboardingDialog = true }
         )
@@ -127,6 +143,29 @@ private fun SettingsContent(
             actionLabel = stringResource(R.string.settings_open_detail_action),
             testTag = "settings_about_card",
             onClick = onOpenAbout
+        )
+    }
+
+    if (showMockHistoryDialog) {
+        AlertDialog(
+            onDismissRequest = { showMockHistoryDialog = false },
+            title = { Text(text = stringResource(R.string.settings_mock_history_dialog_title)) },
+            text = { Text(text = stringResource(R.string.settings_mock_history_dialog_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMockHistoryDialog = false
+                        onMockHistoryEnabledChanged(true)
+                    }
+                ) {
+                    Text(text = stringResource(R.string.settings_mock_history_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMockHistoryDialog = false }) {
+                    Text(text = stringResource(R.string.settings_mock_history_dialog_cancel))
+                }
+            }
         )
     }
 
@@ -272,6 +311,32 @@ private fun AssessmentSection(
 }
 
 @Composable
+private fun MockHistorySection(
+    isMockHistoryEnabled: Boolean,
+    onMockHistoryEnabledChanged: (Boolean) -> Unit
+) {
+    SettingsSectionCard(
+        title = stringResource(R.string.settings_mock_history_title),
+        body = stringResource(R.string.settings_mock_history_body)
+    ) {
+        SettingsSwitchRow(
+            title = stringResource(R.string.settings_mock_history_toggle_title),
+            body = stringResource(
+                if (isMockHistoryEnabled) {
+                    R.string.settings_mock_history_toggle_body_on
+                } else {
+                    R.string.settings_mock_history_toggle_body_off
+                }
+            ),
+            checked = isMockHistoryEnabled,
+            rowTestTag = "settings_mock_history_row",
+            switchTestTag = "settings_mock_history_switch",
+            onCheckedChange = onMockHistoryEnabledChanged
+        )
+    }
+}
+
+@Composable
 private fun OnboardingSection(
     onReplayOnboarding: () -> Unit
 ) {
@@ -324,14 +389,16 @@ private fun SettingsSwitchRow(
     title: String,
     body: String,
     checked: Boolean,
+    rowTestTag: String = "settings_honesty_row",
+    switchTestTag: String = "settings_honesty_switch",
     onCheckedChange: (Boolean) -> Unit
 ) {
     PreferenceToggleRow(
         title = title,
         body = body,
         checked = checked,
-        rowTestTag = "settings_honesty_row",
-        switchTestTag = "settings_honesty_switch",
+        rowTestTag = rowTestTag,
+        switchTestTag = switchTestTag,
         onCheckedChange = onCheckedChange
     )
 }

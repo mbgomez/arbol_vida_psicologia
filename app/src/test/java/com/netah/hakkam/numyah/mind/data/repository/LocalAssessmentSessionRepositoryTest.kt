@@ -3,12 +3,22 @@ package com.netah.hakkam.numyah.mind.data.repository
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
+import com.netah.hakkam.numyah.mind.data.local.content.LocalizedText
+import com.netah.hakkam.numyah.mind.data.local.content.SeedQuestion
+import com.netah.hakkam.numyah.mind.data.local.content.SeedQuestionPage
+import com.netah.hakkam.numyah.mind.data.local.content.SeedQuestionnaire
+import com.netah.hakkam.numyah.mind.data.local.content.SeedSephiraSection
 import com.netah.hakkam.numyah.mind.data.local.database.NumyahMindDatabase
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
+import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -27,6 +37,8 @@ class LocalAssessmentSessionRepositoryTest {
 
     private lateinit var db: NumyahMindDatabase
     private lateinit var repository: LocalAssessmentSessionRepository
+    private lateinit var appPreferencesRepository: AppPreferencesRepository
+    private lateinit var jsonAssessmentContentDataSource: JsonAssessmentContentDataSource
 
     @Before
     fun createDb() {
@@ -34,7 +46,15 @@ class LocalAssessmentSessionRepositoryTest {
         db = Room.inMemoryDatabaseBuilder(context, NumyahMindDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = LocalAssessmentSessionRepository(db.getAssessmentSessionDao())
+        appPreferencesRepository = mockk(relaxed = true)
+        jsonAssessmentContentDataSource = mockk(relaxed = true)
+        every { appPreferencesRepository.shouldUseMockHistory() } returns flowOf(false)
+        every { jsonAssessmentContentDataSource.getCurrentQuestionnaire() } returns testSeedQuestionnaire()
+        repository = LocalAssessmentSessionRepository(
+            assessmentSessionDao = db.getAssessmentSessionDao(),
+            appPreferencesRepository = appPreferencesRepository,
+            jsonAssessmentContentDataSource = jsonAssessmentContentDataSource
+        )
     }
 
     @After
@@ -186,6 +206,17 @@ class LocalAssessmentSessionRepositoryTest {
     }
 
     @Test
+    fun observeCompletedSessions_returnsMockHistoryWhenEnabled() = runBlocking {
+        every { appPreferencesRepository.shouldUseMockHistory() } returns flowOf(true)
+
+        val history = repository.observeCompletedSessions().first()
+
+        assertEquals(10, history.size)
+        assertEquals(9_000_000L, history.first().sessionId)
+        assertEquals(2, history.first().scores.size)
+    }
+
+    @Test
     fun completeSession_savesScoreAndEndsActiveSession() = runBlocking {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "malkuth-v1",
@@ -236,5 +267,61 @@ class LocalAssessmentSessionRepositoryTest {
         dominantPole = dominantPole,
         confidence = ConfidenceLevel.HIGH,
         isLowConfidence = false
+    )
+
+    private fun testSeedQuestionnaire() = SeedQuestionnaire(
+        version = "tree-v1",
+        title = LocalizedText(en = "Tree", es = "Arbol"),
+        responseScale = emptyList(),
+        sections = listOf(
+            SeedSephiraSection(
+                sephiraId = SephiraId.MALKUTH,
+                displayName = LocalizedText("Malkuth", "Malkuth"),
+                shortMeaning = LocalizedText("Grounding", "Enraizamiento"),
+                introText = LocalizedText("Intro", "Intro"),
+                pages = listOf(
+                    SeedQuestionPage(
+                        id = "m1_page",
+                        title = LocalizedText("Page", "Pagina"),
+                        description = LocalizedText("Desc", "Desc"),
+                        questionIds = listOf("m1")
+                    )
+                ),
+                questions = listOf(
+                    SeedQuestion(
+                        id = "m1",
+                        sephiraId = SephiraId.MALKUTH,
+                        pageId = "m1_page",
+                        prompt = LocalizedText("Prompt", "Pregunta"),
+                        format = QuestionFormat.LIKERT_5,
+                        targetPole = Pole.BALANCE
+                    )
+                )
+            ),
+            SeedSephiraSection(
+                sephiraId = SephiraId.YESOD,
+                displayName = LocalizedText("Yesod", "Yesod"),
+                shortMeaning = LocalizedText("Bond", "Vinculo"),
+                introText = LocalizedText("Intro", "Intro"),
+                pages = listOf(
+                    SeedQuestionPage(
+                        id = "y1_page",
+                        title = LocalizedText("Page", "Pagina"),
+                        description = LocalizedText("Desc", "Desc"),
+                        questionIds = listOf("y1")
+                    )
+                ),
+                questions = listOf(
+                    SeedQuestion(
+                        id = "y1",
+                        sephiraId = SephiraId.YESOD,
+                        pageId = "y1_page",
+                        prompt = LocalizedText("Prompt", "Pregunta"),
+                        format = QuestionFormat.LIKERT_5,
+                        targetPole = Pole.DEFICIENCY
+                    )
+                )
+            )
+        )
     )
 }

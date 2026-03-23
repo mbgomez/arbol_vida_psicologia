@@ -38,6 +38,22 @@ class SetAssessmentHonestyNoticeVisibilityUseCase @Inject constructor(
     }
 }
 
+class GetMockHistoryModeUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractorNoParams<Boolean>() {
+    override fun buildUseCase(): Flow<Boolean> {
+        return appPreferencesRepository.shouldUseMockHistory()
+    }
+}
+
+class SetMockHistoryModeUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractor<Boolean, Boolean>() {
+    override fun buildUseCase(params: Boolean): Flow<Boolean> {
+        return appPreferencesRepository.setUseMockHistory(params)
+    }
+}
+
 class GetLanguageModeUseCase @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository
 ) : FlowInteractorNoParams<AppLanguageMode>() {
