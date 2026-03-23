@@ -287,6 +287,7 @@ Avoid:
 Additional guidance:
 
 - For long scrollable production screens, prefer stable semantics and explicit `performScrollTo()`-style assertions over viewport-dependent visibility checks.
+- For scoring-rule tests, avoid threshold-edge fixtures unless the test is intentionally about threshold behavior. Clear-margin fixtures are less brittle during scoring refactors.
 
 ### 15. Assessment Entry Standard
 

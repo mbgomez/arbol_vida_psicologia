@@ -168,6 +168,7 @@ Testing priorities:
 - Use case tests should verify delegation and returned flow values.
 - ViewModel tests should verify state transitions, progression logic, and callback/completion behavior.
 - Compose UI tests should start with the stable, user-critical screens in the current slice.
+- For scoring-engine tests, prefer fixtures with a clear margin away from classification and confidence thresholds unless the test is explicitly about threshold behavior.
 - Avoid spending test effort on placeholder screens unless they protect behavior we explicitly want to keep stable.
 - For long scrollable Compose screens such as History and Settings, prefer assertions that scroll to the target content or rely on stable test tags rather than assuming later sections are immediately visible in the initial viewport.
 - When connected Compose tests fail broadly with `No compose hierarchies found in the app`, first check the Android test-device state before treating it as a feature regression. In this project that failure can come from Developer Options such as `Don't keep activities`.

@@ -83,6 +83,7 @@ Testing standard:
 - Use case tests should verify delegation and emitted values.
 - ViewModel tests should verify state mapping, progression rules, and completion behavior.
 - Compose UI tests should focus first on stable, user-facing flows that define the current slice of work.
+- Scoring tests should avoid sitting exactly on confidence or dominant-pole thresholds unless the goal is to verify threshold behavior itself.
 - Do not overgrow UI tests around temporary placeholders or screens that are likely to change immediately unless they protect a meaningful user contract.
 - Local builds, Gradle test runs, emulator checks, and manual verification are run by the user. Implementation work should include clear run instructions and focused checks for the user to execute.
 - For long scrollable screens, prefer Compose assertions that explicitly scroll to the target content or use stable test tags so layout growth does not create false failures.

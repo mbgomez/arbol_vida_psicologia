@@ -723,6 +723,7 @@ For flows that use repository -> use case -> ViewModel layering, keep tests alig
 - repository tests for emitted persistence values
 - use case tests for delegation and flow output
 - ViewModel tests for UI state mapping and flow-driven behavior
+- scoring-rule tests should use fixtures with visible headroom away from classification thresholds unless the test is explicitly validating threshold behavior
 
 UI test prioritization guidance:
 

@@ -131,7 +131,8 @@ items = [
   "Assessment exit confirmation has to name the actual destination in both the body and the confirm action or the shell feels untrustworthy.",
   "Footer copy on production browsing surfaces should describe the user's experience, not the team's rollout structure.",
   "Debug/demo tools for completed-history review should switch sources instead of seeding or overwriting real saved data.",
-  "Compose tests for long polished screens like History and Settings should scroll to below-the-fold content or rely on stable semantics instead of assuming those sections stay immediately visible."
+  "Compose tests for long polished screens like History and Settings should scroll to below-the-fold content or rely on stable semantics instead of assuming those sections stay immediately visible.",
+  "Scoring tests are more reliable when weighted fixtures stay comfortably away from confidence and dominant-pole thresholds unless the test is intentionally validating a boundary."
 ]
 
 [verification]
