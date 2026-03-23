@@ -14,6 +14,14 @@ The app should launch with bilingual support for English and Spanish.
 
 The current phase roadmap toward a production-ready release is documented in [production_readiness_roadmap.md](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md).
 
+Locked tester-distribution and observability direction:
+
+- Before later-stage release hardening, the roadmap may introduce a dedicated tester-distribution and observability phase.
+- That phase may include Google Play internal or closed testing, crash reporting, and lightweight analytics for core product flows.
+- Telemetry should stay minimal, focused on product learning and reliability, and aligned with the app's local-first trust model.
+- Instrumentation should prioritize events such as onboarding completion, assessment start, assessment resume, start-fresh confirmation, assessment completion, results detail open, history re-entry, learn reading, and important settings changes.
+- Telemetry should not drift into broad or invasive behavioral tracking that would undermine the product's reflective and privacy-respectful positioning.
+
 ## 2. User Flow
 
 ### Primary Flow

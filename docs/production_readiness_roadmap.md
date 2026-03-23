@@ -48,6 +48,26 @@ Release gate:
 
 - every production surface should feel intentional, trustworthy, and usable end-to-end
 
+### Phase 1.5: Tester Distribution And Observability
+
+Goal:
+
+- make the app learnable in real tester hands before deeper polish and release hardening
+
+Focus:
+
+- prepare Google Play internal testing or closed testing distribution
+- add crash reporting for release-candidate and tester builds
+- add lightweight product analytics for the core reflective journey
+- define a small, stable event taxonomy for onboarding, start, resume, start-fresh confirmation, completion, results detail, history re-entry, learn reading, and key settings changes
+- keep telemetry aligned with the product's local-first trust model and explain it clearly in privacy-facing copy when enabled
+- prefer minimal, product-relevant analytics over broad behavioral tracking
+- add non-fatal reporting for important recoverable failures that testers may hit during real usage
+
+Release gate:
+
+- tester builds should surface actionable crash and product-flow signals without violating the app's calm, privacy-respectful positioning
+
 ### Phase 2: UX And Enjoyment Polish
 
 Goal:
@@ -192,12 +212,13 @@ This side mission continues in parallel with the mainline release track.
 The default near-term order is:
 
 1. `Phase 1: Product Completion`
-2. `Phase 2: UX And Enjoyment Polish`
-3. `Phase 3: Refactor And Architecture Hardening`
-4. `Phase 4: Reliability And Coverage Expansion`
-5. `Phase 5: Accessibility And Localization Hardening`
-6. `Phase 6: Release Hardening`
-7. `Phase 7: Final QA And Submission Prep`
+2. `Phase 1.5: Tester Distribution And Observability`
+3. `Phase 2: UX And Enjoyment Polish`
+4. `Phase 3: Refactor And Architecture Hardening`
+5. `Phase 4: Reliability And Coverage Expansion`
+6. `Phase 5: Accessibility And Localization Hardening`
+7. `Phase 6: Release Hardening`
+8. `Phase 7: Final QA And Submission Prep`
 
 The `Sephira content side mission` continues throughout all of those phases.
 
@@ -210,6 +231,7 @@ Release-blocking by default:
 - major missing production surfaces
 - unresolved accessibility or localization failures on core flows
 - unresolved crash or data-loss risks
+- lack of crash visibility or tester-distribution readiness once the team has chosen to run real Play testing
 
 Not automatically release-blocking:
 

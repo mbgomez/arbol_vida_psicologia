@@ -72,6 +72,7 @@ description = "Done in this slice."
 file = "docs/production_readiness_roadmap.md"
 mainline_track = [
   "Phase 1: Product Completion",
+  "Phase 1.5: Tester Distribution And Observability",
   "Phase 2: UX And Enjoyment Polish",
   "Phase 3: Refactor And Architecture Hardening",
   "Phase 4: Reliability And Coverage Expansion",
@@ -86,6 +87,7 @@ assessment_library_screen = "Now lives in the top-level Assessments tab while Ho
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
+tester_distribution_and_observability = "Add Google Play tester distribution, crash reporting, and a minimal analytics/event taxonomy for the core reflective journey without weakening the local-first trust model."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
 
@@ -104,6 +106,8 @@ items = [
   "Starting a fresh assessment is a trust-sensitive moment, so the app should confirm before replacing an unfinished session and should preserve completed History entries.",
   "Fresh-start behavior is safest when the route carries an explicit intent and the repository owns the replacement semantics, instead of each screen trying to reset assessment state on its own.",
   "Coverage for trust-sensitive flow changes is strongest when it spans repository behavior, route/use-case wiring, ViewModel state, and the visible confirmation path on production surfaces.",
+  "Tester analytics are most useful when they stay narrowly focused on the core journey and key recoverable failures instead of trying to measure everything at once.",
+  "Crash and telemetry instrumentation should respect the product's privacy posture and be explained clearly once tester-distribution work begins.",
   "Per-sephira visibility toggles in score-type trend mode are a UI concern, so filtering the chart-ready screen model locally is cleaner than pushing transient selection state into repository contracts.",
   "Dynamic graph screens are easier to keep stable when test tags target specific controls and saved-point rows instead of relying on repeated sephira names in visible text.",
   "Five-tab bottom navigation needs explicit label-fit handling early; letting long labels wrap creates obvious UX debt on smaller phones.",

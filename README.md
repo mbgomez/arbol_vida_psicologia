@@ -252,6 +252,8 @@ Production roadmap standard:
 - Use `docs/production_readiness_roadmap.md` as the current phase guide toward a production-ready release.
 - Keep the mainline release track moving even while deeper authored sephira content is still arriving.
 - Treat finalized sephira-content enrichment as an ongoing side mission that can be added one sephira at a time during the main roadmap.
+- The roadmap now includes a dedicated tester-distribution and observability phase before deeper polish and release hardening.
+- Telemetry during that phase should stay minimal and product-relevant, focusing on crashes, key journey events, and tester learning rather than broad user tracking.
 
 Locked assessment entry direction:
 

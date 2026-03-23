@@ -285,6 +285,7 @@ Avoid:
 
 - growing brittle end-to-end UI tests around unstable polished layouts
 - leaving reused logic duplicated across screens without a single testable source of truth
+- coupling future analytics or crash-reporting instrumentation too tightly to screen-local UI code when the same product event can be emitted from a more stable ViewModel or navigation boundary
 
 Additional guidance:
 
