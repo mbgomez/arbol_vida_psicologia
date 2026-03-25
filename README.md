@@ -100,6 +100,19 @@ Assessment content standard:
   - `pages`
   - `questions`
 - `completionContent` should hold the section-complete reflection content for that sephira so the completed assessment screen stays driven by authored content rather than hardcoded screen copy.
+- The locked `completionContent` shape is:
+  - `sectionSummary`
+  - `balanced`
+    - `reflection`
+    - `practice`
+  - `deficiency`
+    - `reflection`
+    - `practice`
+  - `excess`
+    - `reflection`
+    - `practice`
+- Seed JSON fields used for gradually arriving authored content should remain parse-safe with optional/defaulted DTO fields so repository fallbacks can stabilize incomplete sections instead of failing Moshi parsing.
+- When this seeded content shape changes, update test fixtures and bump the questionnaire/cache version in the same pass.
 - This contract should stay generic enough to support future assessments or added energy views without teaching the UI about one specific sephira's interpretation structure.
 - `detailContent` should keep:
   - `healthyExpression`

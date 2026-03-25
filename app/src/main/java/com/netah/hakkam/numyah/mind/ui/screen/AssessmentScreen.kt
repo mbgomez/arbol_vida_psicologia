@@ -37,11 +37,7 @@ import com.netah.hakkam.numyah.mind.ui.components.AssessmentResultSummaryCard
 import com.netah.hakkam.numyah.mind.ui.components.AssessmentScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceLabel
 import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceNoteText
-import com.netah.hakkam.numyah.mind.ui.components.assessmentDailyLifeText
 import com.netah.hakkam.numyah.mind.ui.components.assessmentDominantLabel
-import com.netah.hakkam.numyah.mind.ui.components.assessmentNextStepText
-import com.netah.hakkam.numyah.mind.ui.components.assessmentResultMeaningText
-import com.netah.hakkam.numyah.mind.ui.components.assessmentResultSummaryText
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentCompletedUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentErrorType
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentHonestyNoticeUiModel
@@ -298,15 +294,11 @@ private fun AssessmentCompletedState(
                 dominantPole = model.dominantPole,
                 isLowConfidence = model.isLowConfidence
             ),
-            body = assessmentResultSummaryText(
-                sephiraName = model.sephiraName,
-                dominantPole = model.dominantPole,
-                isLowConfidence = model.isLowConfidence
-            )
+            body = model.completionReflection
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_what_it_means_title),
-            body = assessmentResultMeaningText(model.shortMeaning)
+            body = model.sectionSummary
         )
         AssessmentInfoCard(
             title = assessmentConfidenceLabel(model.confidence),
@@ -328,16 +320,12 @@ private fun AssessmentCompletedState(
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_daily_life_title),
-            body = assessmentDailyLifeText(
-                dominantPole = model.dominantPole,
-                healthyExpression = model.healthyExpression,
-                deficiencyPattern = model.deficiencyPattern,
-                excessPattern = model.excessPattern
-            )
+            body = model.completionReflection
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_next_step_title),
-            body = assessmentNextStepText(model.suggestedPractices)
+            body = model.practiceSuggestion
+                ?: stringResource(R.string.assessment_result_next_step_fallback)
         )
         Button(
             onClick = {

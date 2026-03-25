@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.CompletionPoleContent
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
@@ -12,6 +13,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraCompletionContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
@@ -137,6 +139,7 @@ class ResultsViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("malkuth_page", "Title", "Body", listOf("m1"))),
                     questions = emptyList()
@@ -146,6 +149,7 @@ class ResultsViewModelTests {
                     displayName = "Yesod",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("yesod_page", "Title", "Body", listOf("y1"))),
                     questions = emptyList()
@@ -155,6 +159,7 @@ class ResultsViewModelTests {
                     displayName = "Hod",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("hod_page", "Title", "Body", listOf("h1"))),
                     questions = emptyList()
@@ -231,5 +236,12 @@ class ResultsViewModelTests {
         deficiencyPattern = "Deficiency",
         excessPattern = "Excess",
         suggestedPractices = listOf("Practice")
+    )
+
+    private fun testCompletionContent() = SephiraCompletionContent(
+        sectionSummary = "Completion summary",
+        balanced = CompletionPoleContent("Balanced reflection", "Balanced practice"),
+        deficiency = CompletionPoleContent("Deficiency reflection", "Deficiency practice"),
+        excess = CompletionPoleContent("Excess reflection", "Excess practice")
     )
 }

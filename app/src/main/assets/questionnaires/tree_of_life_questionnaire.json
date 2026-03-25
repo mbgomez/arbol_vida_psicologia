@@ -1,5 +1,5 @@
 {
-  "version": "tree-of-life-v1",
+  "version": "tree-of-life-v2",
   "title": {
     "en": "Tree of Life reflection",
     "es": "Reflexion del Arbol de la Vida"
@@ -60,6 +60,42 @@
       "introText": {
         "en": "This section explores how you relate to material life through money, possessions, health, and the body. It looks for balance, deficiency, and excess without reducing you to a fixed label.",
         "es": "Esta seccion explora como te relacionas con la vida material a traves del dinero, las posesiones, la salud y el cuerpo. Busca balance, carencia y exceso sin reducirte a una etiqueta fija."
+      },
+      "completionContent": {
+        "sectionSummary": {
+          "en": "Malkuth reflects how grounded, supported, and proportionate your relationship with practical life feels right now.",
+          "es": "Malkuth refleja cuan enraizada, sostenida y proporcionada se siente tu relacion con la vida practica en este momento."
+        },
+        "balanced": {
+          "reflection": {
+            "en": "Your answers suggest Malkuth is acting as a steady base. Practical life seems present enough to support you without taking over your whole sense of meaning.",
+            "es": "Tus respuestas sugieren que Malkuth esta actuando como una base estable. La vida practica parece estar lo bastante presente para sostenerte sin aduenarse de tu sentido de significado."
+          },
+          "practice": {
+            "en": "Keep one small act of physical or practical care steady this week so support stays embodied.",
+            "es": "Manten un pequeno acto de cuidado fisico o practico esta semana para que el sosten permanezca encarnado."
+          }
+        },
+        "deficiency": {
+          "reflection": {
+            "en": "Your answers suggest practical life may need more support right now. Basic care, structure, or material steadiness may be asking for more deliberate attention.",
+            "es": "Tus respuestas sugieren que la vida practica podria necesitar mas apoyo en este momento. El cuidado basico, la estructura o la estabilidad material pueden estar pidiendo una atencion mas deliberada."
+          },
+          "practice": {
+            "en": "Choose one neglected practical area and give it calm, specific attention this week.",
+            "es": "Elige un area practica descuidada y dale una atencion serena y especifica esta semana."
+          }
+        },
+        "excess": {
+          "reflection": {
+            "en": "Your answers suggest material life may be carrying too much force right now. Control, possessions, or bodily routines may be holding more emotional weight than they need to.",
+            "es": "Tus respuestas sugieren que la vida material podria estar cargando demasiada fuerza en este momento. El control, las posesiones o las rutinas corporales pueden estar sosteniendo mas peso emocional del necesario."
+          },
+          "practice": {
+            "en": "Notice one place where enough would be healthier than more this week.",
+            "es": "Observa un lugar en el que suficiente seria mas saludable que mas esta semana."
+          }
+        }
       },
       "healthyExpression": {
         "en": "When Malkuth is expressed in a healthy way, practical life becomes a stable base instead of a burden. You can care for the body, money, and daily structure without treating them as the whole meaning of life.",
@@ -219,6 +255,42 @@
         "en": "This section explores closeness, confidence, and the way you move between connection and privacy. It looks for balance, deficiency, and excess without turning your answers into a fixed label.",
         "es": "Esta seccion explora la cercania, la confianza y la forma en que te mueves entre la conexion y la privacidad. Busca balance, carencia y exceso sin convertir tus respuestas en una etiqueta fija."
       },
+      "completionContent": {
+        "sectionSummary": {
+          "en": "Yesod reflects how securely your inner life connects with relationship, confidence, visibility, and emotional closeness.",
+          "es": "Yesod refleja cuan seguramente se conecta tu vida interior con el vinculo, la confianza, la visibilidad y la cercania emocional."
+        },
+        "balanced": {
+          "reflection": {
+            "en": "Your answers suggest Yesod feels relatively rooted right now. Connection and privacy seem able to coexist without pulling you too far from yourself.",
+            "es": "Tus respuestas sugieren que Yesod se siente relativamente enraizada en este momento. La conexion y la privacidad parecen poder convivir sin alejarte demasiado de ti mismo."
+          },
+          "practice": {
+            "en": "Protect one relationship rhythm that helps you feel both connected and grounded.",
+            "es": "Protege un ritmo relacional que te ayude a sentirte conectado y a la vez enraizado."
+          }
+        },
+        "deficiency": {
+          "reflection": {
+            "en": "Your answers suggest trust, visibility, or closeness may feel under-supported right now. Pulling back may be protecting you, but it may also be limiting nourishment.",
+            "es": "Tus respuestas sugieren que la confianza, la visibilidad o la cercania pueden sentirse poco sostenidas en este momento. Retirarte puede estar protegiendote, pero tambien puede estar limitando el alimento relacional."
+          },
+          "practice": {
+            "en": "Try one small act of showing up more honestly where you usually retreat.",
+            "es": "Prueba un pequeno acto de mostrarte con mas honestidad donde sueles retirarte."
+          }
+        },
+        "excess": {
+          "reflection": {
+            "en": "Your answers suggest self-image or closeness may be asking for too much reinforcement right now. Attention from others may be carrying more weight than is comfortable.",
+            "es": "Tus respuestas sugieren que la autoimagen o la cercania pueden estar pidiendo demasiado refuerzo en este momento. La atencion de otras personas puede estar cargando mas peso del que resulta comodo."
+          },
+          "practice": {
+            "en": "Notice one moment to return your center to yourself before seeking reassurance.",
+            "es": "Observa un momento para devolver tu centro a ti mismo antes de buscar reafirmacion."
+          }
+        }
+      },
       "healthyExpression": {
         "en": "When Yesod is expressed in a healthy way, connection feels rooted and flexible. You can enjoy closeness, solitude, visibility, and privacy without losing your center in any of them.",
         "es": "Cuando Yesod se expresa de forma saludable, la conexion se siente enraizada y flexible. Puedes disfrutar la cercania, la soledad, la visibilidad y la privacidad sin perder tu centro en ninguna de ellas."
@@ -377,6 +449,42 @@
         "en": "This section explores verbal expression, listening, honesty, and the way you communicate yourself to the world around you. It looks for grounded expression rather than rigid labels.",
         "es": "Esta seccion explora la expresion verbal, la escucha, la honestidad y la forma en que te comunicas con el mundo que te rodea. Busca una expresion enraizada en lugar de etiquetas rigidas."
       },
+      "completionContent": {
+        "sectionSummary": {
+          "en": "Hod reflects how truth, language, and emotional expression are being shaped in your communication right now.",
+          "es": "Hod refleja como se estan dando forma la verdad, el lenguaje y la expresion emocional en tu comunicacion en este momento."
+        },
+        "balanced": {
+          "reflection": {
+            "en": "Your answers suggest Hod feels relatively balanced. You seem able to express yourself with enough honesty and enough room for relationship.",
+            "es": "Tus respuestas sugieren que Hod se siente relativamente equilibrada. Pareces poder expresarte con suficiente honestidad y suficiente espacio para la relacion."
+          },
+          "practice": {
+            "en": "Keep noticing conversations where clarity and reciprocity are both present.",
+            "es": "Sigue observando las conversaciones en las que estan presentes tanto la claridad como la reciprocidad."
+          }
+        },
+        "deficiency": {
+          "reflection": {
+            "en": "Your answers suggest expression may be getting constrained or landing too bluntly right now. Truth may be present, but its form may need more care.",
+            "es": "Tus respuestas sugieren que la expresion puede estar quedando contenida o llegando con demasiada brusquedad en este momento. La verdad puede estar presente, pero su forma puede necesitar mas cuidado."
+          },
+          "practice": {
+            "en": "Before one important conversation, ask what truth you want to share and what tone would help it land well.",
+            "es": "Antes de una conversacion importante, preguntate que verdad quieres compartir y que tono ayudaria a que llegue bien."
+          }
+        },
+        "excess": {
+          "reflection": {
+            "en": "Your answers suggest words may be doing too much work right now. Communication may be moving faster than listening, accuracy, or shared space.",
+            "es": "Tus respuestas sugieren que las palabras pueden estar haciendo demasiado trabajo en este momento. La comunicacion puede estar moviendose mas rapido que la escucha, la precision o el espacio compartido."
+          },
+          "practice": {
+            "en": "In one conversation this week, pause once more than usual before speaking again.",
+            "es": "En una conversacion esta semana, haz una pausa una vez mas de lo habitual antes de volver a hablar."
+          }
+        }
+      },
       "healthyExpression": {
         "en": "When Hod is expressed in a healthy way, words can carry both truth and relationship. Communication feels clearer, more reciprocal, and more able to give shape to inner life without overwhelming others.",
         "es": "Cuando Hod se expresa de forma saludable, las palabras pueden sostener tanto la verdad como la relacion. La comunicacion se siente mas clara, reciproca y capaz de dar forma a la vida interior sin abrumar a otras personas."
@@ -534,6 +642,42 @@
       "introText": {
         "en": "This section explores pleasure, impulse, and emotional expression in action. It looks for a humane balance between enjoyment, self-control, and emotional freedom.",
         "es": "Esta seccion explora el placer, el impulso y la expresion emocional en la accion. Busca un balance humano entre el disfrute, el autocontrol y la libertad emocional."
+      },
+      "completionContent": {
+        "sectionSummary": {
+          "en": "Netzach reflects how desire, pleasure, and visible feeling are moving through your life right now.",
+          "es": "Netzach refleja como se estan moviendo el deseo, el placer y el sentimiento visible por tu vida en este momento."
+        },
+        "balanced": {
+          "reflection": {
+            "en": "Your answers suggest Netzach has room to move without taking over. Enjoyment and emotion seem to have a place without pulling you out of proportion.",
+            "es": "Tus respuestas sugieren que Netzach tiene espacio para moverse sin apoderarse de todo. El disfrute y la emocion parecen tener un lugar sin sacarte de proporcion."
+          },
+          "practice": {
+            "en": "Notice one pleasure you can meet with appreciation and steadiness this week.",
+            "es": "Observa un placer que puedas encontrar con aprecio y constancia esta semana."
+          }
+        },
+        "deficiency": {
+          "reflection": {
+            "en": "Your answers suggest desire or emotional expression may be held too tightly right now. Restraint may be protecting order, but it may also be flattening vitality.",
+            "es": "Tus respuestas sugieren que el deseo o la expresion emocional pueden estar demasiado contenidos en este momento. La contencion puede estar protegiendo el orden, pero tambien puede estar aplanando la vitalidad."
+          },
+          "practice": {
+            "en": "Give yourself permission for one small form of enjoyment or visible feeling that feels safe and real.",
+            "es": "Date permiso para una pequena forma de disfrute o sentimiento visible que se sienta segura y real."
+          }
+        },
+        "excess": {
+          "reflection": {
+            "en": "Your answers suggest pleasure, impulse, or emotion may be running ahead of grounding right now. Feeling may be arriving faster than reflection can hold it.",
+            "es": "Tus respuestas sugieren que el placer, el impulso o la emocion pueden estar yendo por delante del enraizamiento en este momento. El sentimiento puede estar llegando mas rapido de lo que la reflexion puede sostener."
+          },
+          "practice": {
+            "en": "Pause briefly the next time emotion rises quickly and look for one steadier next move.",
+            "es": "Haz una breve pausa la proxima vez que la emocion suba con rapidez y busca un siguiente paso mas sereno."
+          }
+        }
       },
       "healthyExpression": {
         "en": "When Netzach is expressed in a healthy way, desire and feeling can move freely without taking over the whole system. Pleasure has a place, and emotion can be visible without losing proportion.",

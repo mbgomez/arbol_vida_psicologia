@@ -358,6 +358,28 @@ Each sephira questionnaire definition should include:
 
 `completionContent` should carry the authored section-complete interpretation for that sephira instead of relying on screen-level copy. The exact schema can evolve, but it should support completed-state summary plus pole-specific reflection in a way that stays assessment-agnostic and endpoint-friendly.
 
+The locked Phase 1 return shape for `completionContent` is:
+
+- `sectionSummary`
+- `balanced`
+  - `reflection`
+  - `practice`
+- `deficiency`
+  - `reflection`
+  - `practice`
+- `excess`
+  - `reflection`
+  - `practice`
+
+Repository/domain/ViewModel layers should select the active pole content before it reaches the screen. The screen should render authored completion content and keep only generic confidence and score presentation logic.
+
+Implementation hardening rules for this content contract:
+
+- seed-model parsing must be backward-safe while authored sections are still arriving gradually
+- optional authored fields should fail soft through repository fallbacks, not fail fast during JSON parsing
+- test fixtures and local seed constructors should be updated in the same pass whenever the content contract changes
+- questionnaire-content version bumps and cache/schema bumps should be verified with a fresh install or cleared local data during manual checks
+
 `detailContent` should include:
 
 - `healthyExpression`

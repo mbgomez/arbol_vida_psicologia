@@ -5,6 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.netah.hakkam.numyah.mind.data.datasource.local.AnswerOptionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionPageTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.ResponseTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraPracticeTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraScoreTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraSectionTable
 
 private const val DATABASE_NAME = "numyah_mind.db"
 
@@ -20,7 +31,7 @@ private const val DATABASE_NAME = "numyah_mind.db"
         QuestionPageTable::class,
         QuestionTable::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(RoomTypeConverters::class)

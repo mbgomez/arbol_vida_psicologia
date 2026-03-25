@@ -46,11 +46,24 @@ internal data class SeedPractice(
     val text: LocalizedText
 )
 
+internal data class SeedCompletionPole(
+    val reflection: LocalizedText? = null,
+    val practice: LocalizedText? = null
+)
+
+internal data class SeedCompletionContent(
+    val sectionSummary: LocalizedText? = null,
+    val balanced: SeedCompletionPole? = null,
+    val deficiency: SeedCompletionPole? = null,
+    val excess: SeedCompletionPole? = null
+)
+
 internal data class SeedSephiraSection(
     val sephiraId: SephiraId,
     val displayName: LocalizedText,
     val shortMeaning: LocalizedText,
     val introText: LocalizedText,
+    val completionContent: SeedCompletionContent? = null,
     val healthyExpression: LocalizedText? = null,
     val deficiencyPattern: LocalizedText? = null,
     val excessPattern: LocalizedText? = null,

@@ -320,6 +320,7 @@ class LocalAssessmentSessionRepositoryTest {
                 displayName = LocalizedText("Malkuth", "Malkuth"),
                 shortMeaning = LocalizedText("Grounding", "Enraizamiento"),
                 introText = LocalizedText("Intro", "Intro"),
+                suggestedPractices = emptyList(),
                 pages = listOf(
                     SeedQuestionPage(
                         id = "m1_page",
@@ -344,6 +345,7 @@ class LocalAssessmentSessionRepositoryTest {
                 displayName = LocalizedText("Yesod", "Yesod"),
                 shortMeaning = LocalizedText("Bond", "Vinculo"),
                 introText = LocalizedText("Intro", "Intro"),
+                suggestedPractices = emptyList(),
                 pages = listOf(
                     SeedQuestionPage(
                         id = "y1_page",

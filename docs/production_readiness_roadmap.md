@@ -44,10 +44,16 @@ Focus:
 - ensure the app feels complete even where some authored sephira content still uses approved fallback copy
 - treat trust-sensitive continuation and replacement moments as product work, not only navigation work, so users always understand when an unfinished session will be replaced and when completed history will remain untouched
 - keep section-complete assessment interpretation on the same authored content pipeline as sephira intros and detail screens, so later sephirot do not inherit Malkuth-shaped or screen-level fallback copy by accident
+- treat the locked `completionContent` contract as:
+  - `sectionSummary`
+  - pole-specific `balanced`, `deficiency`, and `excess`
+  - per-pole `reflection` and `practice`
+- keep gradual-content parsing backward-safe so incomplete authored sections fall back cleanly instead of failing the seed loader before repository fallback logic can run
 
 Release gate:
 
 - every production surface should feel intentional, trustworthy, and usable end-to-end
+- content-contract changes should survive both cached-content refresh and fresh-install/clear-data verification
 
 Current return-to-Phase-1 note:
 

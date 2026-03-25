@@ -69,6 +69,18 @@ class LocalAssessmentContentRepositoryTests {
         assertEquals(2, questionnaire.sections.first().pages.size)
         assertEquals(6, questionnaire.sections.first().questions.size)
         assertEquals(3, questionnaire.sections.first().detailContent.suggestedPractices.size)
+        assertEquals(
+            "Malkuth represents your relationship with the material world. In psychological terms, it reflects how you relate to the body, daily life, possessions, and practical reality.",
+            questionnaire.sections.first().completionContent.sectionSummary
+        )
+        assertEquals(
+            "Deficient Malkuth",
+            questionnaire.sections.first().completionContent.deficiency.reflection
+        )
+        assertEquals(
+            "Choose one small weekly act of physical care that feels supportive rather than punishing.",
+            questionnaire.sections.first().completionContent.excess.practice
+        )
         assertTrue(
             questionnaire.sections.first().shortMeaning.contains("relationship with the material world")
         )
@@ -87,6 +99,10 @@ class LocalAssessmentContentRepositoryTests {
         assertEquals(
             "Elige un pequeno acto semanal de cuidado fisico que se sienta de apoyo y no de castigo.",
             questionnaire.sections.first().detailContent.suggestedPractices.first()
+        )
+        assertEquals(
+            "Malkuth en carencia",
+            questionnaire.sections.first().completionContent.deficiency.reflection
         )
         assertTrue(
             questionnaire.sections.first().questions.first().prompt.contains("Dedico gran parte")
@@ -143,6 +159,24 @@ class LocalAssessmentContentRepositoryTests {
 
         assertEquals(2.5, questionnaire.sections.first().questions.first().weight, 0.0)
         assertEquals(0.5, questionnaire.sections.first().questions[1].weight, 0.0)
+    }
+
+    @Test
+    fun getCurrentQuestionnaire_buildsCompletionFallbackWhenSeedOmitsCompletionContent() = coroutinesRule.runBlockingTest {
+        val questionnaire = repository.getCurrentQuestionnaire(Locale.ENGLISH).first()
+        val completionContent = questionnaire.sections.first().completionContent
+
+        assertEquals(
+            questionnaire.sections.first().shortMeaning,
+            completionContent.sectionSummary
+        )
+        assertEquals("Healthy Malkuth", completionContent.balanced.reflection)
+        assertEquals("Deficient Malkuth", completionContent.deficiency.reflection)
+        assertEquals("Excessive Malkuth", completionContent.excess.reflection)
+        assertEquals(
+            "Choose one small weekly act of physical care that feels supportive rather than punishing.",
+            completionContent.balanced.practice
+        )
     }
 
     private companion object {

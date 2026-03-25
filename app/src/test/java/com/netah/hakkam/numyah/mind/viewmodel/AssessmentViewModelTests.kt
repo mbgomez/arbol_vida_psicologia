@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.CompletionPoleContent
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
@@ -15,6 +16,7 @@ import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
 import com.netah.hakkam.numyah.mind.domain.model.SavedResponse
 import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
+import com.netah.hakkam.numyah.mind.domain.model.SephiraCompletionContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraScore
@@ -264,9 +266,9 @@ class AssessmentViewModelTests {
 
         val state = viewModel.uiState.value as AssessmentUiState.Completed
         assertEquals(Pole.BALANCE, state.model.dominantPole)
-        assertEquals("Meaning", state.model.shortMeaning)
-        assertEquals("Healthy", state.model.healthyExpression)
-        assertEquals(listOf("Practice"), state.model.suggestedPractices)
+        assertEquals("Completion summary", state.model.sectionSummary)
+        assertEquals("Balanced reflection", state.model.completionReflection)
+        assertEquals("Balanced practice", state.model.practiceSuggestion)
         assertTrue(state.model.isLowConfidence)
         assertEquals(ConfidenceLevel.LOW, state.model.confidence)
         assertFalse(state.model.hasNextSephira)
@@ -321,9 +323,9 @@ class AssessmentViewModelTests {
 
         val state = viewModel.uiState.value as AssessmentUiState.Completed
         assertEquals("Malkuth", state.model.sephiraName)
-        assertEquals("Meaning", state.model.shortMeaning)
-        assertEquals("Excess", state.model.excessPattern)
-        assertEquals(listOf("Practice"), state.model.suggestedPractices)
+        assertEquals("Completion summary", state.model.sectionSummary)
+        assertEquals("Excess reflection", state.model.completionReflection)
+        assertEquals("Excess practice", state.model.practiceSuggestion)
         assertTrue(state.model.hasNextSephira)
         assertEquals("Yesod", state.model.nextSephiraName)
         verify(exactly = 1) { saveAssessmentScoreUseCase.run(1L to savedScore) }
@@ -489,6 +491,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(
                         QuestionPageContent("page_1", "Money", "Resources", listOf("q1", "q2", "q3")),
@@ -521,6 +524,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("page_1", "Money", "Resources", listOf("q_last"))),
                     questions = listOf(
@@ -545,6 +549,7 @@ class AssessmentViewModelTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("page_1", "Money", "Resources", listOf("q_last"))),
                     questions = listOf(
@@ -556,6 +561,7 @@ class AssessmentViewModelTests {
                     displayName = "Yesod",
                     shortMeaning = "Foundation",
                     introText = "Yesod intro",
+                    completionContent = testCompletionContent(),
                     detailContent = testDetailContent(),
                     pages = listOf(QuestionPageContent("yesod_page_1", "Bonding", "Connection", listOf("yesod_q1"))),
                     questions = listOf(
@@ -595,5 +601,21 @@ class AssessmentViewModelTests {
         deficiencyPattern = "Deficiency",
         excessPattern = "Excess",
         suggestedPractices = listOf("Practice")
+    )
+
+    private fun testCompletionContent() = SephiraCompletionContent(
+        sectionSummary = "Completion summary",
+        balanced = CompletionPoleContent(
+            reflection = "Balanced reflection",
+            practice = "Balanced practice"
+        ),
+        deficiency = CompletionPoleContent(
+            reflection = "Deficiency reflection",
+            practice = "Deficiency practice"
+        ),
+        excess = CompletionPoleContent(
+            reflection = "Excess reflection",
+            practice = "Excess practice"
+        )
     )
 }

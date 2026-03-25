@@ -144,6 +144,21 @@ Data and content rules:
   - `questions`
 - `completionContent` should be treated as part of the same authored content contract as intros and detail screens so the section-complete assessment reflection does not depend on screen-level or Malkuth-shaped fallback copy.
 - `completionContent` should stay assessment-agnostic enough that future assessments or additional energy views for a sephira can reuse the same model instead of inventing UI-specific interpretation text.
+- The locked `completionContent` shape is:
+  - `sectionSummary`
+  - `balanced`
+    - `reflection`
+    - `practice`
+  - `deficiency`
+    - `reflection`
+    - `practice`
+  - `excess`
+    - `reflection`
+    - `practice`
+- Repository/domain/ViewModel layers should choose the active completion pole content before the screen renders it.
+- Seed DTO fields that may legitimately be absent while content is still arriving little by little must stay backward-safe at parse time. Prefer optional/defaulted JSON seed fields for authored copy such as `completionContent`, its nested pole fields, and `suggestedPractices` so Moshi parsing does not fail before repository fallbacks can run.
+- When the seeded assessment content contract changes, update fixture/test seed constructors in the same pass so local repository/session/scoring tests do not silently keep enforcing an older required shape.
+- When questionnaire seed content or cached content schema changes, treat the corresponding content/database version bump plus manual fresh-install or clear-data verification as part of the same slice.
 - `detailContent` should include:
   - `healthyExpression`
   - `deficiencyPattern`
@@ -279,3 +294,4 @@ Refactor lessons to preserve:
 - Replacing an unfinished assessment is a trust-sensitive action. Keep the confirmation copy explicit about what will be replaced and what will remain saved.
 - Fresh-start behavior is stronger when it is implemented in the session/repository contract rather than as screen-local reset logic, so every entry surface shares the same rule.
 - Section-complete assessment interpretation belongs to the authored content contract. If it is still expressed through shared screen strings or one sephira's copy pattern, treat that as a Phase 1 correction before layering more UX polish on top.
+- Backward-safe seed DTO defaults are part of the content contract. If parse-time required fields can fail before repository fallbacks run, the fallback strategy is incomplete.

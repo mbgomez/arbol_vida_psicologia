@@ -1,6 +1,5 @@
-package com.netah.hakkam.numyah.mind.data.local.database
+package com.netah.hakkam.numyah.mind.data.datasource.local
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -132,6 +131,20 @@ data class SephiraSectionTable(
     val shortMeaningEs: String,
     val introTextEn: String,
     val introTextEs: String,
+    val completionSummaryEn: String,
+    val completionSummaryEs: String,
+    val balancedReflectionEn: String,
+    val balancedReflectionEs: String,
+    val balancedPracticeEn: String?,
+    val balancedPracticeEs: String?,
+    val deficiencyReflectionEn: String,
+    val deficiencyReflectionEs: String,
+    val deficiencyPracticeEn: String?,
+    val deficiencyPracticeEs: String?,
+    val excessReflectionEn: String,
+    val excessReflectionEs: String,
+    val excessPracticeEn: String?,
+    val excessPracticeEs: String?,
     val healthyExpressionEn: String,
     val healthyExpressionEs: String,
     val deficiencyPatternEn: String,

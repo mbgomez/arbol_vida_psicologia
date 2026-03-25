@@ -48,9 +48,22 @@ data class SephiraSectionContent(
     val displayName: String,
     val shortMeaning: String,
     val introText: String,
+    val completionContent: SephiraCompletionContent,
     val detailContent: SephiraDetailContent,
     val pages: List<QuestionPageContent>,
     val questions: List<QuestionContent>
+)
+
+data class SephiraCompletionContent(
+    val sectionSummary: String,
+    val balanced: CompletionPoleContent,
+    val deficiency: CompletionPoleContent,
+    val excess: CompletionPoleContent
+)
+
+data class CompletionPoleContent(
+    val reflection: String,
+    val practice: String?
 )
 
 data class SephiraDetailContent(

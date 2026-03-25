@@ -1,7 +1,7 @@
 package com.netah.hakkam.numyah.mind.di
 
-import com.netah.hakkam.numyah.mind.data.local.database.AssessmentSessionDao
-import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireContentDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.AssessmentSessionDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
 import com.netah.hakkam.numyah.mind.data.local.content.JsonLearningContentDataSource
 import com.netah.hakkam.numyah.mind.data.repository.AssessmentContentRepository

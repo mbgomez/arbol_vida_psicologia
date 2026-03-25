@@ -1,25 +1,39 @@
 package com.netah.hakkam.numyah.mind.data.repository
 
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
-import com.netah.hakkam.numyah.mind.data.local.database.AnswerOptionTable
-import com.netah.hakkam.numyah.mind.data.local.database.QuestionPageTable
-import com.netah.hakkam.numyah.mind.data.local.database.QuestionTable
-import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireContentDao
-import com.netah.hakkam.numyah.mind.data.local.database.QuestionnaireTable
-import com.netah.hakkam.numyah.mind.data.local.database.SephiraPracticeTable
-import com.netah.hakkam.numyah.mind.data.local.database.SephiraSectionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.AnswerOptionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionPageTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireContentDao
+import com.netah.hakkam.numyah.mind.data.datasource.local.QuestionnaireTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraPracticeTable
+import com.netah.hakkam.numyah.mind.data.datasource.local.SephiraSectionTable
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.CompletionPoleContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraCompletionContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+
+private data class CachedCompletionPole(
+    val reflection: com.netah.hakkam.numyah.mind.data.local.content.LocalizedText,
+    val practice: com.netah.hakkam.numyah.mind.data.local.content.LocalizedText?
+)
+
+private data class CachedCompletionContent(
+    val sectionSummary: com.netah.hakkam.numyah.mind.data.local.content.LocalizedText,
+    val balanced: CachedCompletionPole,
+    val deficiency: CachedCompletionPole,
+    val excess: CachedCompletionPole
+)
 
 interface AssessmentContentRepository {
     fun getCurrentQuestionnaire(locale: Locale): Flow<QuestionnaireContent>
@@ -72,6 +86,7 @@ class LocalAssessmentContentRepository @Inject constructor(
         )
         questionnaireContentDao.insertSections(
             seedQuestionnaire.sections.mapIndexed { index, section ->
+                val completionContent = section.toCachedCompletionContent()
                 SephiraSectionTable(
                     questionnaireVersion = seedQuestionnaire.version,
                     sephiraId = section.sephiraId,
@@ -81,6 +96,20 @@ class LocalAssessmentContentRepository @Inject constructor(
                     shortMeaningEs = section.shortMeaning.es,
                     introTextEn = section.introText.en,
                     introTextEs = section.introText.es,
+                    completionSummaryEn = completionContent.sectionSummary.en,
+                    completionSummaryEs = completionContent.sectionSummary.es,
+                    balancedReflectionEn = completionContent.balanced.reflection.en,
+                    balancedReflectionEs = completionContent.balanced.reflection.es,
+                    balancedPracticeEn = completionContent.balanced.practice?.en,
+                    balancedPracticeEs = completionContent.balanced.practice?.es,
+                    deficiencyReflectionEn = completionContent.deficiency.reflection.en,
+                    deficiencyReflectionEs = completionContent.deficiency.reflection.es,
+                    deficiencyPracticeEn = completionContent.deficiency.practice?.en,
+                    deficiencyPracticeEs = completionContent.deficiency.practice?.es,
+                    excessReflectionEn = completionContent.excess.reflection.en,
+                    excessReflectionEs = completionContent.excess.reflection.es,
+                    excessPracticeEn = completionContent.excess.practice?.en,
+                    excessPracticeEs = completionContent.excess.practice?.es,
                     healthyExpressionEn = section.healthyExpression?.en ?: section.shortMeaning.en,
                     healthyExpressionEs = section.healthyExpression?.es ?: section.shortMeaning.es,
                     deficiencyPatternEn = section.deficiencyPattern?.en ?: section.introText.en,
@@ -173,6 +202,21 @@ class LocalAssessmentContentRepository @Inject constructor(
                     displayName = section.resolveDisplayName(localeLanguage),
                     shortMeaning = section.resolveShortMeaning(localeLanguage),
                     introText = section.resolveIntroText(localeLanguage),
+                    completionContent = SephiraCompletionContent(
+                        sectionSummary = section.resolveCompletionSummary(localeLanguage),
+                        balanced = CompletionPoleContent(
+                            reflection = section.resolveBalancedReflection(localeLanguage),
+                            practice = section.resolveBalancedPractice(localeLanguage)
+                        ),
+                        deficiency = CompletionPoleContent(
+                            reflection = section.resolveDeficiencyReflection(localeLanguage),
+                            practice = section.resolveDeficiencyPractice(localeLanguage)
+                        ),
+                        excess = CompletionPoleContent(
+                            reflection = section.resolveExcessReflection(localeLanguage),
+                            practice = section.resolveExcessPractice(localeLanguage)
+                        )
+                    ),
                     detailContent = SephiraDetailContent(
                         healthyExpression = section.resolveHealthyExpression(localeLanguage),
                         deficiencyPattern = section.resolveDeficiencyPattern(localeLanguage),
@@ -233,6 +277,46 @@ class LocalAssessmentContentRepository @Inject constructor(
         return if (localeLanguage.equals("es", ignoreCase = true)) introTextEs else introTextEn
     }
 
+    private fun SephiraSectionTable.resolveCompletionSummary(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) completionSummaryEs else completionSummaryEn
+    }
+
+    private fun SephiraSectionTable.resolveBalancedReflection(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            balancedReflectionEs
+        } else {
+            balancedReflectionEn
+        }
+    }
+
+    private fun SephiraSectionTable.resolveBalancedPractice(localeLanguage: String): String? {
+        return if (localeLanguage.equals("es", ignoreCase = true)) balancedPracticeEs else balancedPracticeEn
+    }
+
+    private fun SephiraSectionTable.resolveDeficiencyReflection(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            deficiencyReflectionEs
+        } else {
+            deficiencyReflectionEn
+        }
+    }
+
+    private fun SephiraSectionTable.resolveDeficiencyPractice(localeLanguage: String): String? {
+        return if (localeLanguage.equals("es", ignoreCase = true)) deficiencyPracticeEs else deficiencyPracticeEn
+    }
+
+    private fun SephiraSectionTable.resolveExcessReflection(localeLanguage: String): String {
+        return if (localeLanguage.equals("es", ignoreCase = true)) {
+            excessReflectionEs
+        } else {
+            excessReflectionEn
+        }
+    }
+
+    private fun SephiraSectionTable.resolveExcessPractice(localeLanguage: String): String? {
+        return if (localeLanguage.equals("es", ignoreCase = true)) excessPracticeEs else excessPracticeEn
+    }
+
     private fun SephiraSectionTable.resolveHealthyExpression(localeLanguage: String): String {
         return if (localeLanguage.equals("es", ignoreCase = true)) {
             healthyExpressionEs
@@ -273,10 +357,24 @@ class LocalAssessmentContentRepository @Inject constructor(
         return if (localeLanguage.equals("es", ignoreCase = true)) promptEs else promptEn
     }
 
-    private fun resolveResponseScaleFormat(seedQuestionnaire: com.netah.hakkam.numyah.mind.data.local.content.SeedQuestionnaire): QuestionFormat {
-        return seedQuestionnaire.sections
-            .flatMap { section -> section.questions }
-            .firstOrNull()
-            ?.format ?: QuestionFormat.LIKERT_5
+    private fun com.netah.hakkam.numyah.mind.data.local.content.SeedSephiraSection.toCachedCompletionContent():
+        CachedCompletionContent {
+        val firstPractice = suggestedPractices.firstOrNull()?.text
+        val authoredContent = completionContent
+        return CachedCompletionContent(
+            sectionSummary = authoredContent?.sectionSummary ?: shortMeaning,
+            balanced = CachedCompletionPole(
+                reflection = authoredContent?.balanced?.reflection ?: healthyExpression ?: shortMeaning,
+                practice = authoredContent?.balanced?.practice ?: firstPractice
+            ),
+            deficiency = CachedCompletionPole(
+                reflection = authoredContent?.deficiency?.reflection ?: deficiencyPattern ?: introText,
+                practice = authoredContent?.deficiency?.practice ?: firstPractice
+            ),
+            excess = CachedCompletionPole(
+                reflection = authoredContent?.excess?.reflection ?: excessPattern ?: introText,
+                practice = authoredContent?.excess?.practice ?: firstPractice
+            )
+        )
     }
 }

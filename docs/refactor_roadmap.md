@@ -216,6 +216,27 @@ The current content shape remains:
 
 `completionContent` is now part of the preferred seeded content direction. Section-complete interpretation should come through the same authored content pipeline as intros and detail screens rather than through screen-level hardcoded strings.
 
+The locked section-complete content shape is:
+
+- `sectionSummary`
+- `balanced`
+  - `reflection`
+  - `practice`
+- `deficiency`
+  - `reflection`
+  - `practice`
+- `excess`
+  - `reflection`
+  - `practice`
+
+Selection of the active completion reflection belongs in repository/domain/ViewModel mapping, not in shared UI helper text.
+
+Additional locked content-hardening lessons:
+
+- parse-time seed DTO requirements must not outrun the repository fallback strategy
+- if a field is intended to be optional during gradual authoring, keep the seed DTO optional/defaulted as well
+- content-contract refactors should update JSON fixtures and local seed test builders in the same pass to avoid false regressions
+
 `detailContent` should now travel with each seeded sephira section and include:
 
 - `healthyExpression`

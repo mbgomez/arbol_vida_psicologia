@@ -1,11 +1,11 @@
 version = 1
 project = "Numyah Mind"
-updated_utc = "2026-03-23"
+updated_utc = "2026-03-25"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the Phase 2 History polish slice is complete. Phase 2 overall remains unfinished, and before continuing more UX polish the project now needs a deliberate return to Phase 1 content-contract work so section-complete reflection copy becomes fully JSON-driven per sephira instead of depending on screen-level interpretation assumptions."
-status = "phase_2_unfinished_phase_1_content_contract_return_next"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the Phase 2 History polish slice is complete. Phase 2 overall remains unfinished, and the Phase 1 return slice for the section-complete content contract has now been implemented so section-complete reflection is routed through seeded JSON, repository mapping, and ViewModel selection instead of shared screen-level interpretation helpers."
+status = "phase_2_unfinished_phase_1_content_contract_return_implemented"
 
 [recent_work]
 completed = [
@@ -54,7 +54,14 @@ completed = [
   "Reworked shared placeholder/state surfaces so Learn, Results, and Sephira detail loading and recovery screens feel more intentional during nested-screen entry",
   "Tightened cross-surface production copy to remove roadmap-style and normative 'should' phrasing from onboarding, Assessments, Learn, and Settings",
   "Updated Learn Compose coverage to match the calmer single-surface locked-state presentation",
-  "Confirmed a content-contract gap in the assessment section-complete screen: Yesod, Hod, and Netzach can inherit Malkuth-shaped interpretation copy when that screen relies on shared screen-level text mapping instead of sephira-authored completion content."
+  "Confirmed a content-contract gap in the assessment section-complete screen: Yesod, Hod, and Netzach can inherit Malkuth-shaped interpretation copy when that screen relies on shared screen-level text mapping instead of sephira-authored completion content.",
+  "Locked and implemented a dedicated completionContent seed/domain contract with sectionSummary plus pole-specific reflection and practice content",
+  "Moved section-complete interpretation selection out of shared UI helpers and into repository/domain/ViewModel mapping",
+  "Added repository fallback behavior so incomplete seeded sections can still build section-complete content from shortMeaning, detail patterns, and the first suggested practice",
+  "Seeded authored completionContent for Malkuth, Yesod, Hod, and Netzach in the local questionnaire JSON",
+  "Updated repository, ViewModel, and assessment screen tests for the new section-complete content contract",
+  "Made seed JSON parsing backward-safe by defaulting optional authored fields such as suggestedPractices and nested completionContent values",
+  "Confirmed that content-contract slices need fixture and local seed-constructor updates in the same pass to avoid Moshi parse failures and outdated test builders"
 ]
 
 [locked_decisions]
@@ -71,34 +78,26 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_1_section_complete_content_contract"
-why = "Phase 2 polish should pause briefly because the next highest-value issue is a Phase 1 content-architecture correction: section-complete reflection interpretation needs to be fully driven by per-sephira JSON content before more UX polish is layered on top."
+name = "phase_2_remaining_polish_after_content_contract_fix"
+why = "The bounded Phase 1 return slice is now in place, so the next thread can safely resume remaining Phase 2 polish without carrying forward section-complete copy assumptions."
 
 [[recommended_next_slice.goals]]
-id = "lock_json_shape"
-description = "Define a stable JSON-backed completion-content shape for each sephira so section-complete interpretation no longer depends on screen-level hardcoded assumptions."
+id = "manual_verify_completion_contract"
+description = "Manually verify that Malkuth, Yesod, Hod, and Netzach now show their own authored section-complete reflection and practice content in the assessment flow."
 
 [[recommended_next_slice.goals]]
-id = "move_selection_out_of_ui"
-description = "Move section-complete interpretation selection into repository/domain/ViewModel mapping so the screen only renders authored per-sephira content."
-
-[[recommended_next_slice.goals]]
-id = "preserve_future_assessment_flexibility"
-description = "Keep the new completion-content contract assessment-agnostic so future assessments or added energy views can reuse it cleanly."
-
-[[recommended_next_slice.goals]]
-id = "verify_yesod_hod_netzach_fix"
-description = "Verify that Yesod, Hod, and Netzach section-complete screens read from sephira-authored JSON content instead of inheriting Malkuth-oriented reflection copy."
+id = "resume_phase_2_polish"
+description = "Resume the remaining UX polish work now that the section-complete content pipeline is no longer screen-driven."
 
 [phase_2_status]
 overall = "in_progress"
 completed_slices = ["history_polish", "copy_and_transition_polish"]
 remaining_focus = [
-  "phase 1 return for section-complete JSON content contract",
   "visual readability polish outside History",
-  "remaining richer empty, loading, and recovery states outside the History slice"
+  "remaining richer empty, loading, and recovery states outside the History slice",
+  "manual verification of the new section-complete content contract across seeded sephirot"
 ]
-next_recommended_slice = "phase_1_section_complete_content_contract"
+next_recommended_slice = "phase_2_remaining_polish_after_content_contract_fix"
 
 [production_roadmap]
 file = "docs/production_readiness_roadmap.md"
@@ -119,7 +118,7 @@ assessment_library_screen = "Now lives in the top-level Assessments tab while Ho
 detail_content_backfill = "Backfill authored result-detail content for seeded sephirot still using fallback copy."
 next_sephirot_batch = "Continue the mainline Phase 1 assessment expansion by locking and seeding the next contiguous batch after Netzach."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
-section_complete_content_contract = "Return briefly to Phase 1 and move section-complete interpretation onto a dedicated per-sephira JSON content contract so completed assessment copy stays aligned with the same authored content pipeline as intros and detail screens."
+section_complete_content_contract = "Implemented as a bounded Phase 1 return slice: section-complete interpretation now uses a dedicated per-sephira JSON contract with repository/ViewModel mapping and safe fallbacks."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
@@ -164,11 +163,14 @@ items = [
   "For chart screens, y-axis labels such as 100, 50, and 0 should visually belong to the graph area rather than sit as detached text above or below it.",
   "Small support-list bullets on multiline cards need manual visual review; simple top or center alignment often looks wrong once the text wraps.",
   "Compose Canvas draw lambdas should receive plain values from composable scope. Looking up theme colors directly inside draw blocks can break compilation.",
-  "When a section-complete reflection bug appears in one sephira, assume the content contract may be incomplete rather than treating it as an isolated copy fix. Lock the JSON/content shape before resuming broader UX polish."
+  "When a section-complete reflection bug appears in one sephira, assume the content contract may be incomplete rather than treating it as an isolated copy fix. Lock the JSON/content shape before resuming broader UX polish.",
+  "A repository fallback is not enough if the seed DTO still requires the field at parse time. Optional authored JSON fields need optional/defaulted DTO fields too.",
+  "When a seeded content contract changes, update test JSON, local seed builders, and constructor call sites in the same pass or the next failure will often come from tests rather than production code.",
+  "For cached questionnaire changes, manual verification should include a fresh install or cleared app data so the new content version and Room cache path are exercised together."
 ]
 
 [verification]
-status = "partially_verified_manual_follow_up_pending"
+status = "verified_tests_passed_manual_follow_up_pending"
 notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
   "Manual checks passed for Home summary and Results detail navigation.",
@@ -184,7 +186,8 @@ notes = [
   "Manual checks also passed for History bullet alignment, Sephira detail Suggested practices spacing, and the integrated History graph axis labels.",
   "The targeted compile issue from a Canvas draw lambda was resolved by hoisting the theme color lookup out of the draw block.",
   "The cross-surface copy and transition polish slice has been implemented in code, but its updated Gradle and manual verification steps still need to be run by the user.",
-  "A new issue was identified in the section-complete assessment screen: authored per-sephira content is not yet the sole source of truth for that interpretation layer, so a Phase 1 content-contract thread should happen before continuing deeper Phase 2 polish."
+  "The new section-complete content-contract slice has now passed the user's test runs after making the seed DTO backward-safe and fixing affected test builders.",
+  "Manual fresh-install or clear-data verification of the new questionnaire version and section-complete authored copy across seeded sephirot is still recommended."
 ]
 
 [files_to_read_first]

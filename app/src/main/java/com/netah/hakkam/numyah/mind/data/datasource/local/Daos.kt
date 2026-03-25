@@ -1,10 +1,11 @@
-package com.netah.hakkam.numyah.mind.data.local.database
+package com.netah.hakkam.numyah.mind.data.datasource.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
+import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -71,7 +72,7 @@ interface AssessmentSessionDao {
     )
     suspend fun advanceToSephira(
         sessionId: Long,
-        sephiraId: com.netah.hakkam.numyah.mind.domain.model.SephiraId,
+        sephiraId: SephiraId,
         pageIndex: Int,
         questionIndex: Int,
         totalQuestions: Int

@@ -2,12 +2,14 @@ package com.netah.hakkam.numyah.mind.viewmodel
 
 import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.CompletionPoleContent
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraCompletionContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
@@ -109,6 +111,7 @@ class AssessmentLibraryViewModelTests {
         displayName = name,
         shortMeaning = "Meaning",
         introText = "Intro",
+        completionContent = testCompletionContent(),
         detailContent = SephiraDetailContent(
             healthyExpression = "Healthy",
             deficiencyPattern = "Deficiency",
@@ -130,5 +133,12 @@ class AssessmentLibraryViewModelTests {
             )
         ),
         questions = emptyList()
+    )
+
+    private fun testCompletionContent() = SephiraCompletionContent(
+        sectionSummary = "Completion summary",
+        balanced = CompletionPoleContent("Balanced reflection", "Balanced practice"),
+        deficiency = CompletionPoleContent("Deficiency reflection", "Deficiency practice"),
+        excess = CompletionPoleContent("Excess reflection", "Excess practice")
     )
 }

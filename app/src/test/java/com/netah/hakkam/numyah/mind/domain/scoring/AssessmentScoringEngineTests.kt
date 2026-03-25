@@ -13,11 +13,13 @@ import com.netah.hakkam.numyah.mind.domain.model.SephiraId
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import com.netah.hakkam.numyah.mind.data.local.content.JsonAssessmentContentDataSource
 import com.netah.hakkam.numyah.mind.domain.model.AnswerOption
+import com.netah.hakkam.numyah.mind.domain.model.CompletionPoleContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionFormat
 import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ResponseScaleDefinition
+import com.netah.hakkam.numyah.mind.domain.model.SephiraCompletionContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraDetailContent
 import com.netah.hakkam.numyah.mind.domain.model.SephiraSectionContent
 import com.squareup.moshi.Moshi
@@ -197,6 +199,7 @@ class AssessmentScoringEngineTests {
                     displayName = "Malkuth",
                     shortMeaning = "Meaning",
                     introText = "Intro",
+                    completionContent = testCompletionContent(),
                     detailContent = SephiraDetailContent(
                         healthyExpression = "Healthy",
                         deficiencyPattern = "Deficiency",
@@ -258,6 +261,13 @@ class AssessmentScoringEngineTests {
             )
         )
     }
+
+    private fun testCompletionContent() = SephiraCompletionContent(
+        sectionSummary = "Completion summary",
+        balanced = CompletionPoleContent("Balanced reflection", "Balanced practice"),
+        deficiency = CompletionPoleContent("Deficiency reflection", "Deficiency practice"),
+        excess = CompletionPoleContent("Excess reflection", "Excess practice")
+    )
 
     private companion object {
         val TEST_QUESTIONNAIRE_JSON = """
