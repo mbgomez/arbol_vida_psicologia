@@ -12,6 +12,11 @@ It exists to keep future implementation work aligned with one product-grade stan
 
 If implementation changes any standard in this document, update this file, `README.md`, `docs/product_spec.md`, and `AGENTS.md` in the same pass.
 
+Workflow note:
+
+- The repo now includes a `.codex` workflow layer for prompt routing and token discipline.
+- That layer does not replace the refactor standards in this file; it exists to help future Codex threads follow them with smaller, phase-aware prompts.
+
 ## Refactor Goal
 
 Refactor the current single-module Android app into a cleaner, more professional, and more scalable production foundation without changing the v1 product scope.
@@ -307,6 +312,7 @@ Avoid:
 - leaving reused logic duplicated across screens without a single testable source of truth
 - coupling future analytics or crash-reporting instrumentation too tightly to screen-local UI code when the same product event can be emitted from a more stable ViewModel or navigation boundary
 - wiring Firebase or Play-testing observability directly into feature UI code when the same event can be emitted through an app-owned telemetry layer
+- writing huge execution prompts that reload the full planning stack when a cheap `.codex/project_map.md` read plus one or two task mini-agents would cover the same slice
 
 Additional guidance:
 
@@ -445,3 +451,10 @@ That should begin with:
 - deprecated flow quarantine or removal
 - token strategy setup
 - shell/navigation simplification plan
+
+Codex workflow standard for refactor work:
+
+- start with `AGENTS.md`
+- then `.codex/project_map.md`
+- then only the mini-agents needed for the current refactor task
+- keep refactor threads bounded to one meaningful cleanup slice unless the user explicitly asks for a broader pass

@@ -30,6 +30,24 @@ The side mission must not unnecessarily block the mainline release track unless 
 
 ## Mainline Release Track
 
+### Phase 0: Workflow Foundation
+
+Goal:
+
+- improve Codex execution quality before more roadmap work accumulates unnecessary prompt and planning overhead
+
+Focus:
+
+- lock a lightweight `.codex` workflow layer inside the repo
+- keep `AGENTS.md`, the README, the spec, and the roadmap docs as the human source of truth
+- add a cheap project map plus task-specific mini-agents for inspect, implement, content contract, UI boundary, tests, verification, learnings, and next-slice generation
+- standardize bounded-slice prompting so future threads do not repeatedly reload the entire planning stack when a smaller context would do
+- improve AI token consumption without weakening product, architecture, or testing standards
+
+Release gate:
+
+- future Codex threads can start from a stable, phase-aware workflow layer that reduces repeated discovery and keeps work scoped cleanly
+
 ### Phase 1: Product Completion
 
 Goal:
@@ -231,14 +249,15 @@ This side mission continues in parallel with the mainline release track.
 
 The default near-term order is:
 
-1. `Phase 1: Product Completion`
-2. `Phase 1.5: Tester Distribution And Observability`
-3. `Phase 2: UX And Enjoyment Polish`
-4. `Phase 3: Refactor And Architecture Hardening`
-5. `Phase 4: Reliability And Coverage Expansion`
-6. `Phase 5: Accessibility And Localization Hardening`
-7. `Phase 6: Release Hardening`
-8. `Phase 7: Final QA And Submission Prep`
+1. `Phase 0: Workflow Foundation`
+2. `Phase 1: Product Completion`
+3. `Phase 1.5: Tester Distribution And Observability`
+4. `Phase 2: UX And Enjoyment Polish`
+5. `Phase 3: Refactor And Architecture Hardening`
+6. `Phase 4: Reliability And Coverage Expansion`
+7. `Phase 5: Accessibility And Localization Hardening`
+8. `Phase 6: Release Hardening`
+9. `Phase 7: Final QA And Submission Prep`
 
 The `Sephira content side mission` continues throughout all of those phases.
 

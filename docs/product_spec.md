@@ -14,6 +14,13 @@ The app should launch with bilingual support for English and Spanish.
 
 The current phase roadmap toward a production-ready release is documented in [production_readiness_roadmap.md](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md).
 
+Locked workflow foundation:
+
+- The project now includes a dedicated `Phase 0` workflow layer for Codex execution.
+- `AGENTS.md`, this spec, the README, and the roadmap docs remain the human source of truth.
+- `.codex/project_map.md` and the mini-agents under `.codex/agents/` exist to keep future Codex threads bounded, phase-aware, and lower-token.
+- The purpose of that layer is to improve task routing, reduce repeated broad-doc reads, and preserve code quality by encouraging one bounded slice per thread.
+
 Locked tester-distribution and observability direction:
 
 - Before later-stage release hardening, the roadmap may introduce a dedicated tester-distribution and observability phase.
@@ -762,6 +769,14 @@ UI test prioritization guidance:
 - For long, evolving scrollable screens such as History and Settings, prefer tests that scroll to target content or anchor on stable semantics/test tags rather than assuming specific sections remain in the initial viewport forever.
 
 ## 7. Implementation Phases
+
+### Phase 0: Workflow Foundation
+
+- lock a lightweight Codex execution layer in the repo
+- keep human docs as the source of truth and use `.codex/project_map.md` as the low-cost orientation layer
+- add task-specific mini-agents for inspect, implement, content contract, UI boundary, tests, verification, learnings, and next-slice generation
+- standardize one bounded slice per thread unless broader discovery is explicitly needed
+- optimize prompts for token efficiency without weakening product, architecture, or testing standards
 
 ### Phase 1: Product Foundation
 

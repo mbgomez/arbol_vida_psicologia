@@ -257,6 +257,7 @@ When making implementation decisions:
 
 Working-together protocol:
 - Treat identity-level decisions such as naming, package direction, tone, and scope boundaries as lock-first decisions whenever possible.
+- Treat `Phase 0` as the workflow-foundation phase for Codex itself: keep the human docs as the source of truth, keep task prompts bounded, and use lightweight task-specific mini-agents instead of repeatedly loading the full planning stack when that extra context is not needed.
 - Structure each feature slice in three phases:
   - locked decisions
   - implementation
@@ -266,10 +267,48 @@ Working-together protocol:
 - When a standard changes, update both the implementation and the requirement files in the same pass.
 - Prefer reducing assumption churn over rushing a larger implementation on unstable foundations.
 - Follow `docs/production_readiness_roadmap.md` for the current phase order toward a production-ready release.
+- Use `.codex/project_map.md` as the low-token execution map for future Codex threads after reading this file.
+- Read only the task-specific mini-agent files under `.codex/agents/` that are relevant to the current request. Do not load every mini-agent on every thread.
+- Prefer one bounded slice per thread. Do not combine repo-wide discovery, implementation, broad roadmap redesign, and verification strategy changes in one prompt unless the task explicitly requires it.
+- Do not read every config file by default in every thread. Load the smallest sufficient context for the task:
+  - always start with `AGENTS.md` and `.codex/project_map.md`
+  - add `docs/assessment_task_status.toml` for current phase and current-state guidance
+  - add `docs/production_readiness_roadmap.md` when phase boundaries or release ordering matter
+  - add `docs/product_spec.md` when product behavior, UX contract, or content rules are directly in play
+  - add `docs/refactor_roadmap.md` when the slice may affect decomposition, shared UI, package direction, cleanup order, or other refactor standards
+  - add `README.md` only when a lighter product summary or broader re-orientation is useful
+- Do not read every config file by default in every thread. Load the smallest sufficient context for the task:
+  - always start with `AGENTS.md` and `.codex/project_map.md`
+  - add `docs/assessment_task_status.toml` for current phase and current-state guidance
+  - add `docs/production_readiness_roadmap.md` when phase boundaries or release ordering matter
+  - add `docs/product_spec.md` when product behavior, UX contract, or content rules are directly in play
+  - add `docs/refactor_roadmap.md` when the slice may affect decomposition, shared UI, package direction, cleanup order, or other refactor standards
+  - add `README.md` only when a lighter product summary or broader re-orientation is useful
 - Treat finalized sephira-content enrichment as an approved side mission that can be added one sephira at a time during the main roadmap, unless a thread explicitly locks a feature that depends on all related sephirot being finalized first.
 - If the roadmap introduces a tester-distribution and observability phase, keep crash reporting and analytics minimal, product-relevant, and aligned with the app's local-first trust model.
 - During tester-distribution work, keep observability behind an app-owned interface and explicit build-time enablement so Firebase or Play testing setup does not become a hidden always-on dependency of normal local work.
 - Privacy-facing copy for tester builds must stay explicit that telemetry is limited to crashes, recoverable failures, and a small approved flow taxonomy, and must not include answer content, interpretation copy, or saved score details.
+
+Codex workflow layer:
+- The mini-agents in `.codex/agents/` are prompt guides, not replacements for this file and not a separate product source of truth.
+- Default task routing:
+  - `.codex/agents/01-inspect-slice.md` for bounded discovery
+  - `.codex/agents/02-implement-minimal.md` for implementation
+  - `.codex/agents/03-content-contract.md` for authored content/model changes
+  - `.codex/agents/04-ui-state-boundary.md` for keeping UI state-driven
+  - `.codex/agents/05-tests-focused.md` for targeted test updates
+  - `.codex/agents/06-verify-manual.md` for exact user-run verification steps
+  - `.codex/agents/07-capture-learnings.md` for durable learnings and final commit copy after verification
+  - `.codex/agents/08-next-slice-prompts.md` for generating the next bounded follow-up prompts
+- Prefer `.codex/prompts/codex_prompt_cheatsheet.md` and `.codex/prompts/08-next-slice-prompts.md` as reusable prompt helpers instead of rewriting large prompt blocks from scratch each thread.
+- Keep prompt context cheap:
+  - read this file first
+  - then read `.codex/project_map.md`
+  - then read only the mini-agents needed for the task
+  - then read only the minimum relevant code and docs
+- Prefer task-driven doc selection over habitual full-doc loading. More context is not automatically better if the same constraints are already locked in a cheaper source.
+- Prefer task-driven doc selection over habitual full-doc loading. More context is not automatically better if the same constraints are already locked in a cheaper source.
+- The user still owns all Gradle, test, emulator, adb, Firebase, and Play Console execution. End implementation work with exact commands and focused manual checks.
 
 Locked refactor direction:
 - Follow `docs/refactor_roadmap.md` as the source of truth for refactor standards and cleanup order.

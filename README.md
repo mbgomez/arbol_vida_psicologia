@@ -43,6 +43,24 @@ The full product plan is documented here:
 - [Production readiness roadmap](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\production_readiness_roadmap.md)
 - [Tester distribution and observability](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\docs\tester_distribution_and_observability.md)
 
+## Codex Workflow
+
+This repo now has a lightweight Codex workflow layer for lower-token, bounded-slice execution:
+
+- [Project map](C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\.codex\project_map.md)
+- prompt mini-agents under `C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\.codex\agents`
+- reusable prompt helpers under `C:\Users\Miguel\AndroidStudioProjects\arbol-vida-psicologia\.codex\prompts`
+
+How to use it:
+
+- keep `AGENTS.md`, this README, and the docs under `docs/` as the human source of truth
+- use `.codex/project_map.md` as the cheap orientation layer
+- load only the mini-agents needed for the current task
+- prefer one bounded slice per thread
+- keep implementation, verification, and learning capture tightly scoped
+
+This workflow is the locked `Phase 0` foundation in the production roadmap. Its job is to improve prompt quality, code quality, and token efficiency without replacing the existing product standards.
+
 ## Scope For First Build
 
 - onboarding and framing
