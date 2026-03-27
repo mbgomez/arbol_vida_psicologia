@@ -3,6 +3,7 @@ package com.netah.hakkam.numyah.mind.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
@@ -48,6 +49,7 @@ class AssessmentLibraryScreenTest {
                             )
                         )
                     ),
+                    onRetry = {},
                     onOpenAssessment = { openedAssessment = it },
                     onStartFreshAssessment = { startedFreshAssessment = true },
                     onConfirmStartFreshAssessment = { confirmedStartFresh = true }
@@ -84,6 +86,7 @@ class AssessmentLibraryScreenTest {
                             )
                         )
                     ),
+                    onRetry = {},
                     onOpenAssessment = {},
                     onStartFreshAssessment = {},
                     onConfirmStartFreshAssessment = {}
@@ -94,5 +97,52 @@ class AssessmentLibraryScreenTest {
         composeTestRule.onNodeWithText(
             context.getString(R.string.assessment_library_footer)
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun assessmentLibrary_errorState_showsRetryAndDirectOpenAction() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var retried = false
+        var openedAssessment = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentLibraryScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentLibraryUiState.Error,
+                    onRetry = { retried = true },
+                    onOpenAssessment = { openedAssessment = true },
+                    onStartFreshAssessment = {},
+                    onConfirmStartFreshAssessment = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("assessment_library_error_card").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_library_retry_action))
+            .performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.assessment_library_error_secondary_action))
+            .performClick()
+
+        assertTrue(retried)
+        assertTrue(openedAssessment)
+    }
+
+    @Test
+    fun assessmentLibrary_loadingState_showsProgressIndicator() {
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentLibraryScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = AssessmentLibraryUiState.Loading,
+                    onRetry = {},
+                    onOpenAssessment = {},
+                    onStartFreshAssessment = {},
+                    onConfirmStartFreshAssessment = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("assessment_library_loading_indicator").assertIsDisplayed()
     }
 }

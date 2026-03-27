@@ -20,8 +20,10 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -91,6 +93,29 @@ class AssessmentLibraryViewModelTests {
 
         assertEquals("Yesod", state.model.entry.activeAssessment?.sephiraName)
         assertEquals(2, state.model.entry.activeAssessment?.currentQuestionNumber)
+    }
+
+    @Test
+    fun retry_afterInitialFailure_reloadsLibrary() = coroutinesRule.runBlockingTest {
+        every {
+            getCurrentQuestionnaireUseCase.run(Locale.ENGLISH)
+        } returnsMany listOf(
+            flow { throw IllegalStateException("boom") },
+            flowOf(testQuestionnaire())
+        )
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
+
+        val viewModel = AssessmentLibraryViewModel(
+            getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+
+        assertTrue(viewModel.uiState.value is AssessmentLibraryUiState.Error)
+
+        viewModel.retry()
+
+        assertTrue(viewModel.uiState.value is AssessmentLibraryUiState.Loaded)
     }
 
     private fun testQuestionnaire() = QuestionnaireContent(

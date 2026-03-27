@@ -18,6 +18,7 @@ import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -68,13 +69,20 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private var observeHomeSummaryJob: Job? = null
 
     init {
         observeHomeSummary()
     }
 
+    fun retry() {
+        _uiState.value = HomeUiState.Loading
+        observeHomeSummary()
+    }
+
     private fun observeHomeSummary() {
-        viewModelScope.launch {
+        observeHomeSummaryJob?.cancel()
+        observeHomeSummaryJob = viewModelScope.launch {
             try {
                 combine(
                     getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),

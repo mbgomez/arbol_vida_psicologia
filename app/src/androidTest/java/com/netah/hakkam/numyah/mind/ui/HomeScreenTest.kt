@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
 import com.netah.hakkam.numyah.mind.R
@@ -34,6 +36,7 @@ class HomeScreenTest {
                 HomeScreen(
                     paddingValues = PaddingValues(),
                     uiState = HomeUiState.Empty,
+                    onRetry = {},
                     onStartAssessment = {},
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
@@ -52,8 +55,12 @@ class HomeScreenTest {
             .assertHasClickAction()
         composeTestRule.onNodeWithText(context.getString(R.string.home_summary_empty_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.home_card_history_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.home_card_learn_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.home_card_settings_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_card_learn_title))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_card_settings_title))
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -81,6 +88,7 @@ class HomeScreenTest {
                             )
                         )
                     ),
+                    onRetry = {},
                     onStartAssessment = { startedAssessment = true },
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
@@ -123,6 +131,7 @@ class HomeScreenTest {
                             )
                         )
                     ),
+                    onRetry = {},
                     onStartAssessment = {},
                     onStartFreshAssessment = {},
                     onResumeAssessment = {},
@@ -171,6 +180,7 @@ class HomeScreenTest {
                             latestReflection = null
                         )
                     ),
+                    onRetry = {},
                     onStartAssessment = {},
                     onStartFreshAssessment = { startedFresh = true },
                     onResumeAssessment = { resumedAssessment = true },
@@ -196,5 +206,60 @@ class HomeScreenTest {
         assertTrue(resumedAssessment)
         assertTrue(startedFresh)
         assertTrue(confirmedStartFresh)
+    }
+
+    @Test
+    fun homeScreen_errorState_showsRetryAndSecondaryAction() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var retried = false
+        var openedAssessment = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                HomeScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = HomeUiState.Error,
+                    onRetry = { retried = true },
+                    onStartAssessment = { openedAssessment = true },
+                    onStartFreshAssessment = {},
+                    onResumeAssessment = {},
+                    onConfirmStartFreshAssessment = {},
+                    onOpenLatestResults = {},
+                    onOpenHistory = {},
+                    onOpenLearn = {},
+                    onOpenSettings = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("home_error_card").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_retry_action)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.home_error_secondary_action)).performClick()
+
+        assertTrue(retried)
+        assertTrue(openedAssessment)
+    }
+
+    @Test
+    fun homeScreen_loadingState_showsProgressIndicator() {
+        composeTestRule.setContent {
+            AppTheme {
+                HomeScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = HomeUiState.Loading,
+                    onRetry = {},
+                    onStartAssessment = {},
+                    onStartFreshAssessment = {},
+                    onResumeAssessment = {},
+                    onConfirmStartFreshAssessment = {},
+                    onOpenLatestResults = {},
+                    onOpenHistory = {},
+                    onOpenLearn = {},
+                    onOpenSettings = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("home_loading_indicator").assertIsDisplayed()
     }
 }

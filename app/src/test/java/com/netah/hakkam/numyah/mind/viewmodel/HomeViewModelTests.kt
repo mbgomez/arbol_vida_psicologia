@@ -25,6 +25,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -128,6 +129,31 @@ class HomeViewModelTests {
         assertEquals(2, state.model.activeAssessment?.currentQuestionNumber)
         assertEquals(1, state.model.activeAssessment?.completedSephirotCount)
         assertEquals("Yesod", state.model.latestReflection?.needsAttentionSephiraName)
+    }
+
+    @Test
+    fun retry_afterInitialFailure_reloadsHomeSummary() = coroutinesRule.runBlockingTest {
+        every {
+            getCurrentQuestionnaireUseCase.run(Locale.ENGLISH)
+        } returnsMany listOf(
+            flow { throw IllegalStateException("boom") },
+            flowOf(testQuestionnaire())
+        )
+        every { observeActiveAssessmentUseCase.run() } returns flowOf(null)
+        every { observeLatestCompletedAssessmentUseCase.run() } returns flowOf(testSnapshot())
+
+        val viewModel = HomeViewModel(
+            getCurrentQuestionnaireUseCase = getCurrentQuestionnaireUseCase,
+            observeActiveAssessmentUseCase = observeActiveAssessmentUseCase,
+            observeLatestCompletedAssessmentUseCase = observeLatestCompletedAssessmentUseCase,
+            currentLocaleProvider = currentLocaleProvider
+        )
+
+        assertTrue(viewModel.uiState.value is HomeUiState.Error)
+
+        viewModel.retry()
+
+        assertTrue(viewModel.uiState.value is HomeUiState.Loaded)
     }
 
     private fun testQuestionnaire(): QuestionnaireContent {

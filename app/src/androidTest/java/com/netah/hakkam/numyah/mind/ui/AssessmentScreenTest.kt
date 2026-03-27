@@ -350,7 +350,11 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText("Grounded contact with practical life.").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("Material life may be asking for more support.").performScrollTo().assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("Material life may be asking for more support.")
+            .assertCountEquals(2)
+        composeTestRule.onAllNodesWithText("Material life may be asking for more support.")[1]
+            .performScrollTo()
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Choose one steady act of care this week.").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("22%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("51%", substring = true).assertIsDisplayed()

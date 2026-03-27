@@ -1,10 +1,10 @@
 version = 1
 project = "Numyah Mind"
-updated_utc = "2026-03-25"
+updated_utc = "2026-03-27"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the Phase 2 History polish slice is complete. Phase 2 overall remains unfinished, and the Phase 1 return slice for the section-complete content contract has now been implemented so section-complete reflection is routed through seeded JSON, repository mapping, and ViewModel selection instead of shared screen-level interpretation helpers."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, and the Phase 2 History polish slice plus the top-level Home and Assessments state-surface polish slice are complete. Phase 2 overall remains unfinished, and the Phase 1 return slice for the section-complete content contract has now been implemented so section-complete reflection is routed through seeded JSON, repository mapping, and ViewModel selection instead of shared screen-level interpretation helpers."
 status = "phase_2_unfinished_phase_1_content_contract_return_implemented"
 
 [phase_0_status]
@@ -73,7 +73,11 @@ completed = [
   "Updated repository, ViewModel, and assessment screen tests for the new section-complete content contract",
   "Made seed JSON parsing backward-safe by defaulting optional authored fields such as suggestedPractices and nested completionContent values",
   "Confirmed that content-contract slices need fixture and local seed-constructor updates in the same pass to avoid Moshi parse failures and outdated test builders",
-  "Locked a Phase 0 workflow layer with `.codex` mini-agents and prompt templates so future Codex threads can stay phase-aware and lower-token without weakening the existing project standards"
+  "Locked a Phase 0 workflow layer with `.codex` mini-agents and prompt templates so future Codex threads can stay phase-aware and lower-token without weakening the existing project standards",
+  "Added richer loading, empty, and error states to Home so the fast-entry surface feels calmer and more intentional before the user has saved reflections or when local summary loading fails",
+  "Added richer loading and error states plus in-place retry to the top-level Assessments tab so the library surface no longer falls behind History on recovery behavior and readability",
+  "Added retry support to HomeViewModel and AssessmentLibraryViewModel instead of leaving top-level recovery to navigation away from the current tab",
+  "Updated Home, Assessment library, and completed-assessment Compose tests to tolerate below-the-fold content and duplicate text without treating those as regressions"
 ]
 
 [locked_decisions]
@@ -103,10 +107,10 @@ description = "Resume the remaining UX polish work now that the section-complete
 
 [phase_2_status]
 overall = "in_progress"
-completed_slices = ["history_polish", "copy_and_transition_polish"]
+completed_slices = ["history_polish", "copy_and_transition_polish", "top_level_entry_state_polish"]
 remaining_focus = [
   "visual readability polish outside History",
-  "remaining richer empty, loading, and recovery states outside the History slice",
+  "remaining richer empty, loading, and recovery states outside the History, Home, and Assessments slices",
   "manual verification of the new section-complete content contract across seeded sephirot"
 ]
 next_recommended_slice = "phase_2_remaining_polish_after_content_contract_fix"
@@ -180,6 +184,8 @@ items = [
   "A repository fallback is not enough if the seed DTO still requires the field at parse time. Optional authored JSON fields need optional/defaulted DTO fields too.",
   "When a seeded content contract changes, update test JSON, local seed builders, and constructor call sites in the same pass or the next failure will often come from tests rather than production code.",
   "For cached questionnaire changes, manual verification should include a fresh install or cleared app data so the new content version and Room cache path are exercised together.",
+  "When Home or other polished top-level surfaces gain richer state content, expect lower cards to move below the initial viewport and update Compose tests to scroll instead of freezing the original fold height.",
+  "If completed-state copy is intentionally reused in more than one section, tighten Compose selectors to stable position, tags, or count-aware assertions rather than treating duplicate text as an app regression.",
   "A lightweight execution layer works best when it complements the human docs instead of replacing them. Keep product standards in AGENTS and the docs, and use `.codex` files only for cheap orientation and task routing.",
   "Token savings are strongest when future threads load only `AGENTS.md`, `.codex/project_map.md`, and the one or two mini-agents relevant to the slice.",
   "Reusable prompt templates should preserve existing project constraints instead of introducing a second conflicting rule set."
@@ -203,7 +209,9 @@ notes = [
   "The targeted compile issue from a Canvas draw lambda was resolved by hoisting the theme color lookup out of the draw block.",
   "The cross-surface copy and transition polish slice has been implemented in code, but its updated Gradle and manual verification steps still need to be run by the user.",
   "The new section-complete content-contract slice has now passed the user's test runs after making the seed DTO backward-safe and fixing affected test builders.",
-  "Manual fresh-install or clear-data verification of the new questionnaire version and section-complete authored copy across seeded sephirot is still recommended."
+  "Manual fresh-install or clear-data verification of the new questionnaire version and section-complete authored copy across seeded sephirot is still recommended.",
+  "The top-level Home and Assessments state-surface polish slice passed targeted unit tests, targeted Compose tests, and the user's manual checks for empty, loading, error, resume, and fresh-start behavior.",
+  "During validation, HomeScreenTest and AssessmentScreenTest needed test-selector fixes for below-the-fold content and intentionally duplicated completion reflection text; the app behavior itself remained correct."
 ]
 
 [files_to_read_first]

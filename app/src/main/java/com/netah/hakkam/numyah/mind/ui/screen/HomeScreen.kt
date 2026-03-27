@@ -1,8 +1,11 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -13,7 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.Pole
@@ -23,8 +29,8 @@ import com.netah.hakkam.numyah.mind.ui.components.AppScreenColumn
 import com.netah.hakkam.numyah.mind.ui.components.AppSectionCard
 import com.netah.hakkam.numyah.mind.ui.components.ReplaceInProgressAssessmentDialog
 import com.netah.hakkam.numyah.mind.viewmodel.HomeActiveAssessmentUiModel
-import com.netah.hakkam.numyah.mind.viewmodel.HomeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeSummaryUiModel
+import com.netah.hakkam.numyah.mind.viewmodel.HomeUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.HomeUiState
 import com.netah.hakkam.numyah.mind.viewmodel.HomeViewModel
 
@@ -45,6 +51,7 @@ fun HomeRoute(
     HomeScreen(
         paddingValues = paddingValues,
         uiState = uiState,
+        onRetry = viewModel::retry,
         onStartAssessment = onStartAssessment,
         onStartFreshAssessment = onStartFreshAssessment,
         onResumeAssessment = onResumeAssessment,
@@ -60,6 +67,7 @@ fun HomeRoute(
 fun HomeScreen(
     paddingValues: PaddingValues,
     uiState: HomeUiState,
+    onRetry: () -> Unit,
     onStartAssessment: () -> Unit,
     onStartFreshAssessment: () -> Unit,
     onResumeAssessment: () -> Unit,
@@ -124,20 +132,11 @@ fun HomeScreen(
         }
 
         when (uiState) {
-            HomeUiState.Loading -> AppHeroCard(
-                eyebrow = stringResource(R.string.home_summary_eyebrow),
-                title = stringResource(R.string.home_summary_loading_title),
-                body = stringResource(R.string.home_summary_loading_body)
-            )
-            HomeUiState.Empty -> AppHeroCard(
-                eyebrow = stringResource(R.string.home_summary_eyebrow),
-                title = stringResource(R.string.home_summary_empty_title),
-                body = stringResource(R.string.home_summary_empty_body)
-            )
-            HomeUiState.Error -> AppHeroCard(
-                eyebrow = stringResource(R.string.home_summary_eyebrow),
-                title = stringResource(R.string.home_summary_error_title),
-                body = stringResource(R.string.home_summary_error_body)
+            HomeUiState.Loading -> HomeLoadingState(onOpenAssessments = onStartAssessment)
+            HomeUiState.Empty -> HomeEmptyState(onOpenAssessments = onStartAssessment)
+            HomeUiState.Error -> HomeErrorState(
+                onRetry = onRetry,
+                onOpenAssessments = onStartAssessment
             )
             is HomeUiState.Loaded -> HomeLoadedState(model = uiState.model)
         }
@@ -169,6 +168,106 @@ fun HomeScreen(
             },
             onDismiss = { showReplaceDialog = false }
         )
+    }
+}
+
+@Composable
+private fun HomeLoadingState(onOpenAssessments: () -> Unit) {
+    AppHeroCard(
+        eyebrow = stringResource(R.string.home_summary_eyebrow),
+        title = stringResource(R.string.home_summary_loading_title),
+        body = stringResource(R.string.home_summary_loading_body)
+    )
+    AppSectionCard(
+        title = stringResource(R.string.home_summary_loading_card_title),
+        body = stringResource(R.string.home_summary_loading_card_body),
+        modifier = Modifier.testTag("home_loading_card"),
+        showMarker = false
+    ) {
+        LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("home_loading_indicator"),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+    OutlinedButton(
+        onClick = onOpenAssessments,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("home_loading_secondary_action")
+    ) {
+        Text(text = stringResource(R.string.home_loading_secondary_action))
+    }
+}
+
+@Composable
+private fun HomeEmptyState(onOpenAssessments: () -> Unit) {
+    AppHeroCard(
+        eyebrow = stringResource(R.string.home_summary_eyebrow),
+        title = stringResource(R.string.home_summary_empty_title),
+        body = stringResource(R.string.home_summary_empty_body)
+    )
+    AppSectionCard(
+        title = stringResource(R.string.home_summary_empty_card_title),
+        body = stringResource(R.string.home_summary_empty_card_body),
+        modifier = Modifier.testTag("home_empty_card"),
+        showMarker = false
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_sm))
+        ) {
+            HomeSupportLine(text = stringResource(R.string.home_summary_empty_point_one))
+            HomeSupportLine(text = stringResource(R.string.home_summary_empty_point_two))
+            HomeSupportLine(text = stringResource(R.string.home_summary_empty_point_three))
+        }
+    }
+    Button(
+        onClick = onOpenAssessments,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("home_primary_action")
+    ) {
+        Text(text = stringResource(R.string.home_empty_primary_action))
+    }
+}
+
+@Composable
+private fun HomeErrorState(
+    onRetry: () -> Unit,
+    onOpenAssessments: () -> Unit
+) {
+    AppHeroCard(
+        eyebrow = stringResource(R.string.home_summary_eyebrow),
+        title = stringResource(R.string.home_summary_error_title),
+        body = stringResource(R.string.home_summary_error_body)
+    )
+    AppSectionCard(
+        title = stringResource(R.string.home_summary_error_card_title),
+        body = stringResource(R.string.home_summary_error_card_body),
+        modifier = Modifier.testTag("home_error_card"),
+        showMarker = false
+    )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_md))
+    ) {
+        Button(
+            onClick = onRetry,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("home_retry_action")
+        ) {
+            Text(text = stringResource(R.string.home_retry_action))
+        }
+        OutlinedButton(
+            onClick = onOpenAssessments,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("home_error_secondary_action")
+        ) {
+            Text(text = stringResource(R.string.home_error_secondary_action))
+        }
     }
 }
 
@@ -263,4 +362,14 @@ private fun currentFocusText(model: HomeSummaryUiModel): String {
             model.currentFocus.sephiraName
         )
     }
+}
+
+@Composable
+private fun HomeSupportLine(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        fontWeight = FontWeight.Medium
+    )
 }

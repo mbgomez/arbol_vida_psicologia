@@ -7,6 +7,7 @@ import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCas
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,13 +40,20 @@ class AssessmentLibraryViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<AssessmentLibraryUiState>(AssessmentLibraryUiState.Loading)
     val uiState: StateFlow<AssessmentLibraryUiState> = _uiState.asStateFlow()
+    private var observeLibraryJob: Job? = null
 
     init {
         observeLibrary()
     }
 
+    fun retry() {
+        _uiState.value = AssessmentLibraryUiState.Loading
+        observeLibrary()
+    }
+
     private fun observeLibrary() {
-        viewModelScope.launch {
+        observeLibraryJob?.cancel()
+        observeLibraryJob = viewModelScope.launch {
             try {
                 combine(
                     getCurrentQuestionnaireUseCase.run(currentLocaleProvider.current()),
