@@ -8,10 +8,13 @@
       <SelectionState runConfigName="All Tests">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="assessmentScreen_completedState_showsSoftenedResult()">
+      <SelectionState runConfigName="HomeScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="HomeScreenTest">
+      <SelectionState runConfigName="SettingsScreenTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="settingsScreen_debugToolsTapSequence_resetsAfterPause()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

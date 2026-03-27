@@ -81,7 +81,6 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.settings_language_title)).assertIsDisplayed()
         composeTestRule.onNodeWithTag("settings_scroll").performTouchInput { swipeUp() }
         composeTestRule.onNodeWithText(context.getString(R.string.settings_assessment_title)).performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_mock_history_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performScrollTo().assertIsDisplayed()
     }
@@ -146,11 +145,45 @@ class SettingsScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("settings_language_spanish").performScrollTo()
-        composeTestRule.onNodeWithTag("settings_language_spanish_radio").performClick()
+        composeTestRule.onNodeWithTag("settings_language_spanish").performScrollTo().performClick()
         composeTestRule.waitForIdle()
 
         assertEquals(AppLanguageMode.SPANISH, selectedLanguageMode)
+    }
+
+    @Test
+    fun settingsScreen_debugToolsAreHiddenUntilHeroTappedFiveTimes() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = readyState(),
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.settings_mock_history_title)
+        ).assertDoesNotExist()
+
+        repeat(5) {
+            composeTestRule.onNodeWithTag("settings_debug_tools_trigger").performClick()
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.settings_mock_history_title)
+        ).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -276,6 +309,9 @@ class SettingsScreenTest {
             }
         }
 
+        repeat(5) {
+            composeTestRule.onNodeWithTag("settings_debug_tools_trigger").performClick()
+        }
         composeTestRule.onNodeWithTag("settings_mock_history_row").performScrollTo().performClick()
         composeTestRule.onNodeWithText(
             context.getString(R.string.settings_mock_history_dialog_confirm)
@@ -307,12 +343,18 @@ class SettingsScreenTest {
             }
         }
 
+        repeat(5) {
+            composeTestRule.onNodeWithTag("settings_debug_tools_trigger").performClick()
+        }
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("settings_observability_nonfatal_button")
             .performScrollTo()
             .performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("settings_observability_crash_button")
             .performScrollTo()
             .performClick()
+        composeTestRule.waitForIdle()
 
         assertTrue(reportedNonFatal)
         assertTrue(forcedCrash)

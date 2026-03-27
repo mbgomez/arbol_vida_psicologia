@@ -8,6 +8,7 @@ Rules:
 - Prefer focused test edits over broad rewrites.
 - Follow the repository -> use case -> ViewModel testing standard where that feature already uses that path.
 - Cover changed mapping, progression, fallback, or output state behavior.
+- When a UI rule depends on timing, gestures, or transient screen-local state, prefer extracting the timing/decision logic into a small pure helper and cover that with unit tests while keeping Compose coverage focused on the visible user contract.
 - Do not invent new test architecture for its own sake.
 - Do not run tests.
 

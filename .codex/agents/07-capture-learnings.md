@@ -25,6 +25,7 @@ Project memory update:
 - Suggest a short addition to `AGENTS.md`, `.codex/project_map.md`, or a relevant docs file only if needed.
 - Keep the suggestion to 1 to 5 lines.
 - Avoid duplicating existing guidance.
+- Check whether `docs/assessment_task_status.toml` already captures the durable learning before proposing another status-doc update; if it does, prefer a smaller `.codex/project_map.md` orientation update or no doc change.
 
 Commit message standard:
 - Format:

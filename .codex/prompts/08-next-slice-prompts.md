@@ -46,6 +46,7 @@ Implement this one approved next slice only:
 Important workflow note:
 - I will run all Gradle builds, unit tests, instrumented tests, emulator checks, adb commands, Firebase checks, and Play Console steps myself.
 - Do not run builds or tests for me.
+- If the approved slice includes timing-sensitive UI behavior, prefer a tiny pure helper for the timing rule rather than relying only on Compose timing state
 
 Output:
 1. Files changed
@@ -66,6 +67,9 @@ Update only the tests required for this changed behavior:
 [PASTE CHANGED BEHAVIOR]
 
 Do not run tests.
+
+Testing note:
+- Prefer unit tests for timing-sensitive decision logic and keep Compose coverage focused on the visible user contract
 
 ## Verify Prompt
 Continue from the current workspace state for Numyah Mind.
@@ -93,3 +97,6 @@ Based on this verified slice:
 [PASTE VERIFIED SLICE]
 
 Capture the durable learnings, suggest any minimal config/doc update, and generate a copy-paste-ready commit message.
+
+Doc note:
+- If `docs/assessment_task_status.toml` already contains the durable learning, prefer a lighter `.codex/project_map.md` update or no doc change instead of duplicating status notes

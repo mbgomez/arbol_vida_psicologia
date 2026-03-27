@@ -8,6 +8,7 @@ Rules:
 - Touch the fewest files necessary.
 - Do not expand into broad cleanup or unrelated polish.
 - Prefer adapting existing structures over adding new abstraction layers.
+- If a UI behavior becomes hard to verify because of timing or transient state, a tiny pure helper or local state utility is still acceptable minimal scope when it reduces test flakiness without broadening the slice.
 - Preserve current architecture direction: repository -> use case -> ViewModel -> UI where established.
 - Keep UI state semantic and easy to test.
 - Update docs/config only when the change alters a project standard, roadmap standard, or content contract.

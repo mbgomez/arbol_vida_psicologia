@@ -52,6 +52,7 @@ Constraints:
 - Minimal file changes
 - No unrelated cleanup
 - No broad refactors
+- If a timing-sensitive UI rule becomes hard to test, a tiny pure helper is acceptable when it keeps the slice minimal and makes the behavior deterministic to verify
 
 Output:
 1. Files changed
@@ -104,6 +105,9 @@ Task:
 Update tests only for:
 [PASTE TASK]
 
+Testing note:
+- If the changed behavior depends on timing, gestures, or transient UI state, prefer unit tests for the decision logic and keep Compose tests focused on the visible contract
+
 Output:
 1. Test files changed
 2. Scenarios covered
@@ -133,6 +137,9 @@ Read:
 Task:
 Capture learnings and generate commit message for:
 [PASTE TASK]
+
+Doc note:
+- Check whether `docs/assessment_task_status.toml` already captures the durable learning before suggesting another status-doc update; prefer `.codex/project_map.md` or no doc change when that is enough
 
 Output:
 1. Learnings

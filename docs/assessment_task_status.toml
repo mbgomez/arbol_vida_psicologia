@@ -77,7 +77,10 @@ completed = [
   "Added richer loading, empty, and error states to Home so the fast-entry surface feels calmer and more intentional before the user has saved reflections or when local summary loading fails",
   "Added richer loading and error states plus in-place retry to the top-level Assessments tab so the library surface no longer falls behind History on recovery behavior and readability",
   "Added retry support to HomeViewModel and AssessmentLibraryViewModel instead of leaving top-level recovery to navigation away from the current tab",
-  "Updated Home, Assessment library, and completed-assessment Compose tests to tolerate below-the-fold content and duplicate text without treating those as regressions"
+  "Updated Home, Assessment library, and completed-assessment Compose tests to tolerate below-the-fold content and duplicate text without treating those as regressions",
+  "Polished Settings readability for English and Spanish with calmer copy tightening and better multiline preference-row alignment",
+  "Moved debug-only Settings tools behind a hidden five-tap hero gesture so production-facing Settings stays focused on user-facing preferences by default",
+  "Stabilized Settings coverage by keeping the debug reveal as a Compose test while moving tap-reset timing behavior into a deterministic unit test"
 ]
 
 [locked_decisions]
@@ -188,7 +191,9 @@ items = [
   "If completed-state copy is intentionally reused in more than one section, tighten Compose selectors to stable position, tags, or count-aware assertions rather than treating duplicate text as an app regression.",
   "A lightweight execution layer works best when it complements the human docs instead of replacing them. Keep product standards in AGENTS and the docs, and use `.codex` files only for cheap orientation and task routing.",
   "Token savings are strongest when future threads load only `AGENTS.md`, `.codex/project_map.md`, and the one or two mini-agents relevant to the slice.",
-  "Reusable prompt templates should preserve existing project constraints instead of introducing a second conflicting rule set."
+  "Reusable prompt templates should preserve existing project constraints instead of introducing a second conflicting rule set.",
+  "If a hidden debug gesture depends on tap timing, prefer a small pure helper plus deterministic unit tests for the timing rule and keep Compose coverage focused on the visible reveal behavior.",
+  "For polished bilingual Settings-style rows, top-align controls with multiline copy instead of centering them; centered switches, radios, and action buttons start to look off once Spanish text wraps."
 ]
 
 [verification]
@@ -211,7 +216,8 @@ notes = [
   "The new section-complete content-contract slice has now passed the user's test runs after making the seed DTO backward-safe and fixing affected test builders.",
   "Manual fresh-install or clear-data verification of the new questionnaire version and section-complete authored copy across seeded sephirot is still recommended.",
   "The top-level Home and Assessments state-surface polish slice passed targeted unit tests, targeted Compose tests, and the user's manual checks for empty, loading, error, resume, and fresh-start behavior.",
-  "During validation, HomeScreenTest and AssessmentScreenTest needed test-selector fixes for below-the-fold content and intentionally duplicated completion reflection text; the app behavior itself remained correct."
+  "During validation, HomeScreenTest and AssessmentScreenTest needed test-selector fixes for below-the-fold content and intentionally duplicated completion reflection text; the app behavior itself remained correct.",
+  "The verified Settings polish slice passed manual checks plus targeted unit and Compose coverage after moving the hidden debug tap reset rule out of flaky UI timing tests and into a deterministic helper test."
 ]
 
 [files_to_read_first]

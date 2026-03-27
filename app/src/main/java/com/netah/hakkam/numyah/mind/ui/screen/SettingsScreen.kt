@@ -1,5 +1,6 @@
 package com.netah.hakkam.numyah.mind.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,18 +14,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import android.os.SystemClock
 import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
@@ -37,6 +46,7 @@ import com.netah.hakkam.numyah.mind.ui.components.PreferenceSelectionRow
 import com.netah.hakkam.numyah.mind.ui.components.PreferenceToggleRow
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsUiState
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -103,56 +113,110 @@ private fun SettingsContent(
 ) {
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
     var showMockHistoryDialog by remember { mutableStateOf(false) }
+    var debugToolsVisible by rememberSaveable { mutableStateOf(false) }
+    var debugTapProgress by rememberSaveable(stateSaver = DebugTapProgressSaver) {
+        mutableStateOf(DebugTapProgress())
+    }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-    AppScreenColumn(
-        paddingValues = paddingValues,
-        modifier = Modifier.testTag("settings_scroll")
-    ) {
-        SettingsHero()
-        AppearanceSection(
-            selectedThemeMode = model.themeMode,
-            onThemeModeSelected = onThemeModeSelected
-        )
-        LanguageSection(
-            selectedLanguageMode = model.languageMode,
-            onLanguageModeSelected = onLanguageModeSelected
-        )
-        AssessmentSection(
-            shouldShowAssessmentHonestyNotice = model.shouldShowAssessmentHonestyNotice,
-            onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged
-        )
-        if (model.showMockHistoryTools) {
-            MockHistorySection(
-                isMockHistoryEnabled = model.isMockHistoryEnabled,
-                onMockHistoryEnabledChanged = { enabled ->
-                    if (enabled) {
-                        showMockHistoryDialog = true
-                    } else {
-                        onMockHistoryEnabledChanged(false)
+    fun showDebugToolsVisibilityMessage(visible: Boolean) {
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(
+                message = if (visible) {
+                    "debug_shown"
+                } else {
+                    "debug_hidden"
+                },
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        AppScreenColumn(
+            paddingValues = paddingValues,
+            modifier = Modifier.testTag("settings_scroll")
+        ) {
+            SettingsHero(
+                debugTriggerEnabled = model.showMockHistoryTools,
+                onDebugTriggerTapped = {
+                    val (updatedProgress, shouldToggleDebugTools) = registerDebugToolsTap(
+                        progress = debugTapProgress,
+                        tappedAtMs = SystemClock.uptimeMillis()
+                    )
+                    debugTapProgress = updatedProgress
+                    if (shouldToggleDebugTools) {
+                        debugToolsVisible = !debugToolsVisible
+                        showDebugToolsVisibilityMessage(debugToolsVisible)
                     }
                 }
             )
-            ObservabilityChecksSection(
-                onReportTestNonFatal = onReportTestNonFatal,
-                onForceTestCrash = onForceTestCrash
+            AppearanceSection(
+                selectedThemeMode = model.themeMode,
+                onThemeModeSelected = onThemeModeSelected
+            )
+            LanguageSection(
+                selectedLanguageMode = model.languageMode,
+                onLanguageModeSelected = onLanguageModeSelected
+            )
+            AssessmentSection(
+                shouldShowAssessmentHonestyNotice = model.shouldShowAssessmentHonestyNotice,
+                onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged
+            )
+            if (model.showMockHistoryTools && debugToolsVisible) {
+                DebugToolsVisibilityCard()
+                MockHistorySection(
+                    isMockHistoryEnabled = model.isMockHistoryEnabled,
+                    onMockHistoryEnabledChanged = { enabled ->
+                        if (enabled) {
+                            showMockHistoryDialog = true
+                        } else {
+                            onMockHistoryEnabledChanged(false)
+                        }
+                    }
+                )
+                ObservabilityChecksSection(
+                    onReportTestNonFatal = onReportTestNonFatal,
+                    onForceTestCrash = onForceTestCrash
+                )
+            }
+            OnboardingSection(
+                onReplayOnboarding = { showReplayOnboardingDialog = true }
+            )
+            SettingsNavigationCard(
+                title = stringResource(R.string.settings_privacy_title),
+                body = stringResource(R.string.settings_privacy_body),
+                actionLabel = stringResource(R.string.settings_open_detail_action),
+                testTag = "settings_privacy_card",
+                onClick = onOpenPrivacy
+            )
+            SettingsNavigationCard(
+                title = stringResource(R.string.settings_about_title),
+                body = stringResource(R.string.settings_about_body),
+                actionLabel = stringResource(R.string.settings_open_detail_action),
+                testTag = "settings_about_card",
+                onClick = onOpenAbout
             )
         }
-        OnboardingSection(
-            onReplayOnboarding = { showReplayOnboardingDialog = true }
-        )
-        SettingsNavigationCard(
-            title = stringResource(R.string.settings_privacy_title),
-            body = stringResource(R.string.settings_privacy_body),
-            actionLabel = stringResource(R.string.settings_open_detail_action),
-            testTag = "settings_privacy_card",
-            onClick = onOpenPrivacy
-        )
-        SettingsNavigationCard(
-            title = stringResource(R.string.settings_about_title),
-            body = stringResource(R.string.settings_about_body),
-            actionLabel = stringResource(R.string.settings_open_detail_action),
-            testTag = "settings_about_card",
-            onClick = onOpenAbout
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .testTag("settings_debug_tools_snackbar"),
+            snackbar = { data ->
+                Snackbar {
+                    Text(
+                        text = stringResource(
+                            when (data.visuals.message) {
+                                "debug_shown" -> R.string.settings_debug_tools_revealed_notice
+                                else -> R.string.settings_debug_tools_hidden_notice
+                            }
+                        )
+                    )
+                }
+            }
         )
     }
 
@@ -223,12 +287,43 @@ private fun SettingsNavigationCard(
 }
 
 @Composable
-private fun SettingsHero() {
-    AppHeroCard(
-        eyebrow = stringResource(R.string.settings_eyebrow),
-        title = stringResource(R.string.settings_title),
-        body = stringResource(R.string.settings_body)
-    )
+private fun SettingsHero(
+    debugTriggerEnabled: Boolean,
+    onDebugTriggerTapped: () -> Unit
+) {
+    val triggerModifier = if (debugTriggerEnabled) {
+        Modifier
+            .testTag("settings_debug_tools_trigger")
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onDebugTriggerTapped
+            )
+    } else {
+        Modifier
+    }
+
+    Box(modifier = triggerModifier) {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.settings_eyebrow),
+            title = stringResource(R.string.settings_title),
+            body = stringResource(R.string.settings_body)
+        )
+    }
+}
+
+@Composable
+private fun DebugToolsVisibilityCard() {
+    SettingsSectionCard(
+        title = stringResource(R.string.settings_debug_tools_title),
+        body = stringResource(R.string.settings_debug_tools_body)
+    ) {
+        Text(
+            text = stringResource(R.string.settings_debug_tools_supporting),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable
@@ -296,8 +391,8 @@ private fun LanguageSection(
         )
         Text(
             text = stringResource(R.string.settings_language_supporting),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.secondary
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -455,3 +550,44 @@ private fun SettingsActionRow(
         onAction = onAction
     )
 }
+
+internal data class DebugTapProgress(
+    val count: Int = 0,
+    val lastTapAtMs: Long = 0L
+)
+
+internal fun registerDebugToolsTap(
+    progress: DebugTapProgress,
+    tappedAtMs: Long,
+    requiredTaps: Int = DEBUG_TOOLS_TAP_TARGET,
+    resetWindowMs: Long = DEBUG_TOOLS_TAP_RESET_MS
+): Pair<DebugTapProgress, Boolean> {
+    val nextCount = if (
+        progress.count == 0 ||
+        progress.lastTapAtMs == 0L ||
+        tappedAtMs - progress.lastTapAtMs > resetWindowMs
+    ) {
+        1
+    } else {
+        progress.count + 1
+    }
+
+    return if (nextCount >= requiredTaps) {
+        DebugTapProgress() to true
+    } else {
+        DebugTapProgress(count = nextCount, lastTapAtMs = tappedAtMs) to false
+    }
+}
+
+private val DebugTapProgressSaver = listSaver<DebugTapProgress, Long>(
+    save = { listOf(it.count.toLong(), it.lastTapAtMs) },
+    restore = {
+        DebugTapProgress(
+            count = it[0].toInt(),
+            lastTapAtMs = it[1]
+        )
+    }
+)
+
+private const val DEBUG_TOOLS_TAP_TARGET = 5
+private const val DEBUG_TOOLS_TAP_RESET_MS = 1_200L

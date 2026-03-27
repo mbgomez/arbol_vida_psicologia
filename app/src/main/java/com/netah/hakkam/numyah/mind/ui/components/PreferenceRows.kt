@@ -2,8 +2,8 @@ package com.netah.hakkam.numyah.mind.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.netah.hakkam.numyah.mind.R
 
 @Composable
@@ -42,6 +43,7 @@ fun PreferenceSelectionRow(
     val contentSpacing = dimensionResource(R.dimen.spacing_lg)
     val textSpacing = dimensionResource(R.dimen.spacing_xs)
     val indicatorSize = dimensionResource(R.dimen.size_dot_sm)
+    val controlTopPadding = dimensionResource(R.dimen.spacing_xs)
 
     val borderColor = if (selected) {
         MaterialTheme.colorScheme.secondary
@@ -74,12 +76,14 @@ fun PreferenceSelectionRow(
             )
             .padding(horizontal = horizontalPadding, vertical = verticalPadding),
         horizontalArrangement = Arrangement.spacedBy(contentSpacing),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         RadioButton(
-            modifier = Modifier.testTag("${testTag}_radio"),
+            modifier = Modifier
+                .padding(top = controlTopPadding)
+                .testTag("${testTag}_radio"),
             selected = selected,
-            onClick = onClick
+            onClick = null
         )
         Column(
             modifier = Modifier.weight(1f),
@@ -98,6 +102,7 @@ fun PreferenceSelectionRow(
         }
         Box(
             modifier = Modifier
+                .padding(top = controlTopPadding + 2.dp)
                 .size(indicatorSize)
                 .background(
                     color = if (selected) {
@@ -125,6 +130,7 @@ fun PreferenceToggleRow(
     val verticalPadding = dimensionResource(R.dimen.spacing_lg)
     val contentSpacing = dimensionResource(R.dimen.spacing_lg)
     val textSpacing = dimensionResource(R.dimen.spacing_xs)
+    val controlTopPadding = dimensionResource(R.dimen.spacing_xs)
 
     Row(
         modifier = Modifier
@@ -141,7 +147,7 @@ fun PreferenceToggleRow(
             )
             .padding(horizontal = horizontalPadding, vertical = verticalPadding),
         horizontalArrangement = Arrangement.spacedBy(contentSpacing),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Column(
             modifier = Modifier.weight(1f),
@@ -159,7 +165,9 @@ fun PreferenceToggleRow(
             )
         }
         Switch(
-            modifier = Modifier.testTag(switchTestTag),
+            modifier = Modifier
+                .padding(top = controlTopPadding)
+                .testTag(switchTestTag),
             checked = checked,
             onCheckedChange = null
         )
@@ -179,6 +187,7 @@ fun PreferenceActionRow(
     val verticalPadding = dimensionResource(R.dimen.screen_section_spacing)
     val contentSpacing = dimensionResource(R.dimen.spacing_lg)
     val textSpacing = dimensionResource(R.dimen.spacing_xs)
+    val actionTopPadding = dimensionResource(R.dimen.spacing_xs)
 
     Row(
         modifier = Modifier
@@ -189,7 +198,7 @@ fun PreferenceActionRow(
             )
             .padding(horizontal = horizontalPadding, vertical = verticalPadding),
         horizontalArrangement = Arrangement.spacedBy(contentSpacing),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Column(
             modifier = Modifier.weight(1f),
@@ -207,7 +216,9 @@ fun PreferenceActionRow(
             )
         }
         TextButton(
-            modifier = Modifier.testTag(buttonTestTag),
+            modifier = Modifier
+                .padding(top = actionTopPadding)
+                .testTag(buttonTestTag),
             onClick = onAction
         ) {
             Text(text = actionLabel)
