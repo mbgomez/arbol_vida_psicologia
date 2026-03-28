@@ -207,11 +207,12 @@ Focus:
 - full manual smoke pass across all primary flows
 - verify empty, partial, and rich saved-data scenarios
 - verify install and upgrade behavior
+- finalize launcher icon, monochrome icon, and any last brand-mark assets after the product UI is visually settled
 - prepare release notes, store copy, and submission-facing material
 
 Release gate:
 
-- no known release-blocking UX, persistence, localization, or navigation issues remain
+- no known release-blocking UX, persistence, localization, navigation, or final branding issues remain
 
 ## Sephira Content Side Mission
 

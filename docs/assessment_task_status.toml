@@ -144,6 +144,7 @@ tester_distribution_and_observability = "A gated observability foundation is now
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
 history_phase_2_follow_up = "After the first History polish pass, review whether the new state copy and trend helper text feel equally calm in English and Spanish during manual device checks."
 debug_history_switch = "Finish or refine a debug-only Settings control that explains its purpose and switches completed-history consumers to generated sample sessions without touching persisted user history."
+branding_assets = "Treat launcher icon and related brand-mark finalization as a late release-prep task after the product UI and copy are visually settled."
 
 [lessons_learned]
 items = [
