@@ -19,6 +19,7 @@
     <string name="screen_settings">Settings</string>
     <string name="screen_settings_privacy">Privacy and data</string>
     <string name="screen_settings_about">About Numyah Mind</string>
+    <string name="screen_legal_disclaimer">Before you continue</string>
     <string name="app_loading_title">Preparing your reflection space</string>
     <string name="app_loading_body">Loading your local experience and choosing the right starting point.</string>
     <string name="home_title">Tree of Life reflection</string>
@@ -126,6 +127,7 @@
     <string name="assessment_honesty_body">This reflection is most useful when your answers are honest about how things feel today.\n\nThere are no right answers here. You do not need to present your best self, only your real current experience.</string>
     <string name="assessment_honesty_skip_label">Do not show this again</string>
     <string name="assessment_honesty_continue">Continue</string>
+    <string name="assessment_exit_dialog_skip_future">Do not show this exit reminder again</string>
     <string name="assessment_loading_eyebrow">Assessment</string>
     <string name="assessment_loading_title">Preparing your reflection</string>
     <string name="assessment_loading_body">Opening your saved progress and current sephira so you can continue calmly.</string>
@@ -399,6 +401,15 @@
     <string name="settings_appearance_body">Choose the appearance that feels most comfortable for reading and reflection across different environments.</string>
     <string name="settings_assessment_title">Assessment experience</string>
     <string name="settings_assessment_body">Control a few experience details that shape how the reflection begins and feels on your device.</string>
+    <string name="settings_exit_confirmation_title">Show leave-reflection reminder</string>
+    <string name="settings_exit_confirmation_body">Show a confirmation before leaving an in-progress assessment for another tab.</string>
+    <string name="settings_legal_title">Legal and product boundary</string>
+    <string name="settings_legal_body">Keep the app-entry trust note available and decide whether it should appear when you enter the app.</string>
+    <string name="settings_startup_legal_title">Show legal note on app entry</string>
+    <string name="settings_startup_legal_body">Show the short product-boundary and privacy note after onboarding before entering the main app.</string>
+    <string name="settings_open_legal_title">Open the legal note now</string>
+    <string name="settings_open_legal_body">Review the same entry note immediately without changing whether it appears automatically on app entry.</string>
+    <string name="settings_open_legal_action">Open now</string>
     <string name="settings_mock_history_title">Testing tools</string>
     <string name="settings_mock_history_body">Use local mock completed assessments to review History, saved results, and related flows more quickly during development.</string>
     <string name="settings_mock_history_toggle_title">Use mock completed history</string>
@@ -452,6 +463,8 @@
     <string name="settings_privacy_resume_body">Saved assessment data helps the app return you to an unfinished reflection and show your completed results later. It is there to support continuity, not to create a profile outside your device.</string>
     <string name="settings_privacy_onboarding_title">Replaying onboarding</string>
     <string name="settings_privacy_onboarding_body">Replaying onboarding resets only the introduction flow so you can read the framing again. It does not erase saved assessments, answers, or results.</string>
+    <string name="settings_privacy_entry_note_title">App-entry legal note</string>
+    <string name="settings_privacy_entry_note_body">After onboarding, Numyah Mind can show a short entry note that restates the reflective boundary of the app, offers a gentle Tree of Life orientation, and reminds you that the core experience stays local to your device. You can turn that note on or off in Settings and reopen it whenever you want.</string>
     <string name="settings_privacy_tester_telemetry_title">Limited tester telemetry</string>
     <string name="settings_privacy_tester_telemetry_body">When tester observability is enabled for internal or closed testing, Numyah Mind may send crash reports, recoverable error reports, and a small set of flow signals such as onboarding completion, assessment entry, assessment completion, results detail opens, history re-entry, learn reading, and key settings changes. Reflection answers, written interpretation content, and saved score details are not part of this analytics taxonomy.</string>
     <string name="settings_privacy_boundary_title">Product boundary</string>
@@ -469,4 +482,16 @@
     <string name="settings_about_version_title">Current app version</string>
     <string name="settings_about_version_body">Version %1$s</string>
     <string name="settings_about_footer">This app is still meant to feel human, practical, and reflective even when the language draws from a deeper symbolic tradition.</string>
+    <string name="legal_disclaimer_eyebrow">Numyah Mind</string>
+    <string name="legal_disclaimer_title">A short note before you enter</string>
+    <string name="legal_disclaimer_body">Numyah Mind is designed as a calm space for self-reflection through the Tree of Life. This note keeps the product boundary, the symbolic framework, and the local-first privacy stance clear before you continue.</string>
+    <string name="legal_disclaimer_boundary_title">Reflection, not therapy</string>
+    <string name="legal_disclaimer_boundary_body">This app is for personal reflection and gentle self-observation. It is not a diagnostic, psychiatric, or clinical mental health product, and it should not be read as a substitute for professional care or treatment.</string>
+    <string name="legal_disclaimer_framework_title">A grounded use of the Tree of Life</string>
+    <string name="legal_disclaimer_framework_body">Numyah Mind uses the Tree of Life and Kabbalistic language as a respectful map for lived experience. The goal is not to force belief or fixed identity, but to offer practical reflection on current tendencies across the ten sephirot.</string>
+    <string name="legal_disclaimer_privacy_title">Local-first by default</string>
+    <string name="legal_disclaimer_privacy_body">Your core experience, saved progress, and results are intended to stay on this device. The app is designed to support offline reflection first, with privacy and continuity as part of the trust model.</string>
+    <string name="legal_disclaimer_skip_label">Do not show this note again</string>
+    <string name="legal_disclaimer_continue">Continue to app</string>
+    <string name="legal_disclaimer_footer">You can reopen this note later from Settings if you want to revisit the framing.</string>
 </resources>

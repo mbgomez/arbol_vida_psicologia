@@ -7,12 +7,14 @@ import com.netah.hakkam.numyah.mind.data.repository.LearningContentRepository
 import com.netah.hakkam.numyah.mind.domain.usecase.AdvanceAssessmentSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.CompleteAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCurrentQuestionnaireUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetCompletedLearningSectionsUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCatalogUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningCourseUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLearningSectionUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetOnboardingStatusUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.MarkLearningSectionCompletedUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveActiveAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveAssessmentHistoryUseCase
@@ -20,8 +22,10 @@ import com.netah.hakkam.numyah.mind.domain.usecase.ObserveCompletedAssessmentByI
 import com.netah.hakkam.numyah.mind.domain.usecase.ObserveLatestCompletedAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentAnswerUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SaveAssessmentScoreUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.StartOrResumeAssessmentUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.UpdateAssessmentProgressUseCase
 import dagger.Module
@@ -46,6 +50,22 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideGetStartupLegalDisclaimerVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = GetStartupLegalDisclaimerVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideSetStartupLegalDisclaimerVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = SetStartupLegalDisclaimerVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
     fun provideGetAssessmentHonestyNoticeVisibilityUseCase(
         appPreferencesRepository: AppPreferencesRepository
     ) = GetAssessmentHonestyNoticeVisibilityUseCase(
@@ -54,9 +74,25 @@ class UseCaseModule {
 
     @Singleton
     @Provides
+    fun provideGetAssessmentExitConfirmationVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = GetAssessmentExitConfirmationVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
     fun provideSetAssessmentHonestyNoticeVisibilityUseCase(
         appPreferencesRepository: AppPreferencesRepository
     ) = SetAssessmentHonestyNoticeVisibilityUseCase(
+        appPreferencesRepository = appPreferencesRepository
+    )
+
+    @Singleton
+    @Provides
+    fun provideSetAssessmentExitConfirmationVisibilityUseCase(
+        appPreferencesRepository: AppPreferencesRepository
+    ) = SetAssessmentExitConfirmationVisibilityUseCase(
         appPreferencesRepository = appPreferencesRepository
     )
 

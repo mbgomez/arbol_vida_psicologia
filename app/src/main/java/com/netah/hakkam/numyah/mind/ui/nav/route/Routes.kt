@@ -16,6 +16,7 @@ sealed class AppDestination(
     @StringRes val titleRes: Int
 ) {
     data object Onboarding : AppDestination("onboarding", R.string.screen_onboarding)
+    data object LegalDisclaimer : AppDestination("legal-disclaimer", R.string.screen_legal_disclaimer)
     data object Home : AppDestination("home", R.string.nav_home)
     data object AssessmentLibrary : AppDestination("assessment-library", R.string.screen_assessment_library)
     data object Assessment : AppDestination("assessment", R.string.screen_assessment) {
@@ -98,6 +99,7 @@ val topLevelDestinations = listOf(
 
 fun destinationForRoute(route: String?): AppDestination? = when (route) {
     AppDestination.Onboarding.route -> AppDestination.Onboarding
+    AppDestination.LegalDisclaimer.route -> AppDestination.LegalDisclaimer
     AppDestination.Home.route -> AppDestination.Home
     AppDestination.AssessmentLibrary.route -> AppDestination.AssessmentLibrary
     AppDestination.Assessment.route,

@@ -33,7 +33,9 @@ enum class ResultsSessionScope(val analyticsValue: String) {
 enum class SettingsChangeKey(val analyticsValue: String) {
     LANGUAGE("language"),
     THEME("theme"),
-    HONESTY_NOTICE("honesty_notice")
+    HONESTY_NOTICE("honesty_notice"),
+    ASSESSMENT_EXIT_CONFIRMATION("assessment_exit_confirmation"),
+    STARTUP_LEGAL_DISCLAIMER("startup_legal_disclaimer")
 }
 
 enum class NonFatalIssueKey(val analyticsValue: String) {

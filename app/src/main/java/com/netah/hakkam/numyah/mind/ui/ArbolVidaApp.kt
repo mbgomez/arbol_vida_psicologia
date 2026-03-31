@@ -42,7 +42,9 @@ fun ArbolVidaApp(
             val navController = rememberNavController()
             MainNavGraph(
                 navController = navController,
-                startDestination = uiState.startDestination,
+                appStateUiState = uiState,
+                onStartupLegalDisclaimerVisibilityChanged = appStateViewModel::setStartupLegalDisclaimerVisible,
+                onAssessmentExitConfirmationVisibilityChanged = appStateViewModel::setAssessmentExitConfirmationVisible,
                 appTelemetry = appTelemetry
             )
         }

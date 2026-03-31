@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,10 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -60,6 +59,7 @@ import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.observability.AssessmentEntryMode
 import com.netah.hakkam.numyah.mind.app.observability.AssessmentEntrySource
+import com.netah.hakkam.numyah.mind.ui.components.AssessmentExitConfirmationDialog
 import com.netah.hakkam.numyah.mind.ui.nav.route.AppDestination
 import com.netah.hakkam.numyah.mind.ui.nav.route.destinationForRoute
 import com.netah.hakkam.numyah.mind.ui.nav.route.topLevelDestinations
@@ -68,6 +68,7 @@ import com.netah.hakkam.numyah.mind.ui.screen.AssessmentLibraryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HistoryTrendsRoute
 import com.netah.hakkam.numyah.mind.ui.screen.HomeRoute
+import com.netah.hakkam.numyah.mind.ui.screen.LegalDisclaimerRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnCourseRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnRoute
 import com.netah.hakkam.numyah.mind.ui.screen.LearnSectionRoute
@@ -83,6 +84,7 @@ import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnCourseViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionUiState
 import com.netah.hakkam.numyah.mind.viewmodel.LearnSectionViewModel
+import com.netah.hakkam.numyah.mind.viewmodel.AppStateUiState
 import com.netah.hakkam.numyah.mind.viewmodel.SephiraDetailUiState
 import com.netah.hakkam.numyah.mind.viewmodel.SephiraDetailViewModel
 import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
@@ -90,25 +92,52 @@ import com.netah.hakkam.numyah.mind.viewmodel.SettingsViewModel
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    startDestination: String,
+    appStateUiState: AppStateUiState,
+    onStartupLegalDisclaimerVisibilityChanged: (Boolean) -> Unit,
+    onAssessmentExitConfirmationVisibilityChanged: (Boolean) -> Unit,
     appTelemetry: AppTelemetry
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = appStateUiState.startDestination
     ) {
         composable(AppDestination.Onboarding.route) {
             OnboardingRoute(
                 onFinish = {
-                    navController.navigate(AppDestination.Home.route) {
+                    navController.navigate(
+                        if (appStateUiState.shouldShowStartupLegalDisclaimer) {
+                            AppDestination.LegalDisclaimer.route
+                        } else {
+                            AppDestination.Home.route
+                        }
+                    ) {
                         popUpTo(AppDestination.Onboarding.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
             )
         }
+        composable(AppDestination.LegalDisclaimer.route) {
+            LegalDisclaimerRoute(
+                onContinue = { skipFuture ->
+                    if (skipFuture) {
+                        onStartupLegalDisclaimerVisibilityChanged(false)
+                    }
+                    if (!navController.popBackStack()) {
+                        navController.navigate(AppDestination.Home.route) {
+                            popUpTo(AppDestination.LegalDisclaimer.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
+        }
         composable(AppDestination.Home.route) {
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 HomeRoute(
                     paddingValues = paddingValues,
                     onStartAssessment = {
@@ -143,7 +172,11 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.AssessmentLibrary.route) {
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 AssessmentLibraryRoute(
                     paddingValues = paddingValues,
                     onOpenAssessment = { hasActiveAssessment ->
@@ -183,6 +216,8 @@ fun MainNavGraph(
             val assessmentUiState by assessmentViewModel.uiState.collectAsState()
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 titleOverride = assessmentScreenTitle(assessmentUiState)
             ) { paddingValues ->
                 AssessmentRoute(
@@ -204,7 +239,11 @@ fun MainNavGraph(
             val selectedSessionId = it.arguments
                 ?.getLong(AppDestination.Results.sessionIdArg)
                 ?.takeIf { sessionId -> sessionId > 0L }
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 ResultsRoute(
                     paddingValues = paddingValues,
                     onPrimaryAction = {
@@ -258,6 +297,8 @@ fun MainNavGraph(
             val sephiraDetailUiState by sephiraDetailViewModel.uiState.collectAsState()
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 titleOverride = sephiraDetailScreenTitle(sephiraDetailUiState),
                 showBottomBar = false,
                 useDetailHeader = true,
@@ -270,7 +311,11 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.History.route) {
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 HistoryRoute(
                     paddingValues = paddingValues,
                     onOpenAssessment = { sessionId ->
@@ -285,6 +330,8 @@ fun MainNavGraph(
         composable(AppDestination.HistoryTrends.route) {
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 showBottomBar = false,
                 useDetailHeader = true,
                 onBack = { navController.navigateUp() }
@@ -296,7 +343,11 @@ fun MainNavGraph(
             }
         }
         composable(AppDestination.Learn.route) {
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 LearnRoute(
                     paddingValues = paddingValues,
                     onOpenCourse = { courseId ->
@@ -317,6 +368,8 @@ fun MainNavGraph(
             val learnCourseUiState by learnCourseViewModel.uiState.collectAsState()
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 titleOverride = learnCourseScreenTitle(learnCourseUiState),
                 showBottomBar = false,
                 useDetailHeader = true,
@@ -347,6 +400,8 @@ fun MainNavGraph(
             val learnSectionUiState by learnSectionViewModel.uiState.collectAsState()
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 titleOverride = learnSectionScreenTitle(learnSectionUiState),
                 showBottomBar = false,
                 useDetailHeader = true,
@@ -377,13 +432,19 @@ fun MainNavGraph(
         composable(AppDestination.Settings.route) {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val settingsUiState by settingsViewModel.uiState.collectAsState()
-            AppShell(navController = navController) { paddingValues ->
+            AppShell(
+                navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged
+            ) { paddingValues ->
                 SettingsScreen(
                     paddingValues = paddingValues,
                     uiState = settingsUiState,
                     onLanguageModeSelected = settingsViewModel::onLanguageModeSelected,
                     onThemeModeSelected = settingsViewModel::onThemeModeSelected,
                     onAssessmentHonestyNoticeChanged = settingsViewModel::onAssessmentHonestyNoticeChanged,
+                    onAssessmentExitConfirmationChanged = settingsViewModel::onAssessmentExitConfirmationChanged,
+                    onStartupLegalDisclaimerChanged = settingsViewModel::onStartupLegalDisclaimerChanged,
                     onMockHistoryEnabledChanged = settingsViewModel::onMockHistoryEnabledChanged,
                     onReportTestNonFatal = settingsViewModel::reportTestNonFatal,
                     onForceTestCrash = {
@@ -391,6 +452,7 @@ fun MainNavGraph(
                     },
                     onOpenPrivacy = { navController.navigate(AppDestination.SettingsPrivacy.route) },
                     onOpenAbout = { navController.navigate(AppDestination.SettingsAbout.route) },
+                    onOpenLegalDisclaimer = { navController.navigate(AppDestination.LegalDisclaimer.route) },
                     onReplayOnboarding = {
                         settingsViewModel.replayOnboarding {
                             navController.navigate(AppDestination.Onboarding.route) {
@@ -409,6 +471,8 @@ fun MainNavGraph(
         composable(AppDestination.SettingsPrivacy.route) {
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 showBottomBar = false,
                 useDetailHeader = true,
                 onBack = { navController.navigateUp() }
@@ -419,6 +483,8 @@ fun MainNavGraph(
         composable(AppDestination.SettingsAbout.route) {
             AppShell(
                 navController = navController,
+                shouldShowAssessmentExitConfirmation = appStateUiState.shouldShowAssessmentExitConfirmation,
+                onAssessmentExitConfirmationVisibilityChanged = onAssessmentExitConfirmationVisibilityChanged,
                 showBottomBar = false,
                 useDetailHeader = true,
                 onBack = { navController.navigateUp() }
@@ -432,6 +498,8 @@ fun MainNavGraph(
 @Composable
 private fun AppShell(
     navController: NavHostController,
+    shouldShowAssessmentExitConfirmation: Boolean,
+    onAssessmentExitConfirmationVisibilityChanged: (Boolean) -> Unit,
     titleOverride: String? = null,
     showBottomBar: Boolean = true,
     useDetailHeader: Boolean = false,
@@ -444,6 +512,7 @@ private fun AppShell(
     val currentTitle = titleOverride ?: destinationTitle(currentRoute)
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     var exitAssessmentDestination by remember { mutableStateOf<AppDestination?>(null) }
+    var skipAssessmentExitDialog by remember { mutableStateOf(false) }
     val showExitAssessmentDialog = exitAssessmentDestination != null
 
     Scaffold(
@@ -476,15 +545,29 @@ private fun AppShell(
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
-                                if (isAssessmentRoute(currentRoute)) {
+                                if (isAssessmentRoute(currentRoute) && shouldShowAssessmentExitConfirmation) {
                                     exitAssessmentDestination = topLevelDestination.destination
                                 } else {
-                                    navigateToTopLevelDestination(
-                                        navController = navController,
-                                        destination = topLevelDestination.destination
-                                    )
+                                    if (isAssessmentRoute(currentRoute)) {
+                                        leaveAssessmentAndNavigate(
+                                            navController = navController,
+                                            destination = topLevelDestination.destination
+                                        )
+                                    } else {
+                                        navigateToTopLevelDestination(
+                                            navController = navController,
+                                            destination = topLevelDestination.destination
+                                        )
+                                    }
                                 }
                             },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                indicatorColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.22f)
+                            ),
                             icon = {
                                 Icon(
                                     imageVector = topLevelDestination.icon,
@@ -519,42 +602,25 @@ private fun AppShell(
     }
 
     if (showExitAssessmentDialog) {
-        AlertDialog(
-            onDismissRequest = { exitAssessmentDestination = null },
-            title = {
-                Text(text = stringResource(R.string.assessment_exit_dialog_title))
-            },
-            text = {
-                Text(
-                    text = stringResource(
-                        R.string.assessment_exit_dialog_body_to,
-                        stringResource(destinationTitleRes(exitAssessmentDestination))
-                    )
+        AssessmentExitConfirmationDialog(
+            destinationLabel = stringResource(destinationTitleRes(exitAssessmentDestination)),
+            skipNextTimeChecked = skipAssessmentExitDialog,
+            onSkipNextTimeChanged = { skipAssessmentExitDialog = it },
+            onConfirm = {
+                val destination = exitAssessmentDestination ?: return@AssessmentExitConfirmationDialog
+                if (skipAssessmentExitDialog) {
+                    onAssessmentExitConfirmationVisibilityChanged(false)
+                }
+                exitAssessmentDestination = null
+                skipAssessmentExitDialog = false
+                leaveAssessmentAndNavigate(
+                    navController = navController,
+                    destination = destination
                 )
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val destination = exitAssessmentDestination ?: return@TextButton
-                        exitAssessmentDestination = null
-                        leaveAssessmentAndNavigate(
-                            navController = navController,
-                            destination = destination
-                        )
-                    }
-                ) {
-                    Text(
-                        text = stringResource(
-                            R.string.assessment_exit_dialog_confirm_to,
-                            stringResource(destinationTitleRes(exitAssessmentDestination))
-                        )
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { exitAssessmentDestination = null }) {
-                    Text(text = stringResource(R.string.assessment_exit_dialog_cancel))
-                }
+            onDismiss = {
+                exitAssessmentDestination = null
+                skipAssessmentExitDialog = false
             }
         )
     }
@@ -583,15 +649,20 @@ private fun navigationLabelTextStyle(
 
 private fun navigateToTopLevelDestination(
     navController: NavHostController,
-    destination: AppDestination
+    destination: AppDestination,
+    config: TopLevelNavigationConfig = TopLevelNavigationConfig()
 ) {
+    if (navController.popBackStack(destination.route, false)) {
+        return
+    }
+
     navController.navigate(destination.route) {
         popUpTo(AppDestination.Home.route) {
-            saveState = true
+            saveState = config.saveState
             inclusive = false
         }
         launchSingleTop = true
-        restoreState = true
+        restoreState = config.restoreState
     }
 }
 
@@ -605,7 +676,20 @@ private fun leaveAssessmentAndNavigate(
 
     navigateToTopLevelDestination(
         navController = navController,
-        destination = destination
+        destination = destination,
+        config = assessmentExitNavigationConfig()
+    )
+}
+
+internal data class TopLevelNavigationConfig(
+    val saveState: Boolean = true,
+    val restoreState: Boolean = true
+)
+
+internal fun assessmentExitNavigationConfig(): TopLevelNavigationConfig {
+    return TopLevelNavigationConfig(
+        saveState = false,
+        restoreState = false
     )
 }
 

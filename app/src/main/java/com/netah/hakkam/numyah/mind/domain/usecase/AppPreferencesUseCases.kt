@@ -22,6 +22,22 @@ class SetOnboardingCompletedUseCase @Inject constructor(
     }
 }
 
+class GetStartupLegalDisclaimerVisibilityUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractorNoParams<Boolean>() {
+    override fun buildUseCase(): Flow<Boolean> {
+        return appPreferencesRepository.shouldShowStartupLegalDisclaimer()
+    }
+}
+
+class SetStartupLegalDisclaimerVisibilityUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractor<Boolean, Boolean>() {
+    override fun buildUseCase(params: Boolean): Flow<Boolean> {
+        return appPreferencesRepository.setStartupLegalDisclaimerVisible(params)
+    }
+}
+
 class GetAssessmentHonestyNoticeVisibilityUseCase @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository
 ) : FlowInteractorNoParams<Boolean>() {
@@ -35,6 +51,22 @@ class SetAssessmentHonestyNoticeVisibilityUseCase @Inject constructor(
 ) : FlowInteractor<Boolean, Boolean>() {
     override fun buildUseCase(params: Boolean): Flow<Boolean> {
         return appPreferencesRepository.setAssessmentHonestyNoticeVisible(params)
+    }
+}
+
+class GetAssessmentExitConfirmationVisibilityUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractorNoParams<Boolean>() {
+    override fun buildUseCase(): Flow<Boolean> {
+        return appPreferencesRepository.shouldShowAssessmentExitConfirmation()
+    }
+}
+
+class SetAssessmentExitConfirmationVisibilityUseCase @Inject constructor(
+    private val appPreferencesRepository: AppPreferencesRepository
+) : FlowInteractor<Boolean, Boolean>() {
+    override fun buildUseCase(params: Boolean): Flow<Boolean> {
+        return appPreferencesRepository.setAssessmentExitConfirmationVisible(params)
     }
 }
 

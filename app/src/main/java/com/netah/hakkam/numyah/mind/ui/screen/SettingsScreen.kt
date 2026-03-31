@@ -55,11 +55,14 @@ fun SettingsScreen(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onAssessmentExitConfirmationChanged: (Boolean) -> Unit,
+    onStartupLegalDisclaimerChanged: (Boolean) -> Unit,
     onMockHistoryEnabledChanged: (Boolean) -> Unit,
     onReportTestNonFatal: () -> Unit,
     onForceTestCrash: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenLegalDisclaimer: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
     when (uiState) {
@@ -70,11 +73,14 @@ fun SettingsScreen(
             onLanguageModeSelected = onLanguageModeSelected,
             onThemeModeSelected = onThemeModeSelected,
             onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged,
+            onAssessmentExitConfirmationChanged = onAssessmentExitConfirmationChanged,
+            onStartupLegalDisclaimerChanged = onStartupLegalDisclaimerChanged,
             onMockHistoryEnabledChanged = onMockHistoryEnabledChanged,
             onReportTestNonFatal = onReportTestNonFatal,
             onForceTestCrash = onForceTestCrash,
             onOpenPrivacy = onOpenPrivacy,
             onOpenAbout = onOpenAbout,
+            onOpenLegalDisclaimer = onOpenLegalDisclaimer,
             onReplayOnboarding = onReplayOnboarding
         )
     }
@@ -104,11 +110,14 @@ private fun SettingsContent(
     onLanguageModeSelected: (AppLanguageMode) -> Unit,
     onThemeModeSelected: (AppThemeMode) -> Unit,
     onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onAssessmentExitConfirmationChanged: (Boolean) -> Unit,
+    onStartupLegalDisclaimerChanged: (Boolean) -> Unit,
     onMockHistoryEnabledChanged: (Boolean) -> Unit,
     onReportTestNonFatal: () -> Unit,
     onForceTestCrash: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenLegalDisclaimer: () -> Unit,
     onReplayOnboarding: () -> Unit
 ) {
     var showReplayOnboardingDialog by remember { mutableStateOf(false) }
@@ -162,7 +171,20 @@ private fun SettingsContent(
             )
             AssessmentSection(
                 shouldShowAssessmentHonestyNotice = model.shouldShowAssessmentHonestyNotice,
-                onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged
+                shouldShowAssessmentExitConfirmation = model.shouldShowAssessmentExitConfirmation,
+                onAssessmentHonestyNoticeChanged = onAssessmentHonestyNoticeChanged,
+                onAssessmentExitConfirmationChanged = onAssessmentExitConfirmationChanged
+            )
+            LegalSection(
+                shouldShowStartupLegalDisclaimer = model.shouldShowStartupLegalDisclaimer,
+                onStartupLegalDisclaimerChanged = onStartupLegalDisclaimerChanged
+            )
+            SettingsNavigationCard(
+                title = stringResource(R.string.settings_open_legal_title),
+                body = stringResource(R.string.settings_open_legal_body),
+                actionLabel = stringResource(R.string.settings_open_legal_action),
+                testTag = "settings_open_legal_card",
+                onClick = onOpenLegalDisclaimer
             )
             if (model.showMockHistoryTools && debugToolsVisible) {
                 DebugToolsVisibilityCard()
@@ -400,7 +422,9 @@ private fun LanguageSection(
 @Composable
 private fun AssessmentSection(
     shouldShowAssessmentHonestyNotice: Boolean,
-    onAssessmentHonestyNoticeChanged: (Boolean) -> Unit
+    shouldShowAssessmentExitConfirmation: Boolean,
+    onAssessmentHonestyNoticeChanged: (Boolean) -> Unit,
+    onAssessmentExitConfirmationChanged: (Boolean) -> Unit
 ) {
     SettingsSectionCard(
         title = stringResource(R.string.settings_assessment_title),
@@ -411,6 +435,34 @@ private fun AssessmentSection(
             body = stringResource(R.string.settings_honesty_notice_body),
             checked = shouldShowAssessmentHonestyNotice,
             onCheckedChange = onAssessmentHonestyNoticeChanged
+        )
+        SettingsSwitchRow(
+            title = stringResource(R.string.settings_exit_confirmation_title),
+            body = stringResource(R.string.settings_exit_confirmation_body),
+            checked = shouldShowAssessmentExitConfirmation,
+            rowTestTag = "settings_exit_confirmation_row",
+            switchTestTag = "settings_exit_confirmation_switch",
+            onCheckedChange = onAssessmentExitConfirmationChanged
+        )
+    }
+}
+
+@Composable
+private fun LegalSection(
+    shouldShowStartupLegalDisclaimer: Boolean,
+    onStartupLegalDisclaimerChanged: (Boolean) -> Unit
+) {
+    SettingsSectionCard(
+        title = stringResource(R.string.settings_legal_title),
+        body = stringResource(R.string.settings_legal_body)
+    ) {
+        SettingsSwitchRow(
+            title = stringResource(R.string.settings_startup_legal_title),
+            body = stringResource(R.string.settings_startup_legal_body),
+            checked = shouldShowStartupLegalDisclaimer,
+            rowTestTag = "settings_startup_legal_row",
+            switchTestTag = "settings_startup_legal_switch",
+            onCheckedChange = onStartupLegalDisclaimerChanged
         )
     }
 }

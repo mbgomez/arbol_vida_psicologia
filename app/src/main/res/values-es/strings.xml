@@ -19,6 +19,7 @@
     <string name="screen_settings">Ajustes</string>
     <string name="screen_settings_privacy">Privacidad y datos</string>
     <string name="screen_settings_about">Acerca de Numyah Mind</string>
+    <string name="screen_legal_disclaimer">Antes de continuar</string>
     <string name="app_loading_title">Preparando tu espacio de reflexion</string>
     <string name="app_loading_body">Cargando tu experiencia local y eligiendo el mejor punto de inicio.</string>
     <string name="home_title">Reflexion del Arbol de la Vida</string>
@@ -104,6 +105,7 @@
     <string name="assessment_honesty_body">Esta reflexion es mas util cuando tus respuestas son honestas sobre como te sientes hoy.\n\nNo hay respuestas correctas aqui. No necesitas mostrar tu mejor version, solo tu experiencia real en este momento.</string>
     <string name="assessment_honesty_skip_label">No volver a mostrar esto</string>
     <string name="assessment_honesty_continue">Continuar</string>
+    <string name="assessment_exit_dialog_skip_future">No volver a mostrar este recordatorio al salir</string>
     <string name="assessment_loading_eyebrow">Evaluacion</string>
     <string name="assessment_loading_title">Preparando tu reflexion</string>
     <string name="assessment_loading_body">Abriendo tu progreso guardado y la sefira actual para que puedas continuar con calma.</string>
@@ -377,6 +379,15 @@
     <string name="settings_appearance_body">Elige la apariencia que te resulte mas comoda para leer y reflexionar en distintos entornos.</string>
     <string name="settings_assessment_title">Experiencia de evaluacion</string>
     <string name="settings_assessment_body">Controla algunos detalles de experiencia que influyen en como comienza y se siente la reflexion en tu dispositivo.</string>
+    <string name="settings_exit_confirmation_title">Mostrar recordatorio al salir de la reflexion</string>
+    <string name="settings_exit_confirmation_body">Muestra una confirmacion antes de dejar una evaluacion en progreso para abrir otra pestana.</string>
+    <string name="settings_legal_title">Aviso legal y limite del producto</string>
+    <string name="settings_legal_body">Mantiene disponible la nota de confianza al entrar y te permite decidir si debe aparecer cuando abres la app.</string>
+    <string name="settings_startup_legal_title">Mostrar nota legal al entrar</string>
+    <string name="settings_startup_legal_body">Muestra la nota breve sobre el limite del producto y la privacidad despues del onboarding y antes de entrar a la app principal.</string>
+    <string name="settings_open_legal_title">Abrir ahora la nota legal</string>
+    <string name="settings_open_legal_body">Revisa de inmediato la misma nota de entrada sin cambiar si aparece automaticamente al entrar a la app.</string>
+    <string name="settings_open_legal_action">Abrir ahora</string>
     <string name="settings_mock_history_title">Herramientas de prueba</string>
     <string name="settings_mock_history_body">Usa evaluaciones completadas simuladas en local para revisar mas rapido Historial, resultados guardados y flujos relacionados durante el desarrollo.</string>
     <string name="settings_mock_history_toggle_title">Usar historial completado simulado</string>
@@ -430,6 +441,8 @@
     <string name="settings_privacy_resume_body">Los datos guardados de evaluacion ayudan a que la app te devuelva a una reflexion sin terminar y te muestre despues tus resultados completados. Estan ahi para sostener continuidad, no para crear un perfil fuera de tu dispositivo.</string>
     <string name="settings_privacy_onboarding_title">Volver a ver onboarding</string>
     <string name="settings_privacy_onboarding_body">Volver a ver el onboarding reinicia solo la introduccion para que puedas leer otra vez el encuadre. No borra evaluaciones, respuestas ni resultados guardados.</string>
+    <string name="settings_privacy_entry_note_title">Nota legal al entrar</string>
+    <string name="settings_privacy_entry_note_body">Despues del onboarding, Numyah Mind puede mostrar una nota breve al entrar que vuelve a enmarcar el limite reflexivo de la app, ofrece una orientacion amable sobre el Arbol de la Vida y recuerda que la experiencia principal permanece en tu dispositivo. Puedes activar o desactivar esa nota en Ajustes y volver a abrirla cuando quieras.</string>
     <string name="settings_privacy_tester_telemetry_title">Telemetria limitada para testers</string>
     <string name="settings_privacy_tester_telemetry_body">Cuando la observabilidad para testers esta activada en pruebas internas o cerradas, Numyah Mind puede enviar informes de fallos, informes de errores recuperables y un conjunto pequeno de senales de flujo, como la finalizacion del onboarding, la entrada a la evaluacion, la finalizacion de la evaluacion, la apertura del detalle de resultados, el reingreso desde Historial, la lectura en Aprender y cambios clave de ajustes. Las respuestas de reflexion, el contenido interpretativo escrito y los detalles guardados de puntajes no forman parte de esta taxonomia analitica.</string>
     <string name="settings_privacy_boundary_title">Limite del producto</string>
@@ -447,4 +460,16 @@
     <string name="settings_about_version_title">Version actual de la app</string>
     <string name="settings_about_version_body">Version %1$s</string>
     <string name="settings_about_footer">Esta app sigue queriendo sentirse humana, practica y reflexiva incluso cuando su lenguaje toma elementos de una tradicion simbolica mas profunda.</string>
+    <string name="legal_disclaimer_eyebrow">Numyah Mind</string>
+    <string name="legal_disclaimer_title">Una nota breve antes de entrar</string>
+    <string name="legal_disclaimer_body">Numyah Mind esta disenada como un espacio sereno para la autorreflexion a traves del Arbol de la Vida. Esta nota mantiene claro el limite del producto, el marco simbolico y la postura local y privada antes de continuar.</string>
+    <string name="legal_disclaimer_boundary_title">Reflexion, no terapia</string>
+    <string name="legal_disclaimer_boundary_body">Esta app esta pensada para la reflexion personal y la autoobservacion amable. No es un producto diagnostico, psiquiatrico ni clinico de salud mental, y no debe leerse como sustituto de atencion o tratamiento profesional.</string>
+    <string name="legal_disclaimer_framework_title">Un uso enraizado del Arbol de la Vida</string>
+    <string name="legal_disclaimer_framework_body">Numyah Mind usa el Arbol de la Vida y el lenguaje cabalistico como un mapa respetuoso de la experiencia vivida. La meta no es imponer creencias ni identidades fijas, sino ofrecer una reflexion practica sobre tendencias actuales a traves de las diez sefirot.</string>
+    <string name="legal_disclaimer_privacy_title">Local por defecto</string>
+    <string name="legal_disclaimer_privacy_body">Tu experiencia principal, el progreso guardado y los resultados estan pensados para quedarse en este dispositivo. La app esta disenada para sostener primero una reflexion sin conexion, con la privacidad y la continuidad como parte del modelo de confianza.</string>
+    <string name="legal_disclaimer_skip_label">No volver a mostrar esta nota</string>
+    <string name="legal_disclaimer_continue">Continuar a la app</string>
+    <string name="legal_disclaimer_footer">Puedes volver a abrir esta nota desde Ajustes si quieres revisar otra vez el encuadre.</string>
 </resources>

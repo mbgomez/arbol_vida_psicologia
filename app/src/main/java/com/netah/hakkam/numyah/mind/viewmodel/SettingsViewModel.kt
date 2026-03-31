@@ -10,13 +10,17 @@ import com.netah.hakkam.numyah.mind.app.observability.SettingsChangeKey
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetMockHistoryModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetThemeModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -36,6 +40,8 @@ data class SettingsUiModel(
     val languageMode: AppLanguageMode,
     val themeMode: AppThemeMode,
     val shouldShowAssessmentHonestyNotice: Boolean,
+    val shouldShowAssessmentExitConfirmation: Boolean,
+    val shouldShowStartupLegalDisclaimer: Boolean,
     val showMockHistoryTools: Boolean,
     val isMockHistoryEnabled: Boolean
 )
@@ -49,6 +55,10 @@ class SettingsViewModel @Inject constructor(
     private val setThemeModeUseCase: SetThemeModeUseCase,
     private val getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase,
     private val setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase,
+    private val getAssessmentExitConfirmationVisibilityUseCase: GetAssessmentExitConfirmationVisibilityUseCase,
+    private val setAssessmentExitConfirmationVisibilityUseCase: SetAssessmentExitConfirmationVisibilityUseCase,
+    private val getStartupLegalDisclaimerVisibilityUseCase: GetStartupLegalDisclaimerVisibilityUseCase,
+    private val setStartupLegalDisclaimerVisibilityUseCase: SetStartupLegalDisclaimerVisibilityUseCase,
     private val getMockHistoryModeUseCase: GetMockHistoryModeUseCase,
     private val setMockHistoryModeUseCase: SetMockHistoryModeUseCase,
     private val setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase,
@@ -61,16 +71,39 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             combine(
-                getLanguageModeUseCase.run(),
-                getThemeModeUseCase.run(),
-                getAssessmentHonestyNoticeVisibilityUseCase.run(),
-                getMockHistoryModeUseCase.run()
-            ) { languageMode, themeMode, shouldShowAssessmentHonestyNotice, isMockHistoryEnabled ->
+                combine(
+                    getLanguageModeUseCase.run(),
+                    getThemeModeUseCase.run(),
+                    getAssessmentHonestyNoticeVisibilityUseCase.run()
+                ) { languageMode, themeMode, shouldShowAssessmentHonestyNotice ->
+                    Triple(languageMode, themeMode, shouldShowAssessmentHonestyNotice)
+                },
+                combine(
+                    getAssessmentExitConfirmationVisibilityUseCase.run(),
+                    getStartupLegalDisclaimerVisibilityUseCase.run(),
+                    getMockHistoryModeUseCase.run()
+                ) { shouldShowAssessmentExitConfirmation, shouldShowStartupLegalDisclaimer, isMockHistoryEnabled ->
+                    Triple(
+                        shouldShowAssessmentExitConfirmation,
+                        shouldShowStartupLegalDisclaimer,
+                        isMockHistoryEnabled
+                    )
+                }
+            ) { primaryPreferences, secondaryPreferences ->
+                val (languageMode, themeMode, shouldShowAssessmentHonestyNotice) = primaryPreferences
+                val (
+                    shouldShowAssessmentExitConfirmation,
+                    shouldShowStartupLegalDisclaimer,
+                    isMockHistoryEnabled
+                ) = secondaryPreferences
+
                 SettingsUiState.Ready(
                     SettingsUiModel(
                         languageMode = languageMode,
                         themeMode = themeMode,
                         shouldShowAssessmentHonestyNotice = shouldShowAssessmentHonestyNotice,
+                        shouldShowAssessmentExitConfirmation = shouldShowAssessmentExitConfirmation,
+                        shouldShowStartupLegalDisclaimer = shouldShowStartupLegalDisclaimer,
                         showMockHistoryTools = BuildConfig.DEBUG,
                         isMockHistoryEnabled = BuildConfig.DEBUG && isMockHistoryEnabled
                     )
@@ -107,6 +140,26 @@ class SettingsViewModel @Inject constructor(
             setAssessmentHonestyNoticeVisibilityUseCase.run(visible).collect { }
             appTelemetry.trackSettingChanged(
                 key = SettingsChangeKey.HONESTY_NOTICE,
+                value = visible.toString()
+            )
+        }
+    }
+
+    fun onAssessmentExitConfirmationChanged(visible: Boolean) {
+        viewModelScope.launch {
+            setAssessmentExitConfirmationVisibilityUseCase.run(visible).collect { }
+            appTelemetry.trackSettingChanged(
+                key = SettingsChangeKey.ASSESSMENT_EXIT_CONFIRMATION,
+                value = visible.toString()
+            )
+        }
+    }
+
+    fun onStartupLegalDisclaimerChanged(visible: Boolean) {
+        viewModelScope.launch {
+            setStartupLegalDisclaimerVisibilityUseCase.run(visible).collect { }
+            appTelemetry.trackSettingChanged(
+                key = SettingsChangeKey.STARTUP_LEGAL_DISCLAIMER,
                 value = visible.toString()
             )
         }

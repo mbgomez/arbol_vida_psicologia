@@ -7,13 +7,17 @@ import com.netah.hakkam.numyah.mind.app.observability.SettingsChangeKey
 import com.netah.hakkam.numyah.mind.domain.model.AppLanguageMode
 import com.netah.hakkam.numyah.mind.domain.model.AppThemeMode
 import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetMockHistoryModeUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.GetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.GetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentHonestyNoticeVisibilityUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetAssessmentExitConfirmationVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetLanguageModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetMockHistoryModeUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetOnboardingCompletedUseCase
+import com.netah.hakkam.numyah.mind.domain.usecase.SetStartupLegalDisclaimerVisibilityUseCase
 import com.netah.hakkam.numyah.mind.domain.usecase.SetThemeModeUseCase
 import com.netah.hakkam.numyah.mind.extension.CoroutinesTestRule
 import io.mockk.every
@@ -36,6 +40,10 @@ class SettingsViewModelTests {
     private lateinit var setThemeModeUseCase: SetThemeModeUseCase
     private lateinit var getAssessmentHonestyNoticeVisibilityUseCase: GetAssessmentHonestyNoticeVisibilityUseCase
     private lateinit var setAssessmentHonestyNoticeVisibilityUseCase: SetAssessmentHonestyNoticeVisibilityUseCase
+    private lateinit var getAssessmentExitConfirmationVisibilityUseCase: GetAssessmentExitConfirmationVisibilityUseCase
+    private lateinit var setAssessmentExitConfirmationVisibilityUseCase: SetAssessmentExitConfirmationVisibilityUseCase
+    private lateinit var getStartupLegalDisclaimerVisibilityUseCase: GetStartupLegalDisclaimerVisibilityUseCase
+    private lateinit var setStartupLegalDisclaimerVisibilityUseCase: SetStartupLegalDisclaimerVisibilityUseCase
     private lateinit var getMockHistoryModeUseCase: GetMockHistoryModeUseCase
     private lateinit var setMockHistoryModeUseCase: SetMockHistoryModeUseCase
     private lateinit var setOnboardingCompletedUseCase: SetOnboardingCompletedUseCase
@@ -53,6 +61,10 @@ class SettingsViewModelTests {
         setThemeModeUseCase = mockk(relaxed = true)
         getAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
         setAssessmentHonestyNoticeVisibilityUseCase = mockk(relaxed = true)
+        getAssessmentExitConfirmationVisibilityUseCase = mockk(relaxed = true)
+        setAssessmentExitConfirmationVisibilityUseCase = mockk(relaxed = true)
+        getStartupLegalDisclaimerVisibilityUseCase = mockk(relaxed = true)
+        setStartupLegalDisclaimerVisibilityUseCase = mockk(relaxed = true)
         getMockHistoryModeUseCase = mockk(relaxed = true)
         setMockHistoryModeUseCase = mockk(relaxed = true)
         setOnboardingCompletedUseCase = mockk(relaxed = true)
@@ -61,6 +73,8 @@ class SettingsViewModelTests {
         every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SYSTEM)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.SYSTEM)
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(true)
+        every { getAssessmentExitConfirmationVisibilityUseCase.run() } returns flowOf(true)
+        every { getStartupLegalDisclaimerVisibilityUseCase.run() } returns flowOf(true)
         every { getMockHistoryModeUseCase.run() } returns flowOf(false)
     }
 
@@ -69,6 +83,8 @@ class SettingsViewModelTests {
         every { getLanguageModeUseCase.run() } returns flowOf(AppLanguageMode.SPANISH)
         every { getThemeModeUseCase.run() } returns flowOf(AppThemeMode.DARK)
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
+        every { getAssessmentExitConfirmationVisibilityUseCase.run() } returns flowOf(false)
+        every { getStartupLegalDisclaimerVisibilityUseCase.run() } returns flowOf(false)
 
         val viewModel = SettingsViewModel(
             appLanguageManager = appLanguageManager,
@@ -78,6 +94,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -89,6 +109,8 @@ class SettingsViewModelTests {
         assertEquals(AppLanguageMode.SPANISH, uiState.model.languageMode)
         assertEquals(AppThemeMode.DARK, uiState.model.themeMode)
         assertEquals(false, uiState.model.shouldShowAssessmentHonestyNotice)
+        assertEquals(false, uiState.model.shouldShowAssessmentExitConfirmation)
+        assertEquals(false, uiState.model.shouldShowStartupLegalDisclaimer)
     }
 
     @Test
@@ -103,6 +125,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -130,6 +156,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -156,6 +186,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -171,6 +205,66 @@ class SettingsViewModelTests {
     }
 
     @Test
+    fun onAssessmentExitConfirmationChanged_savesPreference() = coroutinesRule.runBlockingTest {
+        every { setAssessmentExitConfirmationVisibilityUseCase.run(false) } returns flowOf(false)
+
+        val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
+            getThemeModeUseCase = getThemeModeUseCase,
+            setThemeModeUseCase = setThemeModeUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
+        )
+
+        viewModel.onAssessmentExitConfirmationChanged(false)
+
+        verify(exactly = 1) { setAssessmentExitConfirmationVisibilityUseCase.run(false) }
+        verify(exactly = 1) {
+            appTelemetry.trackSettingChanged(SettingsChangeKey.ASSESSMENT_EXIT_CONFIRMATION, "false")
+        }
+    }
+
+    @Test
+    fun onStartupLegalDisclaimerChanged_savesPreference() = coroutinesRule.runBlockingTest {
+        every { setStartupLegalDisclaimerVisibilityUseCase.run(false) } returns flowOf(false)
+
+        val viewModel = SettingsViewModel(
+            appLanguageManager = appLanguageManager,
+            getLanguageModeUseCase = getLanguageModeUseCase,
+            setLanguageModeUseCase = setLanguageModeUseCase,
+            getThemeModeUseCase = getThemeModeUseCase,
+            setThemeModeUseCase = setThemeModeUseCase,
+            getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
+            setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
+            getMockHistoryModeUseCase = getMockHistoryModeUseCase,
+            setMockHistoryModeUseCase = setMockHistoryModeUseCase,
+            setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
+            appTelemetry = appTelemetry
+        )
+
+        viewModel.onStartupLegalDisclaimerChanged(false)
+
+        verify(exactly = 1) { setStartupLegalDisclaimerVisibilityUseCase.run(false) }
+        verify(exactly = 1) {
+            appTelemetry.trackSettingChanged(SettingsChangeKey.STARTUP_LEGAL_DISCLAIMER, "false")
+        }
+    }
+
+    @Test
     fun onMockHistoryEnabledChanged_savesPreference() = coroutinesRule.runBlockingTest {
         every { setMockHistoryModeUseCase.run(true) } returns flowOf(true)
 
@@ -182,6 +276,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -206,6 +304,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,
@@ -231,6 +333,10 @@ class SettingsViewModelTests {
             setThemeModeUseCase = setThemeModeUseCase,
             getAssessmentHonestyNoticeVisibilityUseCase = getAssessmentHonestyNoticeVisibilityUseCase,
             setAssessmentHonestyNoticeVisibilityUseCase = setAssessmentHonestyNoticeVisibilityUseCase,
+            getAssessmentExitConfirmationVisibilityUseCase = getAssessmentExitConfirmationVisibilityUseCase,
+            setAssessmentExitConfirmationVisibilityUseCase = setAssessmentExitConfirmationVisibilityUseCase,
+            getStartupLegalDisclaimerVisibilityUseCase = getStartupLegalDisclaimerVisibilityUseCase,
+            setStartupLegalDisclaimerVisibilityUseCase = setStartupLegalDisclaimerVisibilityUseCase,
             getMockHistoryModeUseCase = getMockHistoryModeUseCase,
             setMockHistoryModeUseCase = setMockHistoryModeUseCase,
             setOnboardingCompletedUseCase = setOnboardingCompletedUseCase,

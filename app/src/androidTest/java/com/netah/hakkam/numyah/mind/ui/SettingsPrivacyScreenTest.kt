@@ -39,6 +39,9 @@ class SettingsPrivacyScreenTest {
         composeTestRule.onRoot().performTouchInput { swipeUp() }
 
         composeTestRule.onNodeWithText(
+            context.getString(R.string.settings_privacy_entry_note_title)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
             context.getString(R.string.settings_privacy_boundary_title)
         ).assertIsDisplayed()
     }

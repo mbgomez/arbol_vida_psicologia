@@ -16,8 +16,12 @@ import kotlinx.coroutines.flow.map
 interface AppPreferencesRepository {
     fun hasCompletedOnboarding(): Flow<Boolean>
     fun setOnboardingCompleted(completed: Boolean): Flow<Boolean>
+    fun shouldShowStartupLegalDisclaimer(): Flow<Boolean>
+    fun setStartupLegalDisclaimerVisible(visible: Boolean): Flow<Boolean>
     fun shouldShowAssessmentHonestyNotice(): Flow<Boolean>
     fun setAssessmentHonestyNoticeVisible(visible: Boolean): Flow<Boolean>
+    fun shouldShowAssessmentExitConfirmation(): Flow<Boolean>
+    fun setAssessmentExitConfirmationVisible(visible: Boolean): Flow<Boolean>
     fun shouldUseMockHistory(): Flow<Boolean>
     fun setUseMockHistory(enabled: Boolean): Flow<Boolean>
     fun getLanguageMode(): Flow<AppLanguageMode>
@@ -40,6 +44,14 @@ class LocalAppPreferencesRepository @Inject constructor(
     override fun setOnboardingCompleted(completed: Boolean): Flow<Boolean> =
         writePreference(KEY_ONBOARDING_COMPLETED, completed)
 
+    override fun shouldShowStartupLegalDisclaimer(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_SHOW_STARTUP_LEGAL_DISCLAIMER] ?: true
+        }.distinctUntilChanged()
+
+    override fun setStartupLegalDisclaimerVisible(visible: Boolean): Flow<Boolean> =
+        writePreference(KEY_SHOW_STARTUP_LEGAL_DISCLAIMER, visible)
+
     override fun shouldShowAssessmentHonestyNotice(): Flow<Boolean> =
         dataStore.data.map { preferences ->
             preferences[KEY_SHOW_ASSESSMENT_HONESTY_NOTICE] ?: true
@@ -47,6 +59,14 @@ class LocalAppPreferencesRepository @Inject constructor(
 
     override fun setAssessmentHonestyNoticeVisible(visible: Boolean): Flow<Boolean> =
         writePreference(KEY_SHOW_ASSESSMENT_HONESTY_NOTICE, visible)
+
+    override fun shouldShowAssessmentExitConfirmation(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_SHOW_ASSESSMENT_EXIT_CONFIRMATION] ?: true
+        }.distinctUntilChanged()
+
+    override fun setAssessmentExitConfirmationVisible(visible: Boolean): Flow<Boolean> =
+        writePreference(KEY_SHOW_ASSESSMENT_EXIT_CONFIRMATION, visible)
 
     override fun shouldUseMockHistory(): Flow<Boolean> =
         dataStore.data.map { preferences ->
@@ -117,7 +137,9 @@ class LocalAppPreferencesRepository @Inject constructor(
 
     private companion object {
         val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val KEY_SHOW_STARTUP_LEGAL_DISCLAIMER = booleanPreferencesKey("show_startup_legal_disclaimer")
         val KEY_SHOW_ASSESSMENT_HONESTY_NOTICE = booleanPreferencesKey("show_assessment_honesty_notice")
+        val KEY_SHOW_ASSESSMENT_EXIT_CONFIRMATION = booleanPreferencesKey("show_assessment_exit_confirmation")
         val KEY_USE_MOCK_HISTORY = booleanPreferencesKey("use_mock_history")
         val KEY_LANGUAGE_MODE = stringPreferencesKey("language_mode")
         val KEY_THEME_MODE = stringPreferencesKey("theme_mode")

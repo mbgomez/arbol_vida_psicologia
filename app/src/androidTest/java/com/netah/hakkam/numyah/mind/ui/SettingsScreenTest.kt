@@ -41,11 +41,14 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -66,11 +69,14 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -102,11 +108,14 @@ class SettingsScreenTest {
                         uiState = readyState(themeMode = it)
                     },
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -135,11 +144,14 @@ class SettingsScreenTest {
                     },
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -163,11 +175,14 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -203,11 +218,14 @@ class SettingsScreenTest {
                         honestyNoticeEnabled = it
                         uiState = readyState(honestyNoticeVisible = it)
                     },
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -232,11 +250,14 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = { replayedOnboarding = true }
                 )
             }
@@ -251,10 +272,11 @@ class SettingsScreenTest {
     }
 
     @Test
-    fun settingsScreen_openPrivacyAndAbout_invokeCallbacks() {
+    fun settingsScreen_openPrivacyAboutAndLegalNote_invokeCallbacks() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var openedPrivacy = false
         var openedAbout = false
+        var openedLegal = false
 
         composeTestRule.setContent {
             AppTheme {
@@ -264,21 +286,26 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = {},
                     onForceTestCrash = {},
                     onOpenPrivacy = { openedPrivacy = true },
                     onOpenAbout = { openedAbout = true },
+                    onOpenLegalDisclaimer = { openedLegal = true },
                     onReplayOnboarding = {}
                 )
             }
         }
 
+        composeTestRule.onNodeWithTag("settings_open_legal_card").performScrollTo().performClick()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_privacy_title)).performScrollTo().performClick()
         composeTestRule.onNodeWithText(context.getString(R.string.settings_about_title)).performScrollTo().performClick()
 
         assertTrue(openedPrivacy)
         assertTrue(openedAbout)
+        assertTrue(openedLegal)
     }
 
     @Test
@@ -296,6 +323,8 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {
                         mockHistoryEnabled = it
                         uiState = readyState(mockHistoryEnabled = it)
@@ -304,6 +333,7 @@ class SettingsScreenTest {
                     onForceTestCrash = {},
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -333,11 +363,14 @@ class SettingsScreenTest {
                     onLanguageModeSelected = {},
                     onThemeModeSelected = {},
                     onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {},
                     onMockHistoryEnabledChanged = {},
                     onReportTestNonFatal = { reportedNonFatal = true },
                     onForceTestCrash = { forcedCrash = true },
                     onOpenPrivacy = {},
                     onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
                     onReplayOnboarding = {}
                 )
             }
@@ -360,10 +393,86 @@ class SettingsScreenTest {
         assertTrue(forcedCrash)
     }
 
+    @Test
+    fun settingsScreen_toggleExitConfirmation_invokesCallback() {
+        var exitConfirmationEnabled = true
+
+        composeTestRule.setContent {
+            var uiState by remember { mutableStateOf(readyState()) }
+
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = uiState,
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {
+                        exitConfirmationEnabled = it
+                        uiState = readyState(exitConfirmationVisible = it)
+                    },
+                    onStartupLegalDisclaimerChanged = {},
+                    onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
+                    onOpenLegalDisclaimer = {},
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_exit_confirmation_row").performScrollTo().performClick()
+        composeTestRule.waitForIdle()
+
+        assertTrue(!exitConfirmationEnabled)
+    }
+
+    @Test
+    fun settingsScreen_toggleStartupLegalNote_invokesCallback() {
+        var startupLegalEnabled = true
+        var openedLegalDisclaimer = false
+
+        composeTestRule.setContent {
+            var uiState by remember { mutableStateOf(readyState()) }
+
+            AppTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(),
+                    uiState = uiState,
+                    onLanguageModeSelected = {},
+                    onThemeModeSelected = {},
+                    onAssessmentHonestyNoticeChanged = {},
+                    onAssessmentExitConfirmationChanged = {},
+                    onStartupLegalDisclaimerChanged = {
+                        startupLegalEnabled = it
+                        uiState = readyState(startupLegalVisible = it)
+                    },
+                    onMockHistoryEnabledChanged = {},
+                    onReportTestNonFatal = {},
+                    onForceTestCrash = {},
+                    onOpenPrivacy = {},
+                    onOpenAbout = {},
+                    onOpenLegalDisclaimer = { openedLegalDisclaimer = true },
+                    onReplayOnboarding = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_startup_legal_row").performScrollTo().performClick()
+        composeTestRule.waitForIdle()
+
+        assertTrue(!startupLegalEnabled)
+        assertTrue(!openedLegalDisclaimer)
+    }
+
     private fun readyState(
         languageMode: AppLanguageMode = AppLanguageMode.SYSTEM,
         themeMode: AppThemeMode = AppThemeMode.SYSTEM,
         honestyNoticeVisible: Boolean = true,
+        exitConfirmationVisible: Boolean = true,
+        startupLegalVisible: Boolean = true,
         mockHistoryEnabled: Boolean = false
     ): SettingsUiState {
         return SettingsUiState.Ready(
@@ -371,6 +480,8 @@ class SettingsScreenTest {
                 languageMode = languageMode,
                 themeMode = themeMode,
                 shouldShowAssessmentHonestyNotice = honestyNoticeVisible,
+                shouldShowAssessmentExitConfirmation = exitConfirmationVisible,
+                shouldShowStartupLegalDisclaimer = startupLegalVisible,
                 showMockHistoryTools = true,
                 isMockHistoryEnabled = mockHistoryEnabled
             )
