@@ -34,7 +34,9 @@ Current roadmap state:
 - The bounded Phase 1 return slice for section-complete `completionContent` is implemented.
 - The top-level Home and Assessments state-surface polish slice is now implemented and manually verified.
 - The bounded Settings polish slice is now implemented and verified, including calmer bilingual readability tuning and a hidden debug-tools reveal path that keeps the default Settings surface cleaner.
-- The current recommended next slice remains a bounded remaining `Phase 2` polish thread rather than a Phase 3 refactor jump.
+- The final bounded Phase 2 assessment-flow polish slice is now implemented and manually verified.
+- `Phase 2: UX And Enjoyment Polish` is now complete.
+- The next mainline recommendation is `Phase 3: Refactor And Architecture Hardening`.
 - The user runs all builds, tests, emulator checks, adb commands, Firebase checks, and Play Console steps manually.
 
 Current app direction:

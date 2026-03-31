@@ -63,6 +63,9 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithContentDescription(
             context.getString(R.string.progress_indicator_desccription)
         ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_loading_title)
+        ).assertIsDisplayed()
     }
 
     @Test
@@ -351,15 +354,14 @@ class AssessmentScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
         composeTestRule.onNodeWithText("Grounded contact with practical life.").performScrollTo().assertIsDisplayed()
         composeTestRule.onAllNodesWithText("Material life may be asking for more support.")
-            .assertCountEquals(2)
-        composeTestRule.onAllNodesWithText("Material life may be asking for more support.")[1]
-            .performScrollTo()
-            .assertIsDisplayed()
+            .assertCountEquals(1)
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_confidence_note_low)
+        ).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Choose one steady act of care this week.").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("22%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("51%", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("27%", substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_daily_life_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_next_step_title)).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_home_action)).performScrollTo().performClick()
 
@@ -389,6 +391,9 @@ class AssessmentScreenTest {
             }
         }
 
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_error_load_title)
+        ).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_error_load)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_retry)).performClick()
 

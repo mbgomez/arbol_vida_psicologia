@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -34,7 +32,10 @@ import com.netah.hakkam.numyah.mind.ui.components.AssessmentHeroImage
 import com.netah.hakkam.numyah.mind.ui.components.AssessmentInfoCard
 import com.netah.hakkam.numyah.mind.ui.components.AssessmentProgressHeader
 import com.netah.hakkam.numyah.mind.ui.components.AssessmentResultSummaryCard
+import com.netah.hakkam.numyah.mind.ui.components.AssessmentScoreSummaryCard
 import com.netah.hakkam.numyah.mind.ui.components.AssessmentScreenColumn
+import com.netah.hakkam.numyah.mind.ui.components.AppHeroCard
+import com.netah.hakkam.numyah.mind.ui.components.AppSurfaceCard
 import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceLabel
 import com.netah.hakkam.numyah.mind.ui.components.assessmentConfidenceNoteText
 import com.netah.hakkam.numyah.mind.ui.components.assessmentDominantLabel
@@ -46,6 +47,8 @@ import com.netah.hakkam.numyah.mind.viewmodel.AssessmentQuestionUiModel
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentUiState
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentViewModel
 import kotlin.math.roundToInt
+
+internal const val ASSESSMENT_COMPLETED_SCROLL_TAG = "assessment_completed_scroll"
 
 @Composable
 fun AssessmentRoute(
@@ -121,17 +124,33 @@ fun AssessmentScreen(
 @Composable
 private fun AssessmentLoadingState() {
     val loadingDescription = stringResource(R.string.progress_indicator_desccription)
+    val cardSpacing = dimensionResource(R.dimen.spacing_md)
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.semantics {
-                contentDescription = loadingDescription
-            }
+    AssessmentScreenColumn {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.assessment_loading_eyebrow),
+            title = stringResource(R.string.assessment_loading_title),
+            body = stringResource(R.string.assessment_loading_body)
         )
+        AppSurfaceCard {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(cardSpacing)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = loadingDescription
+                        }
+                )
+                Text(
+                    text = stringResource(R.string.assessment_loading_support),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
 
@@ -282,7 +301,7 @@ private fun AssessmentCompletedState(
     onContinue: () -> Unit,
     onBackHome: () -> Unit
 ) {
-    AssessmentScreenColumn {
+    AssessmentScreenColumn(modifier = Modifier.testTag(ASSESSMENT_COMPLETED_SCROLL_TAG)) {
         Text(
             text = stringResource(R.string.assessment_result_title, model.sephiraName),
             style = MaterialTheme.typography.headlineLarge,
@@ -300,27 +319,12 @@ private fun AssessmentCompletedState(
             title = stringResource(R.string.assessment_result_what_it_means_title),
             body = model.sectionSummary
         )
-        AssessmentInfoCard(
-            title = assessmentConfidenceLabel(model.confidence),
-            body = buildString {
-                append(assessmentConfidenceNoteText(model.confidence))
-                append("\n\n")
-                append(stringResource(R.string.assessment_score_balance))
-                append(": ")
-                append(scorePercentText(model.balanceScore))
-                append("\n")
-                append(stringResource(R.string.assessment_score_deficiency))
-                append(": ")
-                append(scorePercentText(model.deficiencyScore))
-                append("\n")
-                append(stringResource(R.string.assessment_score_excess))
-                append(": ")
-                append(scorePercentText(model.excessScore))
-            }
-        )
-        AssessmentInfoCard(
-            title = stringResource(R.string.assessment_result_daily_life_title),
-            body = model.completionReflection
+        AssessmentScoreSummaryCard(
+            confidenceLabel = assessmentConfidenceLabel(model.confidence),
+            confidenceNote = assessmentConfidenceNoteText(model.confidence),
+            balancePercent = scorePercentValue(model.balanceScore),
+            deficiencyPercent = scorePercentValue(model.deficiencyScore),
+            excessPercent = scorePercentValue(model.excessScore)
         )
         AssessmentInfoCard(
             title = stringResource(R.string.assessment_result_next_step_title),
@@ -356,25 +360,35 @@ private fun AssessmentErrorState(
     errorType: AssessmentErrorType,
     onRetry: () -> Unit
 ) {
-    val horizontalPadding = dimensionResource(R.dimen.screen_padding_horizontal)
-    val spacing = dimensionResource(R.dimen.screen_section_spacing)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = horizontalPadding, vertical = spacing),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = errorMessage(errorType),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+    AssessmentScreenColumn {
+        AppHeroCard(
+            eyebrow = stringResource(R.string.assessment_error_eyebrow),
+            title = errorTitle(errorType),
+            body = errorMessage(errorType)
         )
-        Spacer(modifier = Modifier.height(spacing))
-        Button(onClick = onRetry) {
+        AppSurfaceCard {
+            Text(
+                text = errorSupportMessage(errorType),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(stringResource(R.string.assessment_retry))
         }
+    }
+}
+
+@Composable
+private fun errorTitle(errorType: AssessmentErrorType): String {
+    return when (errorType) {
+        AssessmentErrorType.LOAD -> stringResource(R.string.assessment_error_load_title)
+        AssessmentErrorType.SAVE_ANSWER -> stringResource(R.string.assessment_error_save_title)
+        AssessmentErrorType.CONTINUE -> stringResource(R.string.assessment_error_continue_title)
+        AssessmentErrorType.GO_BACK -> stringResource(R.string.assessment_error_back_title)
     }
 }
 
@@ -388,6 +402,16 @@ private fun errorMessage(errorType: AssessmentErrorType): String {
     }
 }
 
-private fun scorePercentText(value: Double): String = "${(value * 100).roundToInt()}%"
+@Composable
+private fun errorSupportMessage(errorType: AssessmentErrorType): String {
+    return when (errorType) {
+        AssessmentErrorType.LOAD -> stringResource(R.string.assessment_error_load_support)
+        AssessmentErrorType.SAVE_ANSWER -> stringResource(R.string.assessment_error_save_support)
+        AssessmentErrorType.CONTINUE -> stringResource(R.string.assessment_error_continue_support)
+        AssessmentErrorType.GO_BACK -> stringResource(R.string.assessment_error_back_support)
+    }
+}
+
+private fun scorePercentValue(value: Double): Int = (value * 100).roundToInt()
 
 private const val ASSESSMENT_HONESTY_CHECKBOX_TAG = "assessment_honesty_checkbox"

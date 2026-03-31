@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -164,6 +165,72 @@ fun AssessmentResultSummaryCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Composable
+fun AssessmentScoreSummaryCard(
+    confidenceLabel: String,
+    confidenceNote: String,
+    balancePercent: Int,
+    deficiencyPercent: Int,
+    excessPercent: Int,
+    modifier: Modifier = Modifier
+) {
+    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
+
+    AppSurfaceCard(modifier = modifier) {
+        Column(verticalArrangement = Arrangement.spacedBy(contentSpacing)) {
+            Text(
+                text = confidenceLabel,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = confidenceNote,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            AssessmentScoreProgressMeters(
+                balancePercent = balancePercent,
+                deficiencyPercent = deficiencyPercent,
+                excessPercent = excessPercent
+            )
+        }
+    }
+}
+
+@Composable
+fun AssessmentScoreProgressMeters(
+    balancePercent: Int,
+    deficiencyPercent: Int,
+    excessPercent: Int,
+    modifier: Modifier = Modifier,
+    balanceColor: Color = MaterialTheme.colorScheme.primary,
+    deficiencyColor: Color = MaterialTheme.colorScheme.secondary,
+    excessColor: Color = MaterialTheme.colorScheme.tertiary
+) {
+    val contentSpacing = dimensionResource(R.dimen.spacing_sm)
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(contentSpacing)
+    ) {
+        AppProgressMeter(
+            label = stringResource(R.string.assessment_score_balance),
+            value = balancePercent,
+            color = balanceColor
+        )
+        AppProgressMeter(
+            label = stringResource(R.string.assessment_score_deficiency),
+            value = deficiencyPercent,
+            color = deficiencyColor
+        )
+        AppProgressMeter(
+            label = stringResource(R.string.assessment_score_excess),
+            value = excessPercent,
+            color = excessColor
+        )
     }
 }
 
