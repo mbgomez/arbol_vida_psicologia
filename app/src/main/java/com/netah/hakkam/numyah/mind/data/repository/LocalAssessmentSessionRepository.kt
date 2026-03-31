@@ -106,7 +106,8 @@ class LocalAssessmentSessionRepository @Inject constructor(
         val session = assessmentSessionDao.getActiveInProgressSession()
             ?: error("Expected an active assessment session after startOrResumeSession")
         val responses = assessmentSessionDao.getResponsesForSession(sessionId)
-        emit(session.toSnapshot(responses = responses, scores = emptyList()))
+        val scores = assessmentSessionDao.getScoresForSession(sessionId)
+        emit(session.toSnapshot(responses = responses, scores = scores))
     }
 
     override fun observeActiveSession(): Flow<AssessmentSessionSnapshot?> {
@@ -232,7 +233,8 @@ class LocalAssessmentSessionRepository @Inject constructor(
         val session = assessmentSessionDao.getActiveInProgressSession()
             ?: error("Expected active session after saving answer")
         val responses = assessmentSessionDao.getResponsesForSession(sessionId)
-        emit(session.toSnapshot(responses = responses, scores = emptyList()))
+        val scores = assessmentSessionDao.getScoresForSession(sessionId)
+        emit(session.toSnapshot(responses = responses, scores = scores))
     }
 
     override fun completeSession(

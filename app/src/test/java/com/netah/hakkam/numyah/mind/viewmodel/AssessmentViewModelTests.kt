@@ -402,6 +402,42 @@ class AssessmentViewModelTests {
     }
 
     @Test
+    fun init_whenCurrentSephiraAlreadyHasSavedScore_restoresCompletedState() = coroutinesRule.runBlockingTest {
+        val questionnaire = questionnaireWithTwoSections()
+        val savedScore = SephiraScore(
+            sessionId = 1L,
+            sephiraId = SephiraId.MALKUTH,
+            balanceScore = 0.30,
+            deficiencyScore = 0.20,
+            excessScore = 0.50,
+            dominantPole = Pole.EXCESS,
+            confidence = ConfidenceLevel.MEDIUM,
+            isLowConfidence = false
+        )
+        every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaire)
+        every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)
+        every { startOrResumeAssessmentUseCase.run(any()) } returns flowOf(
+            testSnapshot(
+                questionnaireVersion = "tree-v1",
+                totalQuestions = 1,
+                currentSephiraId = SephiraId.MALKUTH,
+                responses = listOf(
+                    SavedResponse("q_last", "agree", 3, 0, 1L)
+                ),
+                scores = listOf(savedScore)
+            )
+        )
+
+        val viewModel = createViewModel()
+
+        val state = viewModel.uiState.value as AssessmentUiState.Completed
+        assertEquals("Malkuth", state.model.sephiraName)
+        assertEquals("Excess reflection", state.model.completionReflection)
+        assertTrue(state.model.hasNextSephira)
+        assertEquals("Yesod", state.model.nextSephiraName)
+    }
+
+    @Test
     fun init_whenCurrentSectionHasNoOwnProgress_doesNotShowResumeLabel() = coroutinesRule.runBlockingTest {
         every { getCurrentQuestionnaireUseCase.run(Locale.ENGLISH) } returns flowOf(questionnaireWithTwoSections())
         every { getAssessmentHonestyNoticeVisibilityUseCase.run() } returns flowOf(false)

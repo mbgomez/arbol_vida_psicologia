@@ -109,6 +109,61 @@ class LocalAssessmentSessionRepositoryTest {
     }
 
     @Test
+    fun startOrResumeSession_preservesSavedScoresOnExistingInProgressSession() = runBlocking {
+        val session = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6,
+            forceStartFresh = false
+        ).first()
+
+        repository.saveSephiraScore(
+            sessionId = session.sessionId,
+            score = completedScore(session.sessionId, SephiraId.MALKUTH, Pole.EXCESS)
+        ).first()
+
+        val resumed = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6,
+            forceStartFresh = false
+        ).first()
+
+        assertEquals(1, resumed.scores.size)
+        assertEquals(SephiraId.MALKUTH, resumed.scores.first().sephiraId)
+        assertEquals(Pole.EXCESS, resumed.scores.first().dominantPole)
+    }
+
+    @Test
+    fun saveAnswer_preservesPreviouslySavedScores() = runBlocking {
+        val session = repository.startOrResumeSession(
+            questionnaireVersion = "tree-v1",
+            initialSephiraId = SephiraId.MALKUTH,
+            totalQuestions = 6,
+            forceStartFresh = false
+        ).first()
+
+        repository.saveSephiraScore(
+            sessionId = session.sessionId,
+            score = completedScore(session.sessionId, SephiraId.MALKUTH, Pole.BALANCE)
+        ).first()
+
+        val updated = repository.saveAnswer(
+            sessionId = session.sessionId,
+            questionId = "malkuth_resources_excess",
+            selectedOptionId = "agree",
+            numericValue = 3,
+            questionOrder = 0,
+            nextPageIndex = 0,
+            nextQuestionIndex = 1
+        ).first()
+
+        assertEquals(1, updated.scores.size)
+        assertEquals(SephiraId.MALKUTH, updated.scores.first().sephiraId)
+        assertEquals(Pole.BALANCE, updated.scores.first().dominantPole)
+    }
+
+    @Test
     fun advanceToSephira_updatesActiveSectionPosition() = runBlocking {
         val session = repository.startOrResumeSession(
             questionnaireVersion = "tree-v1",

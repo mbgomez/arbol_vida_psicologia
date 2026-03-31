@@ -7,9 +7,9 @@ import com.netah.hakkam.numyah.mind.app.CurrentLocaleProvider
 import com.netah.hakkam.numyah.mind.app.observability.AppTelemetry
 import com.netah.hakkam.numyah.mind.app.observability.NonFatalIssueKey
 import com.netah.hakkam.numyah.mind.domain.model.AssessmentSessionSnapshot
+import com.netah.hakkam.numyah.mind.domain.model.AssessmentStatus
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
-import com.netah.hakkam.numyah.mind.domain.model.QuestionPageContent
 import com.netah.hakkam.numyah.mind.domain.model.QuestionnaireContent
 import com.netah.hakkam.numyah.mind.domain.model.ScoreInput
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
@@ -170,28 +170,30 @@ class AssessmentViewModel @Inject constructor(
                     )
                 ).first()
 
-                if (currentSection(questionnaire, sessionSnapshot) == null) {
+                if (AssessmentProgressionHelper.currentSection(questionnaire, sessionSnapshot) == null) {
                     _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)
                     return@launch
                 }
 
                 questionnaireContent = questionnaire
                 currentSnapshot = sessionSnapshot
-                pendingNextSection = null
-                val currentSection = currentSection(questionnaire, sessionSnapshot)
+                pendingNextSection = resolvedPendingNextSection(questionnaire, sessionSnapshot)
+                val currentSection = AssessmentProgressionHelper.currentSection(questionnaire, sessionSnapshot)
                     ?: run {
                         _uiState.value = AssessmentUiState.Error(AssessmentErrorType.LOAD)
                         return@launch
                     }
-                val hasCurrentSectionProgress = hasProgressInCurrentSection(currentSection, sessionSnapshot)
                 val shouldShowHonestyNotice = getAssessmentHonestyNoticeVisibilityUseCase.run().first()
                 honestyNoticeDismissed = !shouldShowHonestyNotice ||
                     sessionSnapshot.responses.isNotEmpty() ||
                     sessionSnapshot.currentPageIndex > 0 ||
                     sessionSnapshot.currentQuestionIndex > 0
                 doNotShowHonestyNoticeAgain = false
-                introDismissed = hasCurrentSectionProgress
-                emitPhaseState()
+                introDismissed = AssessmentProgressionHelper.hasProgressInCurrentSection(
+                    currentSection,
+                    sessionSnapshot
+                )
+                emitRestoredState()
             } catch (throwable: Throwable) {
                 appTelemetry.recordNonFatal(
                     key = NonFatalIssueKey.ASSESSMENT_LOAD_FAILED,
@@ -230,7 +232,7 @@ class AssessmentViewModel @Inject constructor(
         val snapshot = currentSnapshot ?: return
         val questionModel = (_uiState.value as? AssessmentUiState.Question)?.model ?: return
         val option = questionModel.answerOptions.firstOrNull { it.id == optionId } ?: return
-        val question = currentQuestion(questionnaire, snapshot) ?: return
+        val question = AssessmentProgressionHelper.currentQuestion(questionnaire, snapshot) ?: return
 
         viewModelScope.launch {
             try {
@@ -269,8 +271,8 @@ class AssessmentViewModel @Inject constructor(
             }
             is AssessmentUiState.Question -> {
                 val selectedOption = state.model.answerOptions.firstOrNull { it.isSelected } ?: return
-                val question = currentQuestion(questionnaire, snapshot) ?: return
-                val nextPosition = nextPosition(questionnaire, snapshot)
+                val question = AssessmentProgressionHelper.currentQuestion(questionnaire, snapshot) ?: return
+                val nextPosition = AssessmentProgressionHelper.nextPosition(questionnaire, snapshot)
 
                 viewModelScope.launch {
                     try {
@@ -287,7 +289,7 @@ class AssessmentViewModel @Inject constructor(
                         ).first()
 
                         if (nextPosition.isComplete) {
-                            val activeSephira = activeSephira(updatedSnapshot)
+                            val activeSephira = AssessmentProgressionHelper.activeSephira(updatedSnapshot)
                             val score = assessmentScoringEngine.score(
                                 input = ScoreInput(
                                     questionnaire = questionnaire,
@@ -296,7 +298,7 @@ class AssessmentViewModel @Inject constructor(
                                 ),
                                 sessionId = updatedSnapshot.sessionId
                             )
-                            val nextSection = nextSection(questionnaire, activeSephira)
+                            val nextSection = AssessmentProgressionHelper.nextSection(questionnaire, activeSephira)
                             if (nextSection == null) {
                                 val completedSnapshot = completeAssessmentUseCase.run(updatedSnapshot.sessionId to score).first()
                                 currentSnapshot = completedSnapshot
@@ -364,7 +366,7 @@ class AssessmentViewModel @Inject constructor(
             return
         }
 
-        val previous = previousPosition(questionnaire, snapshot)
+        val previous = AssessmentProgressionHelper.previousPosition(questionnaire, snapshot)
         if (previous == null) {
             introDismissed = false
             emitPhaseState()
@@ -400,78 +402,13 @@ class AssessmentViewModel @Inject constructor(
     private fun emitPhaseState() {
         val questionnaire = questionnaireContent ?: return
         val snapshot = currentSnapshot ?: return
-        val section = currentSection(questionnaire, snapshot) ?: return
-
-        if (!honestyNoticeDismissed) {
-            _uiState.value = AssessmentUiState.HonestyNotice(
-                AssessmentHonestyNoticeUiModel(
-                    isDoNotShowAgainChecked = doNotShowHonestyNoticeAgain
-                )
-            )
-            return
-        }
-
-        if (!introDismissed) {
-            val hasSectionProgress = hasProgressInCurrentSection(section, snapshot)
-            _uiState.value = AssessmentUiState.Intro(
-                AssessmentIntroUiModel(
-                    questionnaireTitle = questionnaire.title,
-                    sephiraId = section.sephiraId,
-                    sephiraName = section.displayName,
-                    shortMeaning = section.shortMeaning,
-                    introText = section.introText,
-                    isResumeSession = hasSectionProgress,
-                    progress = AssessmentProgressUiModel(
-                        currentPageIndex = snapshot.currentPageIndex,
-                        totalPages = section.pages.size,
-                        currentQuestionNumber = 0,
-                        totalQuestions = section.questions.size,
-                        overallProgress = 0f
-                    )
-                )
-            )
-            return
-        }
-
-        val page = section.pages.getOrNull(snapshot.currentPageIndex) ?: section.pages.first()
-        val questionId = page.questionIds.getOrNull(snapshot.currentQuestionIndex) ?: page.questionIds.first()
-        val question = section.questions.first { it.id == questionId }
-        val selectedResponse = snapshot.responses.firstOrNull { it.questionId == question.id }
-        val questionNumber = absoluteQuestionNumber(section.pages, snapshot.currentPageIndex, snapshot.currentQuestionIndex)
-        val totalQuestions = section.questions.size
-
-        _uiState.value = AssessmentUiState.Question(
-            AssessmentQuestionUiModel(
-                questionnaireTitle = questionnaire.title,
-                sephiraId = section.sephiraId,
-                sephiraName = section.displayName,
-                currentPageTitle = page.title,
-                currentPageDescription = page.description,
-                currentQuestionPrompt = question.prompt,
-                answerOptions = questionnaire.responseScale.options.map { option ->
-                    AssessmentAnswerOptionUiModel(
-                        id = option.id,
-                        label = option.label,
-                        numericValue = option.numericValue,
-                        isSelected = option.id == selectedResponse?.selectedOptionId
-                    )
-                },
-                selectedOptionId = selectedResponse?.selectedOptionId,
-                progress = AssessmentProgressUiModel(
-                    currentPageIndex = snapshot.currentPageIndex,
-                    totalPages = section.pages.size,
-                    currentQuestionNumber = questionNumber,
-                    totalQuestions = totalQuestions,
-                    overallProgress = questionNumber.toFloat() / totalQuestions.toFloat()
-                ),
-                navigation = AssessmentNavigationUiModel(
-                    canGoBack = questionNumber > 1,
-                    canContinue = selectedResponse != null,
-                    isFirstQuestion = questionNumber == 1,
-                    isLastQuestion = questionNumber == totalQuestions
-                )
-            )
-        )
+        _uiState.value = AssessmentUiStateFactory.createPhaseState(
+            questionnaire = questionnaire,
+            snapshot = snapshot,
+            honestyNoticeDismissed = honestyNoticeDismissed,
+            doNotShowHonestyNoticeAgain = doNotShowHonestyNoticeAgain,
+            introDismissed = introDismissed
+        ) ?: return
     }
 
     private fun emitCompletedState(
@@ -479,122 +416,41 @@ class AssessmentViewModel @Inject constructor(
         nextSection: SephiraSectionContent?
     ) {
         val questionnaire = questionnaireContent ?: return
-        val activeSephira = activeSephira(snapshot)
-        val section = questionnaire.sections.first { it.sephiraId == activeSephira }
-        val score = snapshot.scores.firstOrNull { it.sephiraId == activeSephira } ?: return
-        val completionState = when (score.dominantPole) {
-            Pole.BALANCE -> section.completionContent.balanced
-            Pole.DEFICIENCY -> section.completionContent.deficiency
-            Pole.EXCESS -> section.completionContent.excess
-        }
-
-        _uiState.value = AssessmentUiState.Completed(
-            AssessmentCompletedUiModel(
-                sephiraId = section.sephiraId,
-                sephiraName = section.displayName,
-                sectionSummary = section.completionContent.sectionSummary,
-                completionReflection = completionState.reflection,
-                practiceSuggestion = completionState.practice,
-                dominantPole = score.dominantPole,
-                confidence = score.confidence,
-                balanceScore = score.balanceScore,
-                deficiencyScore = score.deficiencyScore,
-                excessScore = score.excessScore,
-                isLowConfidence = score.isLowConfidence,
-                hasNextSephira = nextSection != null,
-                nextSephiraName = nextSection?.displayName
-            )
-        )
+        _uiState.value = AssessmentUiStateFactory.createCompletedState(
+            questionnaire = questionnaire,
+            snapshot = snapshot,
+            nextSection = nextSection
+        ) ?: return
     }
 
-    private fun currentQuestion(
-        questionnaire: QuestionnaireContent,
-        snapshot: AssessmentSessionSnapshot
-    ) = currentSection(questionnaire, snapshot)
-        ?.let { section ->
-            val page = section.pages[snapshot.currentPageIndex]
-            val questionId = page.questionIds[snapshot.currentQuestionIndex]
-            section.questions.first { it.id == questionId }
+    private fun emitRestoredState() {
+        val questionnaire = questionnaireContent ?: return
+        val snapshot = currentSnapshot ?: return
+        val restoredPendingNextSection = resolvedPendingNextSection(questionnaire, snapshot)
+        if (restoredPendingNextSection != null) {
+            pendingNextSection = restoredPendingNextSection
+            emitCompletedState(snapshot, restoredPendingNextSection)
+            return
         }
-
-    private fun nextPosition(
-        questionnaire: QuestionnaireContent,
-        snapshot: AssessmentSessionSnapshot
-    ): AssessmentPosition {
-        val section = currentSection(questionnaire, snapshot)
-            ?: return AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex, true)
-        val currentPage = section.pages[snapshot.currentPageIndex]
-        return if (snapshot.currentQuestionIndex < currentPage.questionIds.lastIndex) {
-            AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex + 1, false)
-        } else if (snapshot.currentPageIndex < section.pages.lastIndex) {
-            AssessmentPosition(snapshot.currentPageIndex + 1, 0, false)
-        } else {
-            AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex, true)
-        }
+        emitPhaseState()
     }
 
-    private fun previousPosition(
+    private fun resolvedPendingNextSection(
         questionnaire: QuestionnaireContent,
         snapshot: AssessmentSessionSnapshot
-    ): AssessmentPosition? {
-        val section = currentSection(questionnaire, snapshot) ?: return null
-        return when {
-            snapshot.currentQuestionIndex > 0 -> {
-                AssessmentPosition(snapshot.currentPageIndex, snapshot.currentQuestionIndex - 1, false)
-            }
-            snapshot.currentPageIndex > 0 -> {
-                val previousPageIndex = snapshot.currentPageIndex - 1
-                val previousPage = section.pages[previousPageIndex]
-                AssessmentPosition(previousPageIndex, previousPage.questionIds.lastIndex, false)
-            }
-            else -> null
-        }
-    }
-
-    private fun absoluteQuestionNumber(
-        pages: List<QuestionPageContent>,
-        pageIndex: Int,
-        questionIndex: Int
-    ): Int {
-        val previousQuestions = pages.take(pageIndex).sumOf { it.questionIds.size }
-        return previousQuestions + questionIndex + 1
-    }
-
-    private fun currentSection(
-        questionnaire: QuestionnaireContent,
-        snapshot: AssessmentSessionSnapshot
-    ): SephiraSectionContent? = questionnaire.sections.firstOrNull { it.sephiraId == activeSephira(snapshot) }
-
-    private fun hasProgressInCurrentSection(
-        section: SephiraSectionContent,
-        snapshot: AssessmentSessionSnapshot
-    ): Boolean {
-        if (snapshot.currentPageIndex > 0 || snapshot.currentQuestionIndex > 0) {
-            return true
-        }
-
-        val sectionQuestionIds = section.questions.map { it.id }.toSet()
-        return snapshot.responses.any { response ->
-            response.questionId in sectionQuestionIds
-        }
-    }
-
-    private fun nextSection(
-        questionnaire: QuestionnaireContent,
-        currentSephiraId: SephiraId
     ): SephiraSectionContent? {
-        val currentIndex = questionnaire.sections.indexOfFirst { it.sephiraId == currentSephiraId }
-        if (currentIndex == -1) {
+        if (snapshot.status != AssessmentStatus.IN_PROGRESS) {
             return null
         }
-        return questionnaire.sections.getOrNull(currentIndex + 1)
+
+        val activeSephira = AssessmentProgressionHelper.activeSephira(snapshot)
+        val hasSavedScoreForCurrentSephira = snapshot.scores.any { score ->
+            score.sephiraId == activeSephira
+        }
+        if (!hasSavedScoreForCurrentSephira) {
+            return null
+        }
+
+        return AssessmentProgressionHelper.nextSection(questionnaire, activeSephira)
     }
-
-    private fun activeSephira(snapshot: AssessmentSessionSnapshot): SephiraId = snapshot.currentSephiraId
-
-    private data class AssessmentPosition(
-        val pageIndex: Int,
-        val questionIndex: Int,
-        val isComplete: Boolean
-    )
 }
