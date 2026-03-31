@@ -4,8 +4,8 @@ updated_utc = "2026-03-31"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, the Phase 1 return slice for the section-complete content contract is implemented, and the final bounded Phase 2 assessment-flow polish slice has now been implemented and manually verified. Phase 2 is complete, and the next mainline recommendation is Phase 3 refactor and architecture hardening."
-status = "phase_2_complete_ready_for_phase_3"
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, the Phase 1 return slice for the section-complete content contract is implemented, the final bounded Phase 2 assessment-flow polish slice has been implemented and manually verified, and the first bounded Phase 3 assessment-flow refactor slice has now been implemented and verified. The project remains in Phase 3 refactor and architecture hardening."
+status = "phase_3_in_progress"
 
 [phase_0_status]
 overall = "completed"
@@ -88,7 +88,10 @@ completed = [
   "Added a startup legal note with a persisted show-on-entry preference plus a separate manual reopen path from Settings",
   "Added a persisted assessment-exit opt-out so leaving an in-progress reflection can become less repetitive once the user chooses that preference",
   "Fixed top-level tab exit behavior after leaving an assessment so returning from History to Home no longer bounces through the wrong saved tab stack",
-  "Confirmed through follow-up regressions that settings toggles and manual reopen actions for the same concept must stay as separate controls instead of sharing one interaction surface"
+  "Confirmed through follow-up regressions that settings toggles and manual reopen actions for the same concept must stay as separate controls instead of sharing one interaction surface",
+  "Implemented and verified the first bounded Phase 3 assessment-flow refactor slice by splitting assessment progression math and assessment UI-state mapping out of AssessmentViewModel into focused helpers while keeping the screen contract stable",
+  "Fixed a resume regression discovered during Phase 3 verification: section-complete sephira results must restore from persisted saved scores instead of falling back to the last answered question",
+  "Added helper-level and repository-level tests so assessment refactors are protected both at the new pure seams and at the persistence path that feeds resume state"
 ]
 
 [locked_decisions]
@@ -208,11 +211,13 @@ items = [
   "Assessment loading and recovery surfaces feel more trustworthy when they use the same card-based visual language as other production surfaces instead of dropping back to bare centered indicators or text blocks.",
   "For reflective result screens, confidence explanation and numeric score breakdown read better as a dedicated supporting surface beneath the authored interpretation, not as one dense paragraph.",
   "If Settings exposes both a persisted visibility toggle and a manual reopen action for the same note, those interactions should be separated visually and behaviorally so toggling never opens the note by accident.",
-  "Top-level tab navigation is more trustworthy when it first pops back to an existing destination before falling back to generic navigate-with-restore behavior; otherwise deep stacks can rebound through the wrong tab after assessment exit."
+  "Top-level tab navigation is more trustworthy when it first pops back to an existing destination before falling back to generic navigate-with-restore behavior; otherwise deep stacks can rebound through the wrong tab after assessment exit.",
+  "When refactoring a ViewModel around assessment resume behavior, verify the repository snapshot path as well as the screen-state mapper. Resume regressions can come from persistence layers dropping saved scores even when the new UI-state logic looks correct in isolation.",
+  "Section-complete resume is a real persisted assessment state, not just an in-memory UI convenience. If an in-progress session already has a saved score for the current sephira, resume should restore the section-complete result before advancing."
 ]
 
 [verification]
-status = "phase_2_fully_verified"
+status = "phase_3_first_slice_verified"
 notes = [
   "Unit tests passed after making detail JSON fields optional with repository fallbacks.",
   "Manual checks passed for Home summary and Results detail navigation.",
@@ -235,7 +240,8 @@ notes = [
   "The verified Settings polish slice passed manual checks plus targeted unit and Compose coverage after moving the hidden debug tap reset rule out of flaky UI timing tests and into a deterministic helper test.",
   "The final bounded assessment-flow Phase 2 polish slice passed targeted tests and the user's manual verification checklist.",
   "The follow-up trust/readability fixes also passed unit tests, Android tests, and manual verification after separating the legal-note toggle from the manual open action and tightening top-level tab re-entry behavior.",
-  "Phase 2 implementation and verification are now complete, so future mainline threads can move to Phase 3."
+  "Phase 2 implementation and verification are now complete, so future mainline threads can move to Phase 3.",
+  "The first bounded Phase 3 assessment-flow refactor slice passed tests after preserving saved sephira scores in resumed in-progress session snapshots and restoring section-complete sephira results from persisted score data."
 ]
 
 [files_to_read_first]

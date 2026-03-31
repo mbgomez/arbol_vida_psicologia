@@ -438,6 +438,7 @@ A refactor pass is considered complete only when:
 - For multiline support lists, bullet markers need manual visual alignment review. A small offset tied to the first text line can read better than plain top or center alignment.
 - In Compose chart and drawing code, resolve theme-dependent colors or resources in composable scope before entering `Canvas` draw lambdas to avoid compilation and maintenance issues.
 - When a completed-state screen still depends on hardcoded interpretation strings, treat that as a content-contract refactor target instead of polishing the screen around the mismatch. Shared UI can stay generic only if authored sephira content owns the interpretation.
+- For assessment-flow refactors, preserve repository snapshot fidelity while splitting ViewModel logic. Resume behavior can break if in-progress session snapshots drop saved sephira scores before the ViewModel rebuilds its phase state.
 
 ## Immediate Next Step
 
