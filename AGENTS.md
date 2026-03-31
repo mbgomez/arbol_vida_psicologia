@@ -238,6 +238,8 @@ UX guidance:
 - The bottom-nav label may be shorter than the destination header/title when needed for fit, but the destination itself should keep the fuller product-facing name.
 - Assessment exit confirmation should be destination-aware. The dialog body and confirm action should name the actual tab being opened, not always Home.
 - Leaving an in-progress assessment for Home should preserve the fast-entry route behavior. Prefer popping back to an existing Home destination when possible before falling back to generic top-level navigation.
+- When a product concept offers both a persisted visibility toggle and a manual reopen/view action, keep them as clearly separate controls. Toggling visibility must not also trigger the reopen action.
+- For top-level tab navigation, prefer popping back to an existing destination before using generic save/restore navigation so deep-stack re-entry does not bounce through the wrong tab.
 - Footer/supporting copy on production surfaces such as Assessments, Learn, and History should speak to the user's experience, not to internal product structure or developer intent.
 
 Compose screen construction guidance:

@@ -35,6 +35,7 @@ Current roadmap state:
 - The top-level Home and Assessments state-surface polish slice is now implemented and manually verified.
 - The bounded Settings polish slice is now implemented and verified, including calmer bilingual readability tuning and a hidden debug-tools reveal path that keeps the default Settings surface cleaner.
 - The final bounded Phase 2 assessment-flow polish slice is now implemented and manually verified.
+- The bounded post-Phase-2 trust/readability return pass is now implemented and manually verified, covering the startup legal note, the assessment-exit opt-out, and the final top-level nav readability fix.
 - `Phase 2: UX And Enjoyment Polish` is now complete.
 - The next mainline recommendation is `Phase 3: Refactor And Architecture Hardening`.
 - The user runs all builds, tests, emulator checks, adb commands, Firebase checks, and Play Console steps manually.
@@ -81,6 +82,7 @@ Codex operating rules:
 - Prefer minimal diffs over new abstractions.
 - Do not drift into later polish or refactor work unless directly required by the slice.
 - Update docs/config only when a project standard, roadmap standard, or content contract changes.
+- If a settings surface offers both a visibility toggle and a manual reopen action for the same note or dialog, keep them as separate controls and test both paths independently.
 
 Mini-agent routing:
 - `01-inspect-slice.md` for exploration and scope selection

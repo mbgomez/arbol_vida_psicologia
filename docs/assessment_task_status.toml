@@ -84,7 +84,11 @@ completed = [
   "Polished the assessment loading state into a calmer card-based recovery surface instead of a bare spinner",
   "Polished the assessment error states into richer recovery surfaces with clearer titles, support copy, and in-place retry",
   "Reworked the section-complete assessment screen so authored reflection copy appears once, while confidence and score breakdown read as a separate supporting surface",
-  "Verified the final bounded assessment-flow Phase 2 polish slice through targeted tests and manual checks, completing the implementation portion of Phase 2"
+  "Verified the final bounded assessment-flow Phase 2 polish slice through targeted tests and manual checks, completing the implementation portion of Phase 2",
+  "Added a startup legal note with a persisted show-on-entry preference plus a separate manual reopen path from Settings",
+  "Added a persisted assessment-exit opt-out so leaving an in-progress reflection can become less repetitive once the user chooses that preference",
+  "Fixed top-level tab exit behavior after leaving an assessment so returning from History to Home no longer bounces through the wrong saved tab stack",
+  "Confirmed through follow-up regressions that settings toggles and manual reopen actions for the same concept must stay as separate controls instead of sharing one interaction surface"
 ]
 
 [locked_decisions]
@@ -202,7 +206,9 @@ items = [
   "For polished bilingual Settings-style rows, top-align controls with multiline copy instead of centering them; centered switches, radios, and action buttons start to look off once Spanish text wraps.",
   "When a section-complete screen already receives authored reflection and practice from the content contract, Phase 2 polish should improve readability around that content rather than restating the same meaning in extra cards.",
   "Assessment loading and recovery surfaces feel more trustworthy when they use the same card-based visual language as other production surfaces instead of dropping back to bare centered indicators or text blocks.",
-  "For reflective result screens, confidence explanation and numeric score breakdown read better as a dedicated supporting surface beneath the authored interpretation, not as one dense paragraph."
+  "For reflective result screens, confidence explanation and numeric score breakdown read better as a dedicated supporting surface beneath the authored interpretation, not as one dense paragraph.",
+  "If Settings exposes both a persisted visibility toggle and a manual reopen action for the same note, those interactions should be separated visually and behaviorally so toggling never opens the note by accident.",
+  "Top-level tab navigation is more trustworthy when it first pops back to an existing destination before falling back to generic navigate-with-restore behavior; otherwise deep stacks can rebound through the wrong tab after assessment exit."
 ]
 
 [verification]
@@ -228,6 +234,7 @@ notes = [
   "During validation, HomeScreenTest and AssessmentScreenTest needed test-selector fixes for below-the-fold content and intentionally duplicated completion reflection text; the app behavior itself remained correct.",
   "The verified Settings polish slice passed manual checks plus targeted unit and Compose coverage after moving the hidden debug tap reset rule out of flaky UI timing tests and into a deterministic helper test.",
   "The final bounded assessment-flow Phase 2 polish slice passed targeted tests and the user's manual verification checklist.",
+  "The follow-up trust/readability fixes also passed unit tests, Android tests, and manual verification after separating the legal-note toggle from the manual open action and tightening top-level tab re-entry behavior.",
   "Phase 2 implementation and verification are now complete, so future mainline threads can move to Phase 3."
 ]
 
