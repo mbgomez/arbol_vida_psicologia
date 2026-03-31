@@ -4,7 +4,7 @@ updated_utc = "2026-03-31"
 purpose = "Assessment continuation status for future product threads"
 
 [current_state]
-summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, the Phase 1 return slice for the section-complete content contract is implemented, the final bounded Phase 2 assessment-flow polish slice has been implemented and manually verified, and the first bounded Phase 3 assessment-flow refactor slice has now been implemented and verified. The project remains in Phase 3 refactor and architecture hardening."
+summary = "Assessments is now a real top-level tab, Home remains the fast-entry surface for start/resume/latest reflection value, History stays focused on completed sessions with a lightweight trend entry point plus a dedicated deeper-trends screen, Results has per-sephira detail plus an explicit retake path, Learn is present, Settings is present, assessment supports multi-sephira progression across the seeded set, the scoring engine now honors authored question weights, the project has a gated tester-observability foundation plus Firebase configuration and Play testing setup guidance, the Phase 1 return slice for the section-complete content contract is implemented, the final bounded Phase 2 assessment-flow polish slice has been implemented and manually verified, the first bounded Phase 3 assessment-flow refactor slice has now been implemented and verified, and the bounded AssessmentScreen terminal-state decomposition slice has also been implemented and verified. The project remains in Phase 3 refactor and architecture hardening."
 status = "phase_3_in_progress"
 
 [phase_0_status]
@@ -91,7 +91,9 @@ completed = [
   "Confirmed through follow-up regressions that settings toggles and manual reopen actions for the same concept must stay as separate controls instead of sharing one interaction surface",
   "Implemented and verified the first bounded Phase 3 assessment-flow refactor slice by splitting assessment progression math and assessment UI-state mapping out of AssessmentViewModel into focused helpers while keeping the screen contract stable",
   "Fixed a resume regression discovered during Phase 3 verification: section-complete sephira results must restore from persisted saved scores instead of falling back to the last answered question",
-  "Added helper-level and repository-level tests so assessment refactors are protected both at the new pure seams and at the persistence path that feeds resume state"
+  "Added helper-level and repository-level tests so assessment refactors are protected both at the new pure seams and at the persistence path that feeds resume state",
+  "Implemented and verified a bounded AssessmentScreen refactor slice that moved loading, completed, and error terminal phases into dedicated assessment UI files while keeping the screen contract and visible behavior stable",
+  "Added focused Compose coverage for the extracted assessment terminal sections so the new UI seams are protected directly without broadening test scope"
 ]
 
 [locked_decisions]
@@ -108,16 +110,16 @@ history_trend_filtering = "Score-type trend exploration can temporarily enable o
 debug_history_tooling = "Any future mock-history tooling should be debug-only and switch completed-history reads to sample data without mutating the real Room history."
 
 [recommended_next_slice]
-name = "phase_3_refactor_and_architecture_hardening"
-why = "Phase 2 is now complete, so the next mainline thread should move into bounded Phase 3 refactor and architecture hardening work."
+name = "phase_3_assessment_section_complete_information_balance"
+why = "The in-flow sephira-complete assessment result was intentionally simplified during Phase 2, but it now appears too lean for the value of that moment. The next bounded Phase 3 slice should refine information layering so the section-complete screen feels more complete and rewarding while still preserving progressive disclosure and keeping the richest interpretation on the dedicated results-detail path."
 
 [[recommended_next_slice.goals]]
-id = "decompose_large_production_surfaces"
-description = "Reduce risk in the largest active screens and ViewModels with bounded decomposition that preserves the current product behavior."
+id = "refine_section_complete_information_balance"
+description = "Strengthen the in-flow sephira-complete result so it gives enough meaning, context, and immediate value without returning to an overloaded all-details screen."
 
 [[recommended_next_slice.goals]]
-id = "standardize_repeated_ui_patterns"
-description = "Identify real repeated product UI patterns and standardize them carefully without broad cleanup drift."
+id = "preserve_progressive_disclosure_between_assessment_and_results"
+description = "Keep the assessment section-complete screen concise and mid-flow friendly while making the deeper full-results interpretation path more clearly differentiated and intentionally richer."
 
 [phase_2_status]
 overall = "completed"
@@ -128,7 +130,7 @@ completed_slices = [
   "assessment_flow_state_and_completion_polish"
 ]
 remaining_focus = []
-next_recommended_slice = "phase_3_refactor_and_architecture_hardening"
+next_recommended_slice = "phase_3_assessment_section_complete_information_balance"
 
 [production_roadmap]
 file = "docs/production_readiness_roadmap.md"
@@ -151,6 +153,7 @@ detail_content_backfill = "Backfill authored result-detail content for seeded se
 next_sephirot_batch = "Continue the mainline Phase 1 assessment expansion by locking and seeding the next contiguous batch after Netzach."
 results_polish = "Strengthen bridges from Home summary into Results and detail after the explicit retake flow."
 section_complete_content_contract = "Implemented as a bounded Phase 1 return slice: section-complete interpretation now uses a dedicated per-sephira JSON contract with repository/ViewModel mapping and safe fallbacks."
+assessment_section_complete_information_balance = "Refine the in-flow sephira-complete result so it feels more complete and useful in the moment without collapsing the dedicated results-detail surface back into the assessment flow."
 assessment_reentry_polish = "Review whether History or future assessment-library cards need additional calm wording around continuing versus starting fresh."
 tester_distribution_and_observability = "A gated observability foundation is now in place, Firebase has been configured, and a signed release bundle has been created. The next step is to finish Analytics DebugView and Crashlytics delivery verification, complete Play account identity checks, and publish the internal testing release."
 history_graphs = "Refine the new dedicated deeper-trends screen visually after the first mode and chart-state contracts settle through manual review."
@@ -210,6 +213,9 @@ items = [
   "When a section-complete screen already receives authored reflection and practice from the content contract, Phase 2 polish should improve readability around that content rather than restating the same meaning in extra cards.",
   "Assessment loading and recovery surfaces feel more trustworthy when they use the same card-based visual language as other production surfaces instead of dropping back to bare centered indicators or text blocks.",
   "For reflective result screens, confidence explanation and numeric score breakdown read better as a dedicated supporting surface beneath the authored interpretation, not as one dense paragraph.",
+  "A section-complete assessment result can become too lean even when the progressive-disclosure direction is correct. The strongest balance is a concise but emotionally rewarding mid-flow result paired with a clearly richer dedicated detail screen.",
+  "AssessmentScreen refactors are safest when terminal phases such as loading, completed, and error are extracted as screen-owned UI sections first. This thins the orchestrator without pushing presentation-only mapping or screen flow decisions into ViewModel or shared component layers too early.",
+  "When a screen decomposition preserves user-visible behavior, add focused tests at the newly extracted UI seams instead of rewriting broader flow coverage. That keeps Phase 3 refactor protection strong without turning stable screen tests into unnecessary churn.",
   "If Settings exposes both a persisted visibility toggle and a manual reopen action for the same note, those interactions should be separated visually and behaviorally so toggling never opens the note by accident.",
   "Top-level tab navigation is more trustworthy when it first pops back to an existing destination before falling back to generic navigate-with-restore behavior; otherwise deep stacks can rebound through the wrong tab after assessment exit.",
   "When refactoring a ViewModel around assessment resume behavior, verify the repository snapshot path as well as the screen-state mapper. Resume regressions can come from persistence layers dropping saved scores even when the new UI-state logic looks correct in isolation.",
@@ -241,7 +247,8 @@ notes = [
   "The final bounded assessment-flow Phase 2 polish slice passed targeted tests and the user's manual verification checklist.",
   "The follow-up trust/readability fixes also passed unit tests, Android tests, and manual verification after separating the legal-note toggle from the manual open action and tightening top-level tab re-entry behavior.",
   "Phase 2 implementation and verification are now complete, so future mainline threads can move to Phase 3.",
-  "The first bounded Phase 3 assessment-flow refactor slice passed tests after preserving saved sephira scores in resumed in-progress session snapshots and restoring section-complete sephira results from persisted score data."
+  "The first bounded Phase 3 assessment-flow refactor slice passed tests after preserving saved sephira scores in resumed in-progress session snapshots and restoring section-complete sephira results from persisted score data.",
+  "The bounded AssessmentScreen terminal-state decomposition slice was verified after keeping the visible assessment behavior stable and adding focused Compose coverage for the extracted loading, completed, and error sections."
 ]
 
 [files_to_read_first]

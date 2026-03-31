@@ -17,6 +17,9 @@ import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentCompletedState
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentErrorState
+import com.netah.hakkam.numyah.mind.ui.screen.AssessmentLoadingState
 import com.netah.hakkam.numyah.mind.ui.screen.AssessmentScreen
 import com.netah.hakkam.numyah.mind.ui.theme.AppTheme
 import com.netah.hakkam.numyah.mind.viewmodel.AssessmentAnswerOptionUiModel
@@ -65,6 +68,24 @@ class AssessmentScreenTest {
         ).assertIsDisplayed()
         composeTestRule.onNodeWithText(
             context.getString(R.string.assessment_loading_title)
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun assessmentLoadingState_directComposable_displaysSupportCopy() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentLoadingState()
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription(
+            context.getString(R.string.progress_indicator_desccription)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_loading_support)
         ).assertIsDisplayed()
     }
 
@@ -446,5 +467,68 @@ class AssessmentScreenTest {
 
         assertTrue(continued)
         assertEquals(false, returnedHome)
+    }
+
+    @Test
+    fun assessmentCompletedState_withoutPracticeSuggestion_showsFallbackText() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentCompletedState(
+                    model = AssessmentCompletedUiModel(
+                        sephiraId = SephiraId.MALKUTH,
+                        sephiraName = "Malkuth",
+                        sectionSummary = "Grounded contact with practical life.",
+                        completionReflection = "Malkuth feels steady and supported right now.",
+                        practiceSuggestion = null,
+                        dominantPole = Pole.BALANCE,
+                        confidence = ConfidenceLevel.MEDIUM,
+                        balanceScore = 0.55,
+                        deficiencyScore = 0.20,
+                        excessScore = 0.25,
+                        isLowConfidence = false,
+                        hasNextSephira = false,
+                        nextSephiraName = null
+                    ),
+                    onContinue = {},
+                    onBackHome = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_result_next_step_fallback)
+        ).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun assessmentErrorState_saveAnswer_displaysMappedCopyAndRetries() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var retried = false
+
+        composeTestRule.setContent {
+            AppTheme {
+                AssessmentErrorState(
+                    errorType = AssessmentErrorType.SAVE_ANSWER,
+                    onRetry = { retried = true }
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_error_save_title)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_error_save)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_error_save_support)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_retry)
+        ).performClick()
+
+        assertTrue(retried)
     }
 }
