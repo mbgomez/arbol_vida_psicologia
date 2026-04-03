@@ -107,6 +107,7 @@ data class AssessmentCompletedUiModel(
     val sephiraName: String,
     val sectionSummary: String,
     val completionReflection: String,
+    val dominantPattern: String,
     val practiceSuggestion: String?,
     val dominantPole: Pole,
     val confidence: ConfidenceLevel,

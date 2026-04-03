@@ -68,6 +68,11 @@ internal object AssessmentUiStateFactory {
                 sephiraName = section.displayName,
                 sectionSummary = section.completionContent.sectionSummary,
                 completionReflection = completionState.reflection,
+                dominantPattern = when (score.dominantPole) {
+                    Pole.BALANCE -> section.detailContent.healthyExpression
+                    Pole.DEFICIENCY -> section.detailContent.deficiencyPattern
+                    Pole.EXCESS -> section.detailContent.excessPattern
+                },
                 practiceSuggestion = completionState.practice,
                 dominantPole = score.dominantPole,
                 confidence = score.confidence,

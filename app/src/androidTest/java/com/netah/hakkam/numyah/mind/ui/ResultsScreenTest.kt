@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
+import com.netah.hakkam.numyah.mind.R
 import com.netah.hakkam.numyah.mind.domain.model.ConfidenceLevel
 import com.netah.hakkam.numyah.mind.domain.model.Pole
 import com.netah.hakkam.numyah.mind.domain.model.SephiraId
@@ -28,6 +30,7 @@ class ResultsScreenTest {
 
     @Test
     fun resultsScreen_loadedState_opensSephiraDetail() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         var openedSephiraId: SephiraId? = null
         var retookAssessment = false
         var confirmedReplaceAssessment = false
@@ -47,7 +50,18 @@ class ResultsScreenTest {
         }
 
         composeTestRule.onNodeWithText("Yesod").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Open full interpretation").performClick()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.results_overview_map_body)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.results_overview_detail_hint)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.results_sephira_score_summary, 31, 46, 23)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.results_open_detail_action)
+        ).performClick()
         composeTestRule.onNodeWithText("Retake assessment").performClick()
         composeTestRule.onNodeWithText("Start fresh reflection").performClick()
 

@@ -35,7 +35,7 @@ internal fun AssessmentCompletedState(
             fontWeight = FontWeight.SemiBold
         )
         AssessmentResultSummaryCard(
-            eyebrow = model.sephiraName,
+            eyebrow = stringResource(R.string.assessment_result_current_tendency_title),
             title = assessmentDominantLabel(
                 dominantPole = model.dominantPole,
                 isLowConfidence = model.isLowConfidence
@@ -43,8 +43,12 @@ internal fun AssessmentCompletedState(
             body = model.completionReflection
         )
         AssessmentInfoCard(
-            title = stringResource(R.string.assessment_result_what_it_means_title),
+            title = stringResource(R.string.assessment_result_reflection_context_title),
             body = model.sectionSummary
+        )
+        AssessmentInfoCard(
+            title = stringResource(R.string.assessment_result_what_it_means_title),
+            body = model.dominantPattern
         )
         AssessmentScoreSummaryCard(
             confidenceLabel = assessmentConfidenceLabel(model.confidence),

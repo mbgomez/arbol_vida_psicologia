@@ -344,6 +344,7 @@ class AssessmentScreenTest {
                             sephiraName = "Malkuth",
                             sectionSummary = "Grounded contact with practical life.",
                             completionReflection = "Material life may be asking for more support.",
+                            dominantPattern = "Practical life can start to feel under-supported, harder to trust, or more difficult to inhabit steadily.",
                             practiceSuggestion = "Choose one steady act of care this week.",
                             dominantPole = Pole.DEFICIENCY,
                             confidence = ConfidenceLevel.LOW,
@@ -370,14 +371,28 @@ class AssessmentScreenTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_title, "Malkuth")).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_result_current_tendency_title)
+        ).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_leans_deficiency)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_confidence_low)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.assessment_result_what_it_means_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_result_reflection_context_title)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_result_what_it_means_title)
+        ).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            "Practical life can start to feel under-supported, harder to trust, or more difficult to inhabit steadily."
+        ).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Grounded contact with practical life.").performScrollTo().assertIsDisplayed()
         composeTestRule.onAllNodesWithText("Material life may be asking for more support.")
             .assertCountEquals(1)
         composeTestRule.onNodeWithText(
-            context.getString(R.string.assessment_confidence_note_low)
+            context.getString(R.string.assessment_confidence_low)
+        ).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.assessment_confidence_note_low),
+            substring = true
         ).performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Choose one steady act of care this week.").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("22%", substring = true).assertIsDisplayed()
@@ -437,6 +452,7 @@ class AssessmentScreenTest {
                             sephiraName = "Malkuth",
                             sectionSummary = "Grounded contact with practical life.",
                             completionReflection = "Malkuth feels steady and supported right now.",
+                            dominantPattern = "Daily life feels steady, embodied, and easier to support without strain.",
                             practiceSuggestion = "Choose one steady act of care this week.",
                             dominantPole = Pole.BALANCE,
                             confidence = ConfidenceLevel.MEDIUM,
@@ -481,6 +497,7 @@ class AssessmentScreenTest {
                         sephiraName = "Malkuth",
                         sectionSummary = "Grounded contact with practical life.",
                         completionReflection = "Malkuth feels steady and supported right now.",
+                        dominantPattern = "Daily life feels steady, embodied, and easier to support without strain.",
                         practiceSuggestion = null,
                         dominantPole = Pole.BALANCE,
                         confidence = ConfidenceLevel.MEDIUM,

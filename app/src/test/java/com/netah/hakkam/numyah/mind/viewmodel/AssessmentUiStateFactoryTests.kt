@@ -120,6 +120,7 @@ class AssessmentUiStateFactoryTests {
         val completedState = state as AssessmentUiState.Completed
         assertEquals("Summary", completedState.model.sectionSummary)
         assertEquals("Excess reflection", completedState.model.completionReflection)
+        assertEquals("Excess", completedState.model.dominantPattern)
         assertEquals("Excess practice", completedState.model.practiceSuggestion)
         assertTrue(completedState.model.hasNextSephira)
         assertEquals("Yesod", completedState.model.nextSephiraName)

@@ -38,6 +38,7 @@ Current roadmap state:
 - The bounded post-Phase-2 trust/readability return pass is now implemented and manually verified, covering the startup legal note, the assessment-exit opt-out, and the final top-level nav readability fix.
 - `Phase 2: UX And Enjoyment Polish` is now complete.
 - The project is now in `Phase 3: Refactor And Architecture Hardening`.
+- The bounded information-balance correction for section-complete and final Results surfaces is now implemented.
 - The user runs all builds, tests, emulator checks, adb commands, Firebase checks, and Play Console steps manually.
 
 Current app direction:
@@ -75,6 +76,10 @@ Assessment content contract direction:
 - Mapping should flow through repository/domain/ViewModel, not through hardcoded screen logic.
 - Incomplete seeded content must have safe fallback behavior.
 - Assessment resume behavior depends on repository snapshots preserving saved sephira scores; a refactor that restores section-complete UI state is incomplete if the persistence path drops those scores during resume.
+- Reflective output layering is now locked more clearly:
+  - end-of-sephira assessment result = rewarding local pause with tendency, context, score support, and one next practice
+  - final Results overview = richer whole-tree orientation surface
+  - Sephira detail = deepest interpretation surface
 
 Codex operating rules:
 - Read only the files needed for the current slice.

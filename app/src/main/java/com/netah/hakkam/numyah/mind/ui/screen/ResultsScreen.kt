@@ -255,6 +255,16 @@ private fun ResultsSummaryCard(model: ResultsOverviewUiModel) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Text(
+                text = stringResource(R.string.results_overview_map_body),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = stringResource(R.string.results_overview_detail_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -331,6 +341,16 @@ private fun ResultsSephiraCard(
 
             Text(
                 text = assessmentConfidenceLabel(model.confidence),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(
+                    R.string.results_sephira_score_summary,
+                    model.balancePercent,
+                    model.deficiencyPercent,
+                    model.excessPercent
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
