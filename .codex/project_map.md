@@ -39,6 +39,7 @@ Current roadmap state:
 - `Phase 2: UX And Enjoyment Polish` is now complete.
 - The project is now in `Phase 3: Refactor And Architecture Hardening`.
 - The bounded information-balance correction for section-complete and final Results surfaces is now implemented.
+- The remaining Phase 3 work is intentionally grouped into three bounded clusters: Results, Assessment state, and Shell/navigation.
 - The user runs all builds, tests, emulator checks, adb commands, Firebase checks, and Play Console steps manually.
 
 Current app direction:
@@ -80,6 +81,11 @@ Assessment content contract direction:
   - end-of-sephira assessment result = rewarding local pause with tendency, context, score support, and one next practice
   - final Results overview = richer whole-tree orientation surface
   - Sephira detail = deepest interpretation surface
+- For section-complete meaning surfaces, reuse authored per-sephira `detailContent` through state mapping instead of reviving generic screen-level interpretation strings.
+- Remaining Phase 3 execution map:
+  - Results cluster = Results overview readability, ResultsScreen decomposition, Results/detail boundary polish, related Compose tests
+  - Assessment state cluster = remaining AssessmentViewModel thinning, UI-state/helper cleanup, related unit tests
+  - Shell/navigation cluster = MainNav and route-driven shell cleanup, focused navigation verification
 
 Codex operating rules:
 - Read only the files needed for the current slice.
